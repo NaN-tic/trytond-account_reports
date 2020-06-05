@@ -1,0 +1,25 @@
+<table>
+  <tr id="header-details">
+    <td>
+      {{ parameters['company'].render.rec_name }}. {{ _('VAT') }}: {{ parameters['company_vat'] }}
+    </td>
+    <td class="right">
+      {{ parameters['now'] }}
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <h1>{{ _('General Ledger') }}</h1>
+    </td>
+  <tr>
+    <td>
+      {{ _('Fiscal Year') }}: {{ parameters['fiscal_year'].render.rec_name }}<br/>
+      {% if parameters['start_period'] %}{{ _('Start Period') }}: {{ parameters['start_period'].render.rec_name }}{% endif %}
+      {% if parameters['end_period'] %} {{ _('End Period') }}: {{ parameters['end_period'].render.rec_name }}{% endif %}
+    </td>
+    <td class="right">
+      {% if parameters['parties'] %}{{ _('Parties') }}: {{ parameters['parties'] }}{% else %}{{ _('All Parties' )}}{% endif %}<br/>
+      {% if parameters['accounts'] %}{{ _('Accounts') }}: {{ parameters['accounts'] }}{% else %}{{ _('All Accounts' )}}{% endif %}
+    </td>
+  </tr>
+</table>

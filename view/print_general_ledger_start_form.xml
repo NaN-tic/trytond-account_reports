@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<form>
+    <label name="company"/>
+    <field name="company"/>
+    <label name="fiscalyear"/>
+    <field name="fiscalyear"/>
+    <label name="start_period"/>
+    <field name="start_period"/>
+    <label name="end_period"/>
+    <field name="end_period"/>
+    <label id="select_parties" string="Left empty to select all parties"/>
+    <field name="parties" colspan="4"/>
+    <label id="select_accounts" string="Left empty to select all accounts"/>
+    <field name="accounts" colspan="4"/>
+    <label name="all_accounts"/>
+    <field name="all_accounts"/>
+    <label name="output_format"/>
+    <field name="output_format"/>
+</form>
