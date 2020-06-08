@@ -1,0 +1,16 @@
+{% if record.lines %}{% for l in record.lines %}<tr>
+  <td>{{ l.line.date|dateformat }}</td>
+  <td>{% if l.line.move.post_number %}{{ l.line.move.post_number }}{% else %}{{ l.line.move.move_number }}{{ l.line.party and l.line.party.name }}{% endif %}</td>
+  <td>{% if l.ref %}{{ l.ref }}{% endif %}{% if l.ref and l.line.description %} // {% endif %}{{ l.line.description }}</td>
+  <td>{{ l.debit|numberformat }}</td>
+  <td>{{ l.credit|numberformat }}</td>
+  <td>{{ l.balance|numberformat }}</td>
+</tr>{% endfor %}{% else %}
+<tr>
+  <td></td>
+  <td></td>
+  <td>{{ _('Previous balance') }}</td>
+  <td>{{ record.total_debit|numberformat }}</td>
+  <td>{{ record.total_credit|numberformat }}</td>
+  <td>{{ (record.total_debit - record.total_credit)|numberformat }}</td>
+</tr>{% endif %}

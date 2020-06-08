@@ -14,7 +14,7 @@ copyright notices and license terms. -->
         </record>
 
         <!-- templates -->
-        <record model='html.template' id="general_ledger_template_id">
+        <record model='html.template' id="general_ledger_html_template">
             <field name="name">General Ledger</field>
             <field name="type">base</field>
             <field name="sequence" eval="99"/>
@@ -24,7 +24,7 @@ copyright notices and license terms. -->
         <record model="ir.action.report" id="report_general_ledger">
             <field name="name">General Ledger</field>
             <field name="report_name">account_reports.general_ledger</field>
-            <field name="html_template" ref="general_ledger_template_id"/>
+            <field name="html_template" ref="general_ledger_html_template"/>
             <field name="extension">pdf</field>
             <field name="template_extension">jinja</field>
         </record>
@@ -32,14 +32,14 @@ copyright notices and license terms. -->
         <record model='html.template.signature' id="general_ledger_show_header_macro_signature">
             <field name="name">show_header(parameters)</field>
         </record>
-        <record model='html.template' id="general_ledger_show_header_macro_id">
+        <record model='html.template' id="general_ledger_show_header_macro_html">
             <field name="name">Header</field>
             <field name="type">macro</field>
             <field name="sequence" eval="99"/>
             <field name="filename">account_reports/general_ledger/templates/header_macro.html</field>
             <field name="implements" ref="account_reports.general_ledger_show_header_macro_signature"/>
         </record>
-        <record model="html.report.template" id="report_general_ledger_template_show_header_id">
+        <record model="html.report.template" id="report_general_ledger_template_show_header_html">
           <field name="report" ref="report_general_ledger"/>
           <field name="signature" ref="general_ledger_show_header_macro_signature"/>
         </record>
@@ -47,16 +47,31 @@ copyright notices and license terms. -->
         <record model='html.template.signature' id="general_ledger_show_detail_macro_signature">
             <field name="name">show_detail(records)</field>
         </record>
-        <record model='html.template' id="general_ledger_show_detail_macro_id">
+        <record model='html.template' id="general_ledger_show_detail_macro_html">
             <field name="name">Detail</field>
             <field name="type">macro</field>
             <field name="sequence" eval="99"/>
             <field name="filename">account_reports/general_ledger/templates/detail_macro.html</field>
             <field name="implements" ref="account_reports.general_ledger_show_detail_macro_signature"/>
         </record>
-        <record model="html.report.template" id="report_general_ledger_template_show_detail_id">
+        <record model="html.report.template" id="report_general_ledger_template_show_detail_html">
           <field name="report" ref="report_general_ledger"/>
           <field name="signature" ref="general_ledger_show_detail_macro_signature"/>
+        </record>
+
+        <record model='html.template.signature' id="general_ledger_show_detail_lines_macro_signature">
+            <field name="name">show_detail_lines(record)</field>
+        </record>
+        <record model='html.template' id="general_ledger_show_detail_lines_macro_html">
+            <field name="name">Detail Lines</field>
+            <field name="type">macro</field>
+            <field name="sequence" eval="99"/>
+            <field name="filename">account_reports/general_ledger/templates/detail_lines_macro.html</field>
+            <field name="implements" ref="account_reports.general_ledger_show_detail_lines_macro_signature"/>
+        </record>
+        <record model="html.report.template" id="report_general_ledger_template_show_detail_lines_html">
+          <field name="report" ref="report_general_ledger"/>
+          <field name="signature" ref="general_ledger_show_detail_lines_macro_signature"/>
         </record>
 
         <!-- menu wizard -->

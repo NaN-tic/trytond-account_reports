@@ -20,6 +20,7 @@ __all__ = ['PrintGeneralLedgerStart', 'PrintGeneralLedger',
     'GeneralLedgerReport']
 _ZERO = Decimal(0)
 
+
 class PrintGeneralLedgerStart(ModelView):
     'Print General Ledger'
     __name__ = 'account_reports.print_general_ledger.start'
@@ -139,10 +140,17 @@ class GeneralLedgerReport(HTMLReport):
         Line = pool.get('account.move.line')
 
         def _get_key(currentKey):
+            account_code = currentKey[0].code or currentKey[0].name
             if len(currentKey) > 1:
-                key = '%s %s' % (currentKey[0].code, currentKey[1].name)
+                if currentKey[1]:
+                    key = '%s %s' % (account_code, currentKey[1].name)
+                else:
+                    key = account_code
             else:
-                key = '%s %s' % (currentKey[0].code, currentKey[0].name)
+                if currentKey[0].code:
+                    key = '%s %s' % (account_code, currentKey[0].name)
+                else:
+                    key = currentKey[0].name
             return key
 
         fiscalyear = FiscalYear(data['fiscalyear'])
@@ -180,15 +188,16 @@ class GeneralLedgerReport(HTMLReport):
         company = fiscalyear.company
 
         parameters = {}
-        parameters['company'] = DualRecord(company)
-        parameters['start_period'] = start_period and DualRecord(start_period) or ''
-        parameters['end_period'] = end_period and DualRecord(end_period) or ''
-        parameters['fiscal_year'] = DualRecord(fiscalyear)
-        parameters['accounts'] = accounts_subtitle
-        parameters['parties'] = parties_subtitle
+        parameters['company'] = company.rec_name
         parameters['company_vat'] = (company.party.tax_identifier and
             company.party.tax_identifier.code) or ''
-        parameters['now'] = format_datetime(datetime.now(), format='short', locale=Transaction().language or 'en')
+        parameters['start_period'] = start_period and start_period or ''
+        parameters['end_period'] = end_period and end_period or ''
+        parameters['fiscal_year'] = fiscalyear.rec_name
+        parameters['accounts'] = accounts_subtitle
+        parameters['parties'] = parties_subtitle
+        parameters['now'] = format_datetime(datetime.now(), format='short',
+            locale=Transaction().language or 'en')
 
         where = ''
         if accounts:
@@ -282,7 +291,7 @@ class GeneralLedgerReport(HTMLReport):
                 rline = {
                     'sequence': sequence,
                     # 'key': str(currentKey),
-                    'line': DualRecord(line),
+                    'line': line,
                     # 'account_code': line.account.code or '',
                     # 'account_name': line.account.name or '',
                     # 'account_type': account_type,
@@ -308,9 +317,9 @@ class GeneralLedgerReport(HTMLReport):
                     records[key]['total_balance'] = balance
                 else:
                     records[key] = {
-                        'account': DualRecord(line.account),
+                        'account': line.account.name,
                         'code': line.account.code,
-                        'party': DualRecord(line.party) if line.party else None,
+                        'party': line.party.name if line.party else None,
                         'lines': [rline],
                         'previous_balance': (balance + credit - debit),
                         'total_debit': debit,
@@ -358,7 +367,7 @@ class GeneralLedgerReport(HTMLReport):
                     records[key]['total_balance'] = balance
                 else:
                     records[key] = {
-                        'account': DualRecord(account),
+                        'account': account.name,
                         'code': account.code,
                         # 'party': DualRecord(line.party) if line.party else None,
                         'lines': [],
@@ -419,7 +428,7 @@ class GeneralLedgerReport(HTMLReport):
                             records[key]['total_balance'] = balance
                         else:
                             records[key] = {
-                                'account': DualRecord(account),
+                                'account': account.name,
                                 'code': account.code,
                                 # 'party': DualRecord(line.party) if line.party else None,
                                 'lines': [],

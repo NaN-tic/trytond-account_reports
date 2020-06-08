@@ -14,22 +14,7 @@
     <td>{% if record.lines %}{{ record.previous_balance|numberformat }}{% endif %}</td>
   </tr>
 
-  {% if record.lines %}{% for l in record.lines %}<tr>
-    <td>{{ l.line.render.date }}</td>
-    <td>{% if l.line.move.raw.post_number %}{{ l.line.move.render.post_number }}{% else %}{{ l.line.move.render.move_number }}{{ l.line.party and l.line.party.render.name }}{% endif %}</td>
-    <td>{% if l.ref %}{{ l.ref }}{% endif %}{% if l.ref and l.line.raw.description %} // {% endif %}{{ l.line.render.description }}</td>
-    <td>{{ l.debit|numberformat }}</td>
-    <td>{{ l.credit|numberformat }}</td>
-    <td>{{ l.balance|numberformat }}</td>
-  </tr>{% endfor %}{% else %}
-  <tr>
-    <td></td>
-    <td></td>
-    <td>{{ _('Previous balance') }}</td>
-    <td>{{ record.total_debit|numberformat }}</td>
-    <td>{{ record.total_credit|numberformat }}</td>
-    <td>{{ (record.total_debit - record.total_credit)|numberformat }}</td>
-  </tr>{% endif %}
+  {{ show_detail_lines(record) }}
 
   <tr class="bold">
     <td colspan="3" class="right">{{ _('Total Fiscal Year') }}</td>

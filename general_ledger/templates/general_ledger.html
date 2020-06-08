@@ -4,7 +4,7 @@
 <style type="text/css">
 @page {
   @top-left {
-    content: "{{ data['parameters']['company'].render.rec_name }}. {{ _('VAT') }}: {{ data['parameters']['company_vat'] }}";
+    content: "{{ data['parameters']['company'] }}. {{ _('VAT') }}: {{ data['parameters']['company_vat'] }}";
   }
   @top-right {
     content: "{{ data['parameters']['now'] }}";
@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block title %}
-  {{ _('General Ledger') }} - {{ data['parameters']['company'].render.rec_name }} - {{ data['parameters']['now'] }}
+  {{ _('General Ledger') }} - {{ data['parameters']['company'] }} - {{ data['parameters']['now'] }}
 {% endblock %}
 
 {% block main %}
