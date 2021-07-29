@@ -1,0 +1,33 @@
+{% extends 'account_reports/templates/base.html' %}
+
+{% block style %}
+<style type="text/css">
+@media print {
+  #header-details {
+    display: none;
+  }
+}
+</style>
+{% endblock %}
+
+{% block title %}
+  {% if data['parameters']['jump_page'] %}
+    {{ _('Taxes By Invoice and Period') }} - {{ data['parameters']['company_rec_name'] }} - {{ data['parameters']['now'] }}
+  {% else %}
+    {{ _('Taxes By Invoice') }} - {{ data['parameters']['company_rec_name'] }} - {{ data['parameters']['now'] }}
+  {% endif %}
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+              {% if data['parameters']['records_found'] %}
+                {{ show_detail(data['records']) }}  
+              {% else %}
+                <strong>No records found</strong>  
+              {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

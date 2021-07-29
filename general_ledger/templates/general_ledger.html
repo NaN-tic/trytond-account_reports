@@ -2,15 +2,6 @@
 
 {% block style %}
 <style type="text/css">
-@page {
-  @top-left {
-    content: "{{ data['parameters']['company'] }}. {{ _('VAT') }}: {{ data['parameters']['company_vat'] }}";
-  }
-  @top-right {
-    content: "{{ data['parameters']['now'] }}";
-  }
-}
-
 @media print {
   #header-details {
     display: none;
@@ -24,18 +15,8 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-12">
-          {{ show_header(data['parameters']) }}
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12">
-          {{ show_detail(data['records']) }}
-          <p>{{ _("When the Move number is between '()' means it hasn't Post Number and the shown number is the provisional one.") }}</p>
-        </div>
-      </div>
-    </div>
+  <div>
+    {{ show_detail(data['records']) }}
+    <p>{{ _("When the Move number is between '()' means it hasn't Post Number and the shown number is the provisional one.") }}</p>
+  </div>
 {% endblock %}
