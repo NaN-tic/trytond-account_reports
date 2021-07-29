@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<tryton>
+    <data>
+        <record model="ir.ui.view" id="print_taxes_by_invoice_start_view_form">
+            <field name="model">account_reports.print_taxes_by_invoice.start</field>
+            <field name="type">form</field>
+            <field name="name">print_taxes_by_invoice_start_form</field>
+        </record>
+        <record model="ir.action.wizard" id="wizard_print_taxes_by_invoice">
+            <field name="name">Print Taxes by Invoice and Period</field>
+            <field name="wiz_name">account_reports.print_taxes_by_invoice</field>
+        </record>
+
+        <!-- templates -->
+        <record model="html.template" id="taxes_by_invoice_header_template">
+            <field name="name">Header</field>
+            <field name="type">header</field>
+            <field name="sequence" eval="99"/>
+            <field name="filename">account_reports/taxes_by_invoice/templates/header_macro.html</field>
+        </record>
+
+        <record model="html.template" id="taxes_by_invoice_html_template">
+            <field name="name">Taxes By Invoice</field>
+            <field name="type">base</field>
+            <field name="sequence" eval="99"/>
+            <field name="filename">account_reports/taxes_by_invoice/templates/taxes_by_invoice.html</field>
+        </record>
+        <record model="ir.action.report" id="report_taxes_by_invoice">
+            <field name="name">Taxes by Invoice</field>
+            <field name="report_name">account_reports.taxes_by_invoice</field>
+            <field name="html_template" ref="taxes_by_invoice_html_template"/>
+            <field name="html_header_template" ref="taxes_by_invoice_header_template"/>
+            <field name="extension">pdf</field>
+            <field name="template_extension">jinja</field>
+        </record>
+
+        <record model="html.template.signature" id="taxes_by_invoice_show_detail_macro_signature">
+            <field name="name">show_detail(records)</field>
+        </record>
+        <record model="html.template" id="taxes_by_invoice_show_detail_macro_html">
+            <field name="name">Detail</field>
+            <field name="type">macro</field>
+            <field name="sequence" eval="99"/>
+            <field name="filename">account_reports/taxes_by_invoice/templates/detail_macro.html</field>
+            <field name="implements" ref="account_reports.taxes_by_invoice_show_detail_macro_signature"/>
+        </record>
+        <record model="html.report.template" id="report_taxes_by_invoice_template_show_detail_html">
+            <field name="report" ref="report_taxes_by_invoice"/>
+            <field name="signature" ref="account_reports.taxes_by_invoice_show_detail_macro_signature"/>
+        </record>
+
+        <record model='html.template.signature' id="taxes_by_invoice_show_detail_lines_macro_signature">
+            <field name="name">show_detail_lines(record)</field>
+        </record>
+        <record model='html.template' id="taxes_by_invoice_show_detail_lines_macro_html">
+            <field name="name">Detail Lines</field>
+            <field name="type">macro</field>
+            <field name="sequence" eval="99"/>
+            <field name="filename">account_reports/taxes_by_invoice/templates/detail_lines_macro.html</field>
+            <field name="implements" ref="account_reports.taxes_by_invoice_show_detail_lines_macro_signature"/>
+        </record>
+        <record model="html.report.template" id="report_taxes_by_invoice_template_show_detail_lines_html">
+          <field name="report" ref="report_taxes_by_invoice"/>
+          <field name="signature" ref="taxes_by_invoice_show_detail_lines_macro_signature"/>
+        </record>
+
+        <!-- menu wizard -->
+        <menuitem id="menu_print_taxes_by_invoice" name="Print Taxes by Invoice and Period HTML"
+            parent="account.menu_reporting" action="wizard_print_taxes_by_invoice"
+            icon="tryton-print"/>
+    </data>
+</tryton>
