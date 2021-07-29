@@ -1,0 +1,89 @@
+# Catalan translations for PROJECT.
+# Copyright (C) 2021 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2021-06-29 12:11+0200\n"
+"PO-Revision-Date: 2021-06-29 11:58+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ca\n"
+"Language-Team: ca <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: templates/detail_macro.html:5
+msgid "Move Date"
+msgstr ""
+
+#: templates/detail_macro.html:6 templates/detail_macro.html:19
+msgid "Account"
+msgstr ""
+
+#: templates/detail_macro.html:7 templates/detail_macro.html:20
+msgid "NIF"
+msgstr ""
+
+#: templates/detail_macro.html:8 templates/detail_macro.html:21
+msgid "Invoice"
+msgstr ""
+
+#: templates/detail_macro.html:9 templates/detail_macro.html:18
+#: templates/detail_macro.html:22
+msgid "Date"
+msgstr ""
+
+#: templates/detail_macro.html:10 templates/detail_macro.html:23
+msgid "Base"
+msgstr ""
+
+#: templates/detail_macro.html:11 templates/detail_macro.html:24
+msgid "Tax"
+msgstr ""
+
+#: templates/detail_macro.html:12 templates/detail_macro.html:25
+msgid "Base + Tax"
+msgstr ""
+
+#: templates/detail_macro.html:13 templates/detail_macro.html:26
+msgid "Total Invoice"
+msgstr ""
+
+#: templates/detail_macro.html:45
+msgid "Total Period"
+msgstr ""
+
+#: templates/detail_macro.html:45 templates/detail_macro.html:55
+msgid "Total"
+msgstr ""
+
+#: templates/header_macro.html:19 templates/taxes_by_invoice.html:15
+msgid "Taxes By Invoice and Period"
+msgstr ""
+
+#: templates/header_macro.html:19 templates/taxes_by_invoice.html:17
+msgid "Taxes By Invoice"
+msgstr ""
+
+#: templates/header_macro.html:29
+msgid "Fiscal Year"
+msgstr ""
+
+#: templates/header_macro.html:29
+msgid "All Periods"
+msgstr ""
+
+#: templates/header_macro.html:32
+msgid "Parties"
+msgstr ""
+
+#: templates/header_macro.html:32
+msgid "All Parties"
+msgstr ""
+

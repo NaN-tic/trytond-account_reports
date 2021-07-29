@@ -1,0 +1,41 @@
+<link rel="stylesheet" href="{{ 'html_report/templates/base.css'|modulepath }}">
+
+<style>
+#header-table {
+  width: 17cm;
+}
+</style>
+
+{% language party and party.raw.lang and party.lang.raw.code or company.party.lang and company.party.raw.lang.code or 'en' %}
+
+<header id="header">
+    <table style="width: 1110px !important; margin-left: -70px !important;">
+        <thead>
+        <tr>
+            <td style="font-style: italic;font-size: 14px;font-weight: bold;">
+                {{ data['parameters']['company_rec_name']}}
+            </td>
+            <td class="center" style="width:60%;text-align: right;font-size: 15px;">
+                <h1>{% if data['parameters']['jump_page'] %}{{ _('Taxes By Invoice and Period') }}{% else %}{{ _('Taxes By Invoice') }}{% endif %}</h1>
+            </td>
+            <td style="text-align: right;">
+                {{ data['parameters']['now']}}
+            </td>
+        </tr>
+        </thead>
+    </table>
+
+    <table style="width: 1110px !important; margin-left: -70px !important;">
+        <thead>
+        <tr>
+            <td>{{ _('Fiscal Year')}}: {{ data['parameters']['fiscal_year']}} {% if data['parameters']['periods'] %}{{ _('Periods:')}} {{data['parameters']['periods']}} {% else %}{{ _('All Periods')}}{% endif %}</td>
+            <td style="text-align: right;">{% if data['parameters']['include_cancel'] %}{{ _('This document includes cancelled invoices marked with a *')}}{% else %}{{ _('This document not includes cancelled invoices')}}{% endif %}</td>
+        </tr>
+        <tr>
+            <td>{% if data['parameters']['parties'] %}{{ _('Parties: ')}}{{ data['parameters']['parties']}}{% else %}{{ _('All Parties')}}{% endif %}</td>
+        </tr>
+        </thead>
+    </table>
+</header>
+
+{% endlanguage %}

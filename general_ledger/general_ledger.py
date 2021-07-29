@@ -15,6 +15,7 @@ from trytond.modules.html_report.html_report import HTMLReport
 from trytond.report import Report
 from trytond.modules.html_report.engine import DualRecord
 from babel.dates import format_date, format_datetime
+from trytond.rpc import RPC
 
 __all__ = ['PrintGeneralLedgerStart', 'PrintGeneralLedger',
     'GeneralLedgerReport']
@@ -128,6 +129,11 @@ class PrintGeneralLedger(Wizard):
 
 class GeneralLedgerReport(HTMLReport):
     __name__ = 'account_reports.general_ledger'
+
+    @classmethod
+    def __setup__(cls):
+        super(GeneralLedgerReport, cls).__setup__()
+        cls.__rpc__['execute'] = RPC(False)
 
     @classmethod
     def prepare(cls, data):
@@ -436,23 +442,27 @@ class GeneralLedgerReport(HTMLReport):
                                 'total_debit': debit,
                                 'total_credit': credit,
                                 'total_balance': balance,
-
                                 }
         # return records, parameters
         return collections.OrderedDict(sorted(records.items())), parameters
 
     @classmethod
     def execute(cls, ids, data):
+        #from timer import Timer
+
+        #t = Timer()
+
         with Transaction().set_context(active_test=False):
             records, parameters = cls.prepare(data)
+        #print('PREPARED', t)
 
         context = Transaction().context
         context['report_lang'] = Transaction().language
         context['report_translations'] = os.path.join(
-            os.path.dirname(__file__), 'translations')
+                os.path.dirname(__file__), 'translations')
 
         with Transaction().set_context(**context):
-            return super(GeneralLedgerReport, cls).execute(ids, {
+            return super(GeneralLedgerReport, cls).execute(records, {
                     'name': 'account_reports.general_ledger',
                     'model': 'account.move.line',
                     'records': records,
