@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-29 12:11+0200\n"
-"PO-Revision-Date: 2021-06-29 11:58+0200\n"
+"POT-Creation-Date: 2021-08-02 13:46+0200\n"
+"PO-Revision-Date: 2021-08-02 13:47+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ca\n"
 "Language-Team: ca <LL@li.org>\n"
@@ -18,72 +18,83 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: templates/detail_macro.html:5
+#: templates/detail_macro.html:6 templates/detail_macro.html:20
 msgid "Move Date"
-msgstr ""
+msgstr "Data assentament"
 
-#: templates/detail_macro.html:6 templates/detail_macro.html:19
+#: templates/detail_macro.html:7 templates/detail_macro.html:21
 msgid "Account"
-msgstr ""
+msgstr "Compte"
 
-#: templates/detail_macro.html:7 templates/detail_macro.html:20
+#: templates/detail_macro.html:8 templates/detail_macro.html:22
 msgid "NIF"
-msgstr ""
+msgstr "NIF"
 
-#: templates/detail_macro.html:8 templates/detail_macro.html:21
+#: templates/detail_macro.html:9 templates/detail_macro.html:23
 msgid "Invoice"
-msgstr ""
+msgstr "Factura"
 
-#: templates/detail_macro.html:9 templates/detail_macro.html:18
-#: templates/detail_macro.html:22
+#: templates/detail_macro.html:10 templates/detail_macro.html:24
 msgid "Date"
-msgstr ""
+msgstr "Data Factura"
 
-#: templates/detail_macro.html:10 templates/detail_macro.html:23
+#: templates/detail_macro.html:11 templates/detail_macro.html:25
 msgid "Base"
-msgstr ""
+msgstr "Base"
 
-#: templates/detail_macro.html:11 templates/detail_macro.html:24
+#: templates/detail_macro.html:12 templates/detail_macro.html:26
 msgid "Tax"
-msgstr ""
+msgstr "Impost"
 
-#: templates/detail_macro.html:12 templates/detail_macro.html:25
+#: templates/detail_macro.html:13 templates/detail_macro.html:27
 msgid "Base + Tax"
-msgstr ""
+msgstr "Base+Imp."
 
-#: templates/detail_macro.html:13 templates/detail_macro.html:26
+#: templates/detail_macro.html:14 templates/detail_macro.html:28
 msgid "Total Invoice"
-msgstr ""
+msgstr "Total factura"
 
-#: templates/detail_macro.html:45
+#: templates/detail_macro.html:38
 msgid "Total Period"
-msgstr ""
+msgstr "Total període"
 
-#: templates/detail_macro.html:45 templates/detail_macro.html:55
+#: templates/detail_macro.html:38 templates/detail_macro.html:48
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #: templates/header_macro.html:19 templates/taxes_by_invoice.html:15
 msgid "Taxes By Invoice and Period"
-msgstr ""
+msgstr "Impostos per factura i període"
 
 #: templates/header_macro.html:19 templates/taxes_by_invoice.html:17
 msgid "Taxes By Invoice"
-msgstr ""
+msgstr "Impostos per factura"
 
-#: templates/header_macro.html:29
+#: templates/header_macro.html:31
 msgid "Fiscal Year"
-msgstr ""
+msgstr "Any Fiscal"
 
-#: templates/header_macro.html:29
+#: templates/header_macro.html:31
+msgid "Periods:"
+msgstr "Períodes:"
+
+#: templates/header_macro.html:31
 msgid "All Periods"
-msgstr ""
+msgstr "Tots els períodes"
 
 #: templates/header_macro.html:32
-msgid "Parties"
-msgstr ""
+msgid "This document includes cancelled invoices marked with a *"
+msgstr "Aquest document inclou factures cancel·lades marcades amb un *"
 
 #: templates/header_macro.html:32
+msgid "This document not includes cancelled invoices"
+msgstr "Aquest document no inclou factures cancel·lades"
+
+#: templates/header_macro.html:35
+msgid "Parties: "
+msgstr "Tercers: "
+
+#: templates/header_macro.html:35
 msgid "All Parties"
-msgstr ""
+msgstr "Tots els tercers"
 
