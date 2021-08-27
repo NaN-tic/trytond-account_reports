@@ -1,0 +1,360 @@
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
+
+import os
+import collections
+
+from datetime import timedelta, datetime
+from decimal import Decimal
+from trytond.pool import Pool
+from trytond.transaction import Transaction
+from trytond.model import ModelView, fields
+from trytond.wizard import Wizard, StateView, StateAction, StateReport, Button
+from trytond.pyson import Eval, If, Bool
+from trytond.rpc import RPC
+
+from trytond.modules.html_report.html_report import HTMLReport
+from trytond.report import Report
+from trytond.modules.html_report.engine import DualRecord
+
+from babel.dates import format_date, format_datetime
+
+_ZERO = Decimal(0)
+
+class PrintTaxesByInvoiceAndPeriodStart(ModelView):
+    'Print Taxes by Invoice and Period'
+    __name__ = 'account_reports.print_taxes_by_invoice.start'
+
+    fiscalyear = fields.Many2One('account.fiscalyear', 'Fiscal Year',
+        states={
+            'invisible': Eval('start_date') | Eval('end_date'),
+            'required': ~Eval('start_date') & ~Eval('end_date'),
+            })
+    periods = fields.Many2Many('account.period', None, None, 'Periods',
+        states={
+            'invisible': Eval('start_date') | Eval('end_date'),
+            },
+        domain=[
+            ('fiscalyear', '=', Eval('fiscalyear')),
+            ], depends=['fiscalyear'])
+    partner_type = fields.Selection([
+            ('customers', 'Customers'),
+            ('suppliers', 'Suppliers'),
+            ], 'Party Type', required=True)
+    grouping = fields.Selection([
+            ('base_tax_code', 'Base Tax Code'),
+            ('invoice', 'Invoice'),
+            ], 'Grouping', required=True)
+    tax_type = fields.Selection([
+            ('all', 'All'),
+            ('invoiced', 'Invoiced'),
+            ('refunded', 'Refunded'),
+            ], 'Tax Type', required=True)
+    totals_only = fields.Boolean('Totals Only')
+    parties = fields.Many2Many('party.party', None, None, 'Parties')
+    output_format = fields.Selection([
+            ('pdf', 'PDF'),
+            ('xls', 'XLS'),
+            ], 'Output Format', required=True)
+    company = fields.Many2One('company.company', 'Company', required=True)
+    start_date = fields.Date('Initial posting date',
+        domain=[
+            If(Eval('start_date') & Eval('end_date'),
+                ('start_date', '<=', Eval('end_date', None)),
+                ()),
+            ],
+        states={
+            'invisible': Bool(Eval('periods')),
+            'required': ((Eval('start_date') | Eval('end_date')) &
+                ~Bool(Eval('periods'))),
+            },
+        depends=['end_date'])
+    end_date = fields.Date('Final posting date',
+        domain=[
+            If(Eval('start_date') & Eval('end_date'),
+                ('end_date', '>=', Eval('start_date', None)),
+                ()),
+            ],
+        states={
+            'invisible': Bool(Eval('periods')),
+            'required': ((Eval('end_date') | Eval('start_date')) &
+                ~Bool(Eval('periods'))),
+            },
+        depends=['start_date'])
+    taxes = fields.Many2Many('account.tax', None, None, 'Taxes',
+        domain=[
+            If(Eval('partner_type') == 'customers',
+                ('group.kind', 'in', ('both', 'sale')),
+                ('group.kind', 'in', ('both', 'purchase'))
+                ),
+            ], depends=['partner_type'])
+    include_cancel = fields.Boolean('Include cancel')
+    
+    @staticmethod
+    def default_partner_type():
+        return 'customers'
+
+    @staticmethod
+    def default_grouping():
+        return 'base_tax_code'
+
+    @staticmethod
+    def default_tax_type():
+        return 'all'
+
+    @staticmethod
+    def default_fiscalyear():
+        FiscalYear = Pool().get('account.fiscalyear')
+        return FiscalYear.find(
+            Transaction().context.get('company'), exception=False)
+
+    @staticmethod
+    def default_company():
+        return Transaction().context.get('company')
+
+    @staticmethod
+    def default_output_format():
+        return 'pdf'
+
+    @fields.depends('fiscalyear')
+    def on_change_fiscalyear(self):
+        self.periods = None
+
+
+class PrintTaxesByInvoiceAndPeriod(Wizard):
+    'Print TaxesByInvoiceAndPeriod'
+    __name__ = 'account_reports.print_taxes_by_invoice'
+
+    start = StateView('account_reports.print_taxes_by_invoice.start',
+        'account_reports.print_taxes_by_invoice_start_view_form', [
+            Button('Cancel', 'end', 'tryton-cancel'),
+            Button('Print', 'print_', 'tryton-print', default=True),
+            ])
+    print_ = StateReport('account_reports.taxes_by_invoice')
+
+    def do_print_(self, action):
+        fiscalyear = (self.start.fiscalyear.id if self.start.fiscalyear
+            else None)
+        if self.start.start_date:
+            fiscalyear = None
+
+        data = {
+            'company': self.start.company.id,
+            'fiscalyear': fiscalyear,
+            'start_date': self.start.start_date,
+            'end_date': self.start.end_date,
+            'periods': [x.id for x in self.start.periods],
+            'parties': [x.id for x in self.start.parties],
+            'output_format': self.start.output_format,
+            'partner_type': self.start.partner_type,
+            'totals_only': self.start.totals_only,
+            'grouping': self.start.grouping,
+            'tax_type': self.start.tax_type,
+            'taxes': [x.id for x in self.start.taxes],
+            'include_cancel': self.start.include_cancel,
+            }
+
+        return action, data
+
+    def transition_print_(self):
+        return 'end'
+
+    def default_start(self, fields):
+        Party = Pool().get('party.party')
+        party_ids = []
+        if Transaction().context.get('model') == 'party.party':
+            for party in Party.browse(Transaction().context.get('active_ids')):
+                party_ids.append(party.id)
+        return {
+            'parties': party_ids,
+            }
+
+
+class TaxesByInvoiceReport(HTMLReport):
+    __name__ = 'account_reports.taxes_by_invoice'
+
+    @classmethod
+    def __setup__(cls):
+        super(TaxesByInvoiceReport, cls).__setup__()
+        cls.__rpc__['execute'] = RPC(False)
+
+    @classmethod
+    def prepare(cls, data):
+        pool = Pool()
+        Company = pool.get('company.company')
+        FiscalYear = pool.get('account.fiscalyear')
+        Period = pool.get('account.period')
+        Party = pool.get('party.party')
+        Tax = pool.get('account.tax')
+        AccountInvoiceTax = pool.get('account.invoice.tax')
+
+        fiscalyear = (FiscalYear(data['fiscalyear']) if data.get('fiscalyear')
+            else None)
+        start_date = None
+        if data['start_date']:
+            start_date = data['start_date']
+        end_date = None
+        if data['end_date']:
+            end_date = data['end_date']
+
+        periods = []
+        periods_subtitle = ''
+        if data.get('periods'):
+            periods = Period.browse(data.get('periods', []))
+            periods_subtitle = []
+            for x in periods:
+                periods_subtitle.append(x.rec_name)
+            periods_subtitle = '; '.join(periods_subtitle)
+        elif not start_date and not end_date:
+            periods = Period.search([('fiscalyear', '=', fiscalyear.id)])
+
+        with Transaction().set_context(active_test=False):
+            parties = Party.browse(data.get('parties', []))
+        if parties:
+            parties_subtitle = []
+            for x in parties:
+                if len(parties_subtitle) > 4:
+                    parties_subtitle.append('...')
+                    break
+                parties_subtitle.append(x.rec_name)
+            parties_subtitle = '; '.join(parties_subtitle)
+        else:
+            parties_subtitle = ''
+
+        company = None
+        if data['company']:
+            company = Company(data['company'])
+
+        parameters = {}
+        parameters['fiscal_year'] = fiscalyear.rec_name if fiscalyear else ''
+        parameters['start_date'] = (start_date.strftime('%d/%m/%Y')
+            if start_date else '')
+        parameters['end_date'] = (end_date.strftime('%d/%m/%Y')
+            if end_date else '')
+        parameters['parties'] = parties_subtitle
+        parameters['periods'] = periods_subtitle
+        parameters['TOTALS_ONLY'] = data['totals_only'] and True or False
+        parameters['company_rec_name'] = company.rec_name if company else ''
+        parameters['now'] = format_datetime(datetime.now(), format='short',
+            locale=Transaction().language or 'en')
+        parameters['company_vat'] = (company
+            and company.party.tax_identifier and
+            company.party.tax_identifier.code) or ''
+        parameters['jump_page'] = (True if data['grouping'] == 'invoice'
+            else False)
+        parameters['include_cancel'] = data['include_cancel'] or False
+        parameters['records_found'] = True
+
+        domain = [
+            ('invoice.move', '!=', None),
+            ]
+
+        if data['partner_type'] == 'customers':
+            domain += [('invoice.type', '=', 'out')]
+        else:
+            domain += [('invoice.type', '=', 'in')]
+
+        if start_date:
+             domain += [
+                 ('invoice.move.date', '>=', start_date),
+                 ]
+        if end_date:
+             domain += [
+                 ('invoice.move.date', '<=', end_date),
+                 ]
+
+        if not start_date and not end_date and periods:
+            domain += [('invoice.move.period', 'in', periods)]
+
+        if parties:
+            domain += [('invoice.party', 'in', parties)],
+
+        if data['tax_type'] == 'invoiced':
+            domain += [('base', '>=', 0)]
+        elif data['tax_type'] == 'refunded':
+            domain += [('base', '<', 0)]
+
+        if data['taxes']:
+            domain += [('tax', 'in', data.get('taxes', []))]
+
+        if not data['include_cancel']:
+            domain += [('invoice.state', '!=', 'cancel')]
+
+        records = {}
+        totals = {'total_total':0,'total_tax':0,'total_invoice':0}
+        tax_totals = {}
+        if data['grouping'] == 'invoice':
+            periods = AccountInvoiceTax.search(domain,
+                order=[('invoice.move.period', 'ASC'),
+                ('invoice','ASC')])
+
+            for period in periods:
+                records.setdefault(period.invoice.move.period, []).append(
+                    DualRecord(period))
+
+                # With this we have the total for each tax (total base, total
+                # amount and total)
+                tax_totals.setdefault(period.invoice.move.period, {
+                        'total_untaxed':0, 'total_tax':0, 'total':0})
+                tax_totals[period.invoice.move.period]['total_untaxed'] += (
+                    period.company_base)
+                tax_totals[period.invoice.move.period]['total_tax'] += (
+                    period.company_amount)
+                tax_totals[period.invoice.move.period]['total'] += (
+                    period.company_base + period.company_amount)
+
+                # We need this fields in the report
+                totals['total_total'] += period.company_base + period.company_base
+                totals['total_tax'] += period.company_base
+                totals['total_invoice'] += period.invoice.company_total_amount
+            parameters['totals'] = totals
+
+        else:
+            taxes = AccountInvoiceTax.search(domain, order=[('account', 'ASC'),
+                ('invoice','ASC')])
+
+            for tax in taxes:
+                records.setdefault(tax.tax, []).append(DualRecord(tax))
+                # With this we have the total for each tax (total base, total
+                # amount and total)
+                tax_totals.setdefault(tax.tax, {'total_untaxed':0,
+                        'total_tax':0, 'total':0})
+                tax_totals[tax.tax]['total_untaxed'] += tax.company_base
+                tax_totals[tax.tax]['total_tax'] += tax.company_amount
+                tax_totals[tax.tax]['total'] += (tax.company_base +
+                    tax.company_amount)
+
+        parameters['tax_totals'] = tax_totals
+        return records, parameters
+
+    @classmethod
+    def execute(cls, ids, data):
+        with Transaction().set_context(active_test=False):
+            records, parameters = cls.prepare(data)
+
+        context = Transaction().context
+        context['report_lang'] = Transaction().language
+        context['report_translations'] = os.path.join(
+                os.path.dirname(__file__), 'translations')
+
+        # We need the records dictionary to have at leat one record, otherwise
+        # the report will not be generated
+        if len(records) == 0:
+            parameters['records_found'] = False
+            records['no_records'] = ''
+
+        with Transaction().set_context(**context):
+            name = 'account_reports.taxes_by_invoice'
+            if parameters['jump_page']:
+                name = 'account_reports.taxes_by_invoice_and_period'
+            return super(TaxesByInvoiceReport,cls).execute(records, {
+                    'name': name,
+                    'model': 'account.invoice.tax',
+                    'records': records,
+                    'parameters': parameters,
+                    'output_format': data.get('output_format', 'pdf'),
+                    })
+
+
+class TaxesByInvoiceAndPeriodReport(TaxesByInvoiceReport):
+    __name__ = 'account_reports.taxes_by_invoice_and_period'

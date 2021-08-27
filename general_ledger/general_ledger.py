@@ -15,6 +15,7 @@ from trytond.modules.html_report.html_report import HTMLReport
 from trytond.report import Report
 from trytond.modules.html_report.engine import DualRecord
 from babel.dates import format_date, format_datetime
+from trytond.rpc import RPC
 
 __all__ = ['PrintGeneralLedgerStart', 'PrintGeneralLedger',
     'GeneralLedgerReport']
@@ -128,6 +129,11 @@ class PrintGeneralLedger(Wizard):
 
 class GeneralLedgerReport(HTMLReport):
     __name__ = 'account_reports.general_ledger'
+
+    @classmethod
+    def __setup__(cls):
+        super(GeneralLedgerReport, cls).__setup__()
+        cls.__rpc__['execute'] = RPC(False)
 
     @classmethod
     def prepare(cls, data):
@@ -290,26 +296,15 @@ class GeneralLedgerReport(HTMLReport):
 
                 rline = {
                     'sequence': sequence,
-                    # 'key': str(currentKey),
                     'line': line,
-                    # 'account_code': line.account.code or '',
-                    # 'account_name': line.account.name or '',
-                    # 'account_type': account_type,
-                    # 'date': line.date.strftime('%d/%m/%Y'),
-                    # 'move_line_name': line.description or '',
                     'ref': (line.origin.rec_name if line.origin and
                         hasattr(line.origin, 'rec_name') else None),
-                    # 'move_number': line.move.number,
-                    # 'move_post_number': (line.move.post_number
-                    #     if line.move.post_number else ''),
-                    # 'party_name': line.party.name if line.party else '',
                     'credit': credit,
                     'debit': debit,
                     'balance': balance,
                     }
 
                 key = _get_key(currentKey)
-                print(key)
                 if records.get(key):
                     records[key]['lines'].append(rline)
                     records[key]['total_debit'] += debit
@@ -343,24 +338,7 @@ class GeneralLedgerReport(HTMLReport):
                 elif account.type and account.type.payable:
                     account_type = 'payable'
 
-                # records.append({
-                #         'sequence': 1,
-                #         'key': str(account),
-                #         'account_code': account.code or '',
-                #         'account_name': account.name or '',
-                #         'account_type': account_type,
-                #         'move_line_name': '###PREVIOUSBALANCE###',
-                #         'ref': '-',
-                #         'move_number': '-',
-                #         'move_post_number': '-',
-                #         'credit': credit,
-                #         'debit': debit,
-                #         'balance': balance,
-                #         'previous_balance': (balance or _ZERO) + (credit or _ZERO) - (debit or _ZERO),
-                #         })
-
                 key = '%s %s' % (account.code, account.name)
-                print(key)
                 if records.get(key):
                     records[key]['total_debit'] += debit
                     records[key]['total_credit'] += credit
@@ -369,7 +347,6 @@ class GeneralLedgerReport(HTMLReport):
                     records[key] = {
                         'account': account.name,
                         'code': account.code,
-                        # 'party': DualRecord(line.party) if line.party else None,
                         'lines': [],
                         'previous_balance': (balance + credit - debit),
                         'total_debit': debit,
@@ -402,26 +379,8 @@ class GeneralLedgerReport(HTMLReport):
                         credit = z.get('credit', Decimal(0))
                         debit = z.get('debit', Decimal(0))
                         balance = z.get('balance', Decimal(0))
-                        # rline = {
-                        #     'sequence': sequence,
-                        #     'key': str(currentKey),
-                        #     'account_code': account.code or '',
-                        #     'account_name': account.name or '',
-                        #     'account_type': account_type,
-                        #     'move_line_name': '###PREVIOUSBALANCE###',
-                        #     'ref': '-',
-                        #     'move_number': '-',
-                        #     'move_post_number': '-',
-                        #     'party_name': party.name,
-                        #     'credit': credit,
-                        #     'debit': debit,
-                        #     'balance': balance,
-                        #     'previous_balance': (balance + credit - debit),
-                        #     }
 
                         key = _get_key(currentKey)
-                        print('account')
-                        print(key)
                         if records.get(key):
                             records[key]['total_debit'] += debit
                             records[key]['total_credit'] += credit
@@ -430,15 +389,12 @@ class GeneralLedgerReport(HTMLReport):
                             records[key] = {
                                 'account': account.name,
                                 'code': account.code,
-                                # 'party': DualRecord(line.party) if line.party else None,
                                 'lines': [],
                                 'previous_balance': (balance + credit - debit),
                                 'total_debit': debit,
                                 'total_credit': credit,
                                 'total_balance': balance,
-
                                 }
-        # return records, parameters
         return collections.OrderedDict(sorted(records.items())), parameters
 
     @classmethod
@@ -449,10 +405,10 @@ class GeneralLedgerReport(HTMLReport):
         context = Transaction().context
         context['report_lang'] = Transaction().language
         context['report_translations'] = os.path.join(
-            os.path.dirname(__file__), 'translations')
+                os.path.dirname(__file__), 'translations')
 
         with Transaction().set_context(**context):
-            return super(GeneralLedgerReport, cls).execute(ids, {
+            return super(GeneralLedgerReport, cls).execute(records, {
                     'name': 'account_reports.general_ledger',
                     'model': 'account.move.line',
                     'records': records,
