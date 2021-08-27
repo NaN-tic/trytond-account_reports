@@ -296,26 +296,15 @@ class GeneralLedgerReport(HTMLReport):
 
                 rline = {
                     'sequence': sequence,
-                    # 'key': str(currentKey),
                     'line': line,
-                    # 'account_code': line.account.code or '',
-                    # 'account_name': line.account.name or '',
-                    # 'account_type': account_type,
-                    # 'date': line.date.strftime('%d/%m/%Y'),
-                    # 'move_line_name': line.description or '',
                     'ref': (line.origin.rec_name if line.origin and
                         hasattr(line.origin, 'rec_name') else None),
-                    # 'move_number': line.move.number,
-                    # 'move_post_number': (line.move.post_number
-                    #     if line.move.post_number else ''),
-                    # 'party_name': line.party.name if line.party else '',
                     'credit': credit,
                     'debit': debit,
                     'balance': balance,
                     }
 
                 key = _get_key(currentKey)
-                print(key)
                 if records.get(key):
                     records[key]['lines'].append(rline)
                     records[key]['total_debit'] += debit
@@ -349,24 +338,7 @@ class GeneralLedgerReport(HTMLReport):
                 elif account.type and account.type.payable:
                     account_type = 'payable'
 
-                # records.append({
-                #         'sequence': 1,
-                #         'key': str(account),
-                #         'account_code': account.code or '',
-                #         'account_name': account.name or '',
-                #         'account_type': account_type,
-                #         'move_line_name': '###PREVIOUSBALANCE###',
-                #         'ref': '-',
-                #         'move_number': '-',
-                #         'move_post_number': '-',
-                #         'credit': credit,
-                #         'debit': debit,
-                #         'balance': balance,
-                #         'previous_balance': (balance or _ZERO) + (credit or _ZERO) - (debit or _ZERO),
-                #         })
-
                 key = '%s %s' % (account.code, account.name)
-                print(key)
                 if records.get(key):
                     records[key]['total_debit'] += debit
                     records[key]['total_credit'] += credit
@@ -375,7 +347,6 @@ class GeneralLedgerReport(HTMLReport):
                     records[key] = {
                         'account': account.name,
                         'code': account.code,
-                        # 'party': DualRecord(line.party) if line.party else None,
                         'lines': [],
                         'previous_balance': (balance + credit - debit),
                         'total_debit': debit,
@@ -408,26 +379,8 @@ class GeneralLedgerReport(HTMLReport):
                         credit = z.get('credit', Decimal(0))
                         debit = z.get('debit', Decimal(0))
                         balance = z.get('balance', Decimal(0))
-                        # rline = {
-                        #     'sequence': sequence,
-                        #     'key': str(currentKey),
-                        #     'account_code': account.code or '',
-                        #     'account_name': account.name or '',
-                        #     'account_type': account_type,
-                        #     'move_line_name': '###PREVIOUSBALANCE###',
-                        #     'ref': '-',
-                        #     'move_number': '-',
-                        #     'move_post_number': '-',
-                        #     'party_name': party.name,
-                        #     'credit': credit,
-                        #     'debit': debit,
-                        #     'balance': balance,
-                        #     'previous_balance': (balance + credit - debit),
-                        #     }
 
                         key = _get_key(currentKey)
-                        print('account')
-                        print(key)
                         if records.get(key):
                             records[key]['total_debit'] += debit
                             records[key]['total_credit'] += credit
@@ -436,25 +389,18 @@ class GeneralLedgerReport(HTMLReport):
                             records[key] = {
                                 'account': account.name,
                                 'code': account.code,
-                                # 'party': DualRecord(line.party) if line.party else None,
                                 'lines': [],
                                 'previous_balance': (balance + credit - debit),
                                 'total_debit': debit,
                                 'total_credit': credit,
                                 'total_balance': balance,
                                 }
-        # return records, parameters
         return collections.OrderedDict(sorted(records.items())), parameters
 
     @classmethod
     def execute(cls, ids, data):
-        #from timer import Timer
-
-        #t = Timer()
-
         with Transaction().set_context(active_test=False):
             records, parameters = cls.prepare(data)
-        #print('PREPARED', t)
 
         context = Transaction().context
         context['report_lang'] = Transaction().language
