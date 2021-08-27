@@ -473,16 +473,16 @@ class AccountReportsTestCase(ModuleTestCase):
         self.assertEqual(data['output_format'], 'pdf')
         records, parameters = GeneralLedgerReport.prepare(data)
         self.assertEqual(len(records), 6)
-        self.assertEqual(parameters['start_period'].render.name, period.name)
-        self.assertEqual(parameters['end_period'].render.name, last_period.name)
-        self.assertEqual(parameters['fiscal_year'].render.name, fiscalyear.name)
+        self.assertEqual(parameters['start_period'].name, period.name)
+        self.assertEqual(parameters['end_period'].name, last_period.name)
+        self.assertEqual(parameters['fiscal_year'], fiscalyear.name)
         self.assertEqual(parameters['accounts'], '')
         self.assertEqual(parameters['parties'], '')
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
         self.assertEqual(credit, debit)
         self.assertEqual(credit, Decimal('730.0'))
-        with_party = [line for k, m in records.items() for line in m['lines'] if not line['line'].raw.party]
+        with_party = [line for k, m in records.items() for line in m['lines'] if not line['line'].party]
         self.assertEqual(len(with_party), 6)
 
         # Filtered by periods
@@ -547,7 +547,7 @@ class AccountReportsTestCase(ModuleTestCase):
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
         self.assertEqual(credit, Decimal('0.0'))
         self.assertEqual(debit, Decimal('100.0'))
-        parties = [line for k, m in records.items() for line in m['lines'] if not line['line'].raw.party]
+        parties = [line for k, m in records.items() for line in m['lines'] if not line['line'].party]
         self.assertEqual(len(parties), 0)
 
         # Filter by parties and accounts
@@ -573,7 +573,7 @@ class AccountReportsTestCase(ModuleTestCase):
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
         self.assertEqual(credit, Decimal('0.0'))
         self.assertEqual(debit, Decimal('100.0'))
-        self.assertEqual(True, all([line for k, m in records.items() for line in m['lines'] if line['line'].raw.party]))
+        self.assertEqual(True, all([line for k, m in records.items() for line in m['lines'] if line['line'].party]))
 
         # Check balance of full general_ledger
         print_general_ledger = PrintGeneralLedger(session_id)
@@ -589,7 +589,7 @@ class AccountReportsTestCase(ModuleTestCase):
         records, parameters = GeneralLedgerReport.prepare(data)
         self.assertEqual(len(records), 6)
         # balance = sum([line['balance'] for k, m in records.items() for line in m['lines']])
-        results = [(m['total_balance'], m['account'].render.name) for k, m in records.items()]
+        results = [(m['total_balance'], m['account']) for k, m in records.items()]
         balances = [
             (Decimal('-30'), 'Main Payable'),
             (Decimal('-100'), 'Main Payable'),
