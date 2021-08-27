@@ -200,7 +200,6 @@ class TaxesByInvoiceReport(HTMLReport):
         periods = []
         periods_subtitle = ''
         if data.get('periods'):
-            print('PERIODS')
             periods = Period.browse(data.get('periods', []))
             periods_subtitle = []
             for x in periods:
@@ -285,14 +284,14 @@ class TaxesByInvoiceReport(HTMLReport):
         totals = {'total_total':0,'total_tax':0,'total_invoice':0}
         tax_totals = {}
         if data['grouping'] == 'invoice':
-            periods = AccountInvoiceTax.search(domain, 
+            periods = AccountInvoiceTax.search(domain,
                 order=[('invoice.move.period', 'ASC'),
                 ('invoice','ASC')])
 
             for period in periods:
                 records.setdefault(period.invoice.move.period, []).append(
                     DualRecord(period))
-                
+
                 # With this we have the total for each tax (total base, total
                 # amount and total)
                 tax_totals.setdefault(period.invoice.move.period, {
@@ -314,19 +313,15 @@ class TaxesByInvoiceReport(HTMLReport):
             taxes = AccountInvoiceTax.search(domain, order=[('account', 'ASC'),
                 ('invoice','ASC')])
 
-            #print('DOMAIN ',domain)
-            #print('LEN TAXES',len(taxes))
-
             for tax in taxes:
                 records.setdefault(tax.tax, []).append(DualRecord(tax))
-                
                 # With this we have the total for each tax (total base, total
                 # amount and total)
                 tax_totals.setdefault(tax.tax, {'total_untaxed':0,
                         'total_tax':0, 'total':0})
                 tax_totals[tax.tax]['total_untaxed'] += tax.company_base
                 tax_totals[tax.tax]['total_tax'] += tax.company_amount
-                tax_totals[tax.tax]['total'] += (tax.company_base + 
+                tax_totals[tax.tax]['total'] += (tax.company_base +
                     tax.company_amount)
 
         parameters['tax_totals'] = tax_totals
@@ -334,12 +329,8 @@ class TaxesByInvoiceReport(HTMLReport):
 
     @classmethod
     def execute(cls, ids, data):
-        #from timer import Timer
-
-        #t = Timer()
         with Transaction().set_context(active_test=False):
             records, parameters = cls.prepare(data)
-        #print('PREPARED', t)
 
         context = Transaction().context
         context['report_lang'] = Transaction().language
