@@ -54,7 +54,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
     parties = fields.Many2Many('party.party', None, None, 'Parties')
     output_format = fields.Selection([
             ('pdf', 'PDF'),
-            ('xls', 'XLS'),
+            ('html', 'HTML'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
     start_date = fields.Date('Initial posting date',
@@ -89,7 +89,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
                 ),
             ], depends=['partner_type'])
     include_cancel = fields.Boolean('Include cancel')
-    
+
     @staticmethod
     def default_partner_type():
         return 'customers'
