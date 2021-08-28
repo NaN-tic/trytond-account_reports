@@ -281,32 +281,38 @@ class TaxesByInvoiceReport(HTMLReport):
             domain += [('invoice.state', '!=', 'cancel')]
 
         records = {}
-        totals = {'total_total':0,'total_tax':0,'total_invoice':0}
+        totals = {
+            'total_untaxed': _ZERO,
+            'total_tax': _ZERO,
+            'total': _ZERO,
+            }
         tax_totals = {}
         if data['grouping'] == 'invoice':
-            periods = AccountInvoiceTax.search(domain,
-                order=[('invoice.move.period', 'ASC'),
-                ('invoice','ASC')])
+            taxes = AccountInvoiceTax.search(domain,
+                order=[
+                    ('invoice.move.period', 'ASC'),
+                    ('invoice','ASC'),
+                    ])
 
-            for period in periods:
-                records.setdefault(period.invoice.move.period, []).append(
-                    DualRecord(period))
+            for tax in taxes:
+                records.setdefault(tax.invoice.move.period, []).append(
+                    DualRecord(tax))
 
                 # With this we have the total for each tax (total base, total
                 # amount and total)
-                tax_totals.setdefault(period.invoice.move.period, {
+                tax_totals.setdefault(tax.invoice.move.period, {
                         'total_untaxed':0, 'total_tax':0, 'total':0})
-                tax_totals[period.invoice.move.period]['total_untaxed'] += (
-                    period.company_base)
-                tax_totals[period.invoice.move.period]['total_tax'] += (
-                    period.company_amount)
-                tax_totals[period.invoice.move.period]['total'] += (
-                    period.company_base + period.company_amount)
+                tax_totals[tax.invoice.move.period]['total_untaxed'] += (
+                    tax.company_base)
+                tax_totals[tax.invoice.move.period]['total_tax'] += (
+                    tax.company_amount)
+                tax_totals[tax.invoice.move.period]['total'] += (
+                    tax.company_base + tax.company_amount)
 
                 # We need this fields in the report
-                totals['total_total'] += period.company_base + period.company_base
-                totals['total_tax'] += period.company_base
-                totals['total_invoice'] += period.invoice.company_total_amount
+                totals['total_untaxed'] += tax.company_base
+                totals['total_tax'] += tax.company_amount
+                totals['total'] += tax.company_base + tax.company_amount
             parameters['totals'] = totals
 
         else:
