@@ -45,12 +45,12 @@
         {% if data['parameters']['jump_page'] %}
             {% if loop.nextitem is not defined %}
                 <tr class="bold">
-                    <td colspan="6" class="right"> {{ _('Total') }} </td>
-                    <td></td>
+                    <td colspan="6" class="right"> {{ _('Total') }}</td>
+                    <td>{{ data['parameters']['totals']['total_untaxed'] | render(digits=record[0].invoice.company.currency.raw.digits)}}</td>
                     <td></td>
                     <td>{{ data['parameters']['totals']['total_tax'] | render(digits=record[0].invoice.company.currency.raw.digits)}}</td>
-                    <td>{{ data['parameters']['totals']['total_total'] | render(digits=record[0].invoice.company.currency.raw.digits)}}</td>
-                    <td>{{ data['parameters']['totals']['total_invoice'] | render(digits=record[0].invoice.company.currency.raw.digits)}}</td>
+                    <td>{{ data['parameters']['totals']['total'] | render(digits=record[0].invoice.company.currency.raw.digits)}}</td>
+                    <td></td>
                 </tr>
             {% endif %}
         {% endif %}
