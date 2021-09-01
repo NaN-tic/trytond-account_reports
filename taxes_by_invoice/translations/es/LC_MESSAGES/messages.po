@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-08-02 13:46+0200\n"
+"POT-Creation-Date: 2021-08-31 13:16+0200\n"
 "PO-Revision-Date: 2021-08-02 13:47+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -54,11 +54,11 @@ msgstr "Base+Imp."
 msgid "Total Invoice"
 msgstr "Total Factura"
 
-#: templates/detail_macro.html:38
+#: templates/detail_macro.html:40
 msgid "Total Period"
 msgstr "Total Período"
 
-#: templates/detail_macro.html:38 templates/detail_macro.html:48
+#: templates/detail_macro.html:40 templates/detail_macro.html:50
 msgid "Total"
 msgstr "Total"
 
@@ -70,31 +70,39 @@ msgstr "Impuestos por factura y período"
 msgid "Taxes By Invoice"
 msgstr "Impuestos por factura"
 
-#: templates/header_macro.html:31
+#: templates/header_macro.html:32
+msgid "Initial posting date: "
+msgstr "Fecha de contab. inicial: "
+
+#: templates/header_macro.html:35
+msgid "Final posting date: "
+msgstr "Fecha de contab. final: "
+
+#: templates/header_macro.html:39
 msgid "Fiscal Year"
 msgstr "Ejercicio fiscal"
 
-#: templates/header_macro.html:31
+#: templates/header_macro.html:39
 msgid "Periods:"
-msgstr "Períodos"
+msgstr "Períodos:"
 
-#: templates/header_macro.html:31
+#: templates/header_macro.html:39
 msgid "All Periods"
 msgstr "Todos los períodos"
 
-#: templates/header_macro.html:32
-msgid "This document includes cancelled invoices marked with a *"
-msgstr "Este documento incluye facturas canceladas marcadas con un *"
-
-#: templates/header_macro.html:32
-msgid "This document not includes cancelled invoices"
-msgstr "Este documento no incluye facturas canceladas"
-
-#: templates/header_macro.html:35
+#: templates/header_macro.html:43
 msgid "Parties: "
 msgstr "Terceros: "
 
-#: templates/header_macro.html:35
+#: templates/header_macro.html:43
 msgid "All Parties"
 msgstr "Todos los terceros"
+
+#: templates/header_macro.html:44
+msgid "This document includes cancelled invoices marked with a *"
+msgstr "Este documento incluye facturas canceladas marcadas con un *"
+
+#: templates/header_macro.html:44
+msgid "This document not includes cancelled invoices"
+msgstr "Este documento no incluye facturas canceladas"
 
