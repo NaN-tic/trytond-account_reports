@@ -353,7 +353,7 @@ class TaxesByInvoiceReport(HTMLReport):
             name = 'account_reports.taxes_by_invoice'
             if parameters['jump_page']:
                 name = 'account_reports.taxes_by_invoice_and_period'
-            return super(TaxesByInvoiceReport,cls).execute(records, {
+            return super(TaxesByInvoiceReport,cls).execute([], {
                     'name': name,
                     'model': 'account.invoice.tax',
                     'records': records,
