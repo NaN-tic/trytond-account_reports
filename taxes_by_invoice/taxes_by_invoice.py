@@ -233,7 +233,7 @@ class TaxesByInvoiceReport(HTMLReport):
             if end_date else '')
         parameters['parties'] = parties_subtitle
         parameters['periods'] = periods_subtitle
-        parameters['TOTALS_ONLY'] = data['totals_only'] and True or False
+        parameters['totals_only'] = data['totals_only'] and True or False
         parameters['company_rec_name'] = company.rec_name if company else ''
         parameters['now'] = format_datetime(datetime.now(), format='short',
             locale=Transaction().language or 'en')
@@ -353,7 +353,7 @@ class TaxesByInvoiceReport(HTMLReport):
             name = 'account_reports.taxes_by_invoice'
             if parameters['jump_page']:
                 name = 'account_reports.taxes_by_invoice_and_period'
-            return super(TaxesByInvoiceReport,cls).execute(records, {
+            return super(TaxesByInvoiceReport,cls).execute([], {
                     'name': name,
                     'model': 'account.invoice.tax',
                     'records': records,
