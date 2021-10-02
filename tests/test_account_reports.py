@@ -2,7 +2,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from decimal import Decimal
-from dateutil.relativedelta import relativedelta
 import unittest
 from trytond.pool import Pool
 import trytond.tests.test_tryton

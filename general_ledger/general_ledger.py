@@ -12,13 +12,9 @@ from trytond.wizard import Wizard, StateView, StateReport, Button
 from trytond.pyson import Eval, Bool, If
 from trytond.tools import grouped_slice
 from trytond.modules.html_report.html_report import HTMLReport
-from trytond.report import Report
-from trytond.modules.html_report.engine import DualRecord
-from babel.dates import format_date, format_datetime
+from babel.dates import format_datetime
 from trytond.rpc import RPC
 
-__all__ = ['PrintGeneralLedgerStart', 'PrintGeneralLedger',
-    'GeneralLedgerReport']
 _ZERO = Decimal(0)
 
 
@@ -138,7 +134,6 @@ class GeneralLedgerReport(HTMLReport):
     @classmethod
     def prepare(cls, data):
         pool = Pool()
-        Company = pool.get('company.company')
         FiscalYear = pool.get('account.fiscalyear')
         Period = pool.get('account.period')
         Account = pool.get('account.account')
@@ -288,11 +283,6 @@ class GeneralLedgerReport(HTMLReport):
                 debit = line.debit
                 balance += line.debit - line.credit
                 sequence += 1
-                account_type = 'other'
-                if line.account.type and line.account.type.receivable:
-                    account_type = 'receivable'
-                elif line.account.type and line.account.type.payable:
-                    account_type = 'payable'
 
                 rline = {
                     'sequence': sequence,
@@ -332,11 +322,6 @@ class GeneralLedgerReport(HTMLReport):
                 debit = values.get('debit', Decimal(0))
                 if balance == 0:
                     continue
-                account_type = 'other'
-                if account.type and account.type.receivable:
-                    account_type = 'receivable'
-                elif account.type and account.type.payable:
-                    account_type = 'payable'
 
                 key = '%s %s' % (account.code, account.name)
                 if records.get(key):
@@ -371,11 +356,6 @@ class GeneralLedgerReport(HTMLReport):
                         else:
                             currentKey = (account,)
                         sequence += 1
-                        account_type = 'other'
-                        if account.type and account.type.receivable:
-                            account_type = 'receivable'
-                        elif account.type and account.type.payable:
-                            account_type = 'payable'
                         credit = z.get('credit', Decimal(0))
                         debit = z.get('debit', Decimal(0))
                         balance = z.get('balance', Decimal(0))

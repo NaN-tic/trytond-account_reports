@@ -1,23 +1,19 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-
 import os
-import collections
-
-from datetime import timedelta, datetime
+from datetime import datetime
 from decimal import Decimal
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from trytond.model import ModelView, fields
-from trytond.wizard import Wizard, StateView, StateAction, StateReport, Button
+from trytond.wizard import Wizard, StateView, StateReport, Button
 from trytond.pyson import Eval, If, Bool
 from trytond.rpc import RPC
 
 from trytond.modules.html_report.html_report import HTMLReport
-from trytond.report import Report
 from trytond.modules.html_report.engine import DualRecord
 
-from babel.dates import format_date, format_datetime
+from babel.dates import format_datetime
 
 _ZERO = Decimal(0)
 
@@ -186,7 +182,6 @@ class TaxesByInvoiceReport(HTMLReport):
         FiscalYear = pool.get('account.fiscalyear')
         Period = pool.get('account.period')
         Party = pool.get('party.party')
-        Tax = pool.get('account.tax')
         AccountInvoiceTax = pool.get('account.invoice.tax')
 
         fiscalyear = (FiscalYear(data['fiscalyear']) if data.get('fiscalyear')
