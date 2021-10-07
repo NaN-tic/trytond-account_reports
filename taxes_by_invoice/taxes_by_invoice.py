@@ -17,6 +17,7 @@ from babel.dates import format_datetime
 
 _ZERO = Decimal(0)
 
+
 class PrintTaxesByInvoiceAndPeriodStart(ModelView):
     'Print Taxes by Invoice and Period'
     __name__ = 'account_reports.print_taxes_by_invoice.start'
@@ -65,7 +66,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
             'required': ((Eval('start_date') | Eval('end_date')) &
                 ~Bool(Eval('periods'))),
             },
-        depends=['end_date'])
+        depends=['end_date', 'periods'])
     end_date = fields.Date('Final posting date',
         domain=[
             If(Eval('start_date') & Eval('end_date'),
@@ -77,13 +78,15 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
             'required': ((Eval('end_date') | Eval('start_date')) &
                 ~Bool(Eval('periods'))),
             },
-        depends=['start_date'])
+        depends=['start_date', 'periods'])
     taxes = fields.Many2Many('account.tax', None, None, 'Taxes',
         domain=[
             If(Eval('partner_type') == 'customers',
                 ('group.kind', 'in', ('both', 'sale')),
-                ('group.kind', 'in', ('both', 'purchase'))
-                ),
+                ('OR',
+                    ('group', '=', None),
+                    ('group.kind', 'in', ('both', 'purchase'))
+                    )),
             ], depends=['partner_type'])
     include_cancel = fields.Boolean('Include cancel')
 
@@ -251,13 +254,13 @@ class TaxesByInvoiceReport(HTMLReport):
             domain += [('invoice.type', '=', 'in')]
 
         if start_date:
-             domain += [
-                 ('invoice.move.date', '>=', start_date),
-                 ]
+            domain += [
+                ('invoice.move.date', '>=', start_date),
+                ]
         if end_date:
-             domain += [
-                 ('invoice.move.date', '<=', end_date),
-                 ]
+            domain += [
+                ('invoice.move.date', '<=', end_date),
+                ]
 
         if not start_date and not end_date and periods:
             domain += [('invoice.move.period', 'in', periods)]
@@ -287,7 +290,7 @@ class TaxesByInvoiceReport(HTMLReport):
             taxes = AccountInvoiceTax.search(domain,
                 order=[
                     ('invoice.move.period', 'ASC'),
-                    ('invoice','ASC'),
+                    ('invoice', 'ASC'),
                     ])
 
             for tax in taxes:
@@ -297,7 +300,9 @@ class TaxesByInvoiceReport(HTMLReport):
                 # With this we have the total for each tax (total base, total
                 # amount and total)
                 tax_totals.setdefault(tax.invoice.move.period, {
-                        'total_untaxed':0, 'total_tax':0, 'total':0})
+                        'total_untaxed': 0,
+                        'total_tax': 0,
+                        'total': 0})
                 tax_totals[tax.invoice.move.period]['total_untaxed'] += (
                     tax.company_base)
                 tax_totals[tax.invoice.move.period]['total_tax'] += (
@@ -313,14 +318,16 @@ class TaxesByInvoiceReport(HTMLReport):
 
         else:
             taxes = AccountInvoiceTax.search(domain, order=[('account', 'ASC'),
-                ('invoice','ASC')])
+                ('invoice', 'ASC')])
 
             for tax in taxes:
                 records.setdefault(tax.tax, []).append(DualRecord(tax))
                 # With this we have the total for each tax (total base, total
                 # amount and total)
-                tax_totals.setdefault(tax.tax, {'total_untaxed':0,
-                        'total_tax':0, 'total':0})
+                tax_totals.setdefault(tax.tax, {
+                        'total_untaxed': 0,
+                        'total_tax': 0,
+                        'total': 0})
                 tax_totals[tax.tax]['total_untaxed'] += tax.company_base
                 tax_totals[tax.tax]['total_tax'] += tax.company_amount
                 tax_totals[tax.tax]['total'] += (tax.company_base +
@@ -349,7 +356,7 @@ class TaxesByInvoiceReport(HTMLReport):
             name = 'account_reports.taxes_by_invoice'
             if parameters['jump_page']:
                 name = 'account_reports.taxes_by_invoice_and_period'
-            return super(TaxesByInvoiceReport,cls).execute([], {
+            return super(TaxesByInvoiceReport, cls).execute([], {
                     'name': name,
                     'model': 'account.invoice.tax',
                     'records': records,
