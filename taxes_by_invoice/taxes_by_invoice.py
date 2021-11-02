@@ -299,6 +299,11 @@ class TaxesByInvoiceReport(HTMLReport):
                 records.setdefault(tax.invoice.move.period, []).append(
                     DualRecord(tax))
 
+                # If the invoice is cancelled, do not add its values to the
+                # totals
+                if data['include_cancel'] and tax.invoice.state == 'cancel':
+                    continue
+
                 # With this we have the total for each tax (total base, total
                 # amount and total)
                 tax_totals.setdefault(tax.invoice.move.period, {
