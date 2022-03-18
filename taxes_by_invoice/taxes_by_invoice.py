@@ -277,7 +277,7 @@ class TaxesByInvoiceReport(HTMLReport):
             domain += [('tax', 'in', data.get('taxes', []))]
 
         if not data['include_cancel']:
-            domain += [('invoice.state', '!=', 'cancel')]
+            domain += [('invoice.state', '!=', 'cancelled')]
 
         records = {}
         totals = {
@@ -299,7 +299,7 @@ class TaxesByInvoiceReport(HTMLReport):
 
                 # If the invoice is cancelled, do not add its values to the
                 # totals
-                if data['include_cancel'] and tax.invoice.state == 'cancel':
+                if data['include_cancel'] and tax.invoice.state == 'cancelled':
                     continue
 
                 # With this we have the total for each tax (total base, total
