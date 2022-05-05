@@ -48,7 +48,11 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
             ('refunded', 'Refunded'),
             ], 'Tax Type', required=True)
     totals_only = fields.Boolean('Totals Only')
-    parties = fields.Many2Many('party.party', None, None, 'Parties')
+    parties = fields.Many2Many('party.party', None, None, 'Parties',
+        context={
+            'company': Eval('company'),
+            },
+        depends=['company'])
     output_format = fields.Selection([
             ('pdf', 'PDF'),
             ('html', 'HTML'),
