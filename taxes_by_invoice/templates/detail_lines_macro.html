@@ -1,20 +1,34 @@
+{% set nc = namespace(before_invoice_id=None) %}
 {%for l in record %}
-    <tr>
-        <td>{{ l.invoice.move.render.date }}</td>
-        <td>{{ l.account.render.code}}</td>
-        <td style="text-align: left;">{{ l.invoice.party.render.rec_name}}</td>
-        <td>{% if l.invoice.party.raw.tax_identifier %}{{ l.invoice.party.tax_identifier.render.code}}{% endif %}</td>
-        <td>{% if l.invoice.raw.state == 'cancel' %}*{% endif %}{{ l.invoice.render.number }}</td>
-        <td>{{ l.invoice.render.invoice_date }}</td>
-        {% for tax_line in l.invoice.taxes %}
-            {% if tax_line.tax.raw.id == l.tax.raw.id %}
-                <td>{% if tax_line.render.base %}{{tax_line.raw.company_base | render(digits=l.invoice.company.currency.raw.digits)}}{% else %}0.0{% endif %}</td>
-                <td>{{ l.tax.raw.name }}</td>
-                <td>{% if tax_line.render.amount %}{{ tax_line.raw.company_amount | render(digits=l.invoice.company.currency.raw.digits)}}{% else %}0.0{% endif %}</td>
-                {% set total = tax_line.raw.company_base + l.raw.company_amount%}
-                <td>{{ total | render(l.invoice.company.currency.raw.digits) }} </td>
-            {% endif %}
-        {% endfor %}
-        <td class="bold">{{ l.invoice.raw.company_total_amount | render(digits=l.invoice.company.currency.raw.digits)}}</td>
-    </tr>
+    {% if nc.before_invoice_id != l.invoice.raw.id %}
+        <tr>
+            <td>{{ l.invoice.move.render.date }}</td>
+            <td>{{ l.account.render.code}}</td>
+            <td style="text-align: left;">{{ l.invoice.party.render.rec_name}}</td>
+            <td>{% if l.invoice.party.raw.tax_identifier %}{{ l.invoice.party.tax_identifier.render.code}}{% endif %}</td>
+            <td>{% if l.invoice.raw.state == 'cancel' %}*{% endif %}{{ l.invoice.render.number }}</td>
+            <td>{{ l.invoice.render.invoice_date }}</td>
+            <td>{% if l.render.base %}{{l.raw.company_base | render(digits=l.invoice.company.currency.raw.digits)}}{% else %}0.0{% endif %}</td>
+            <td>{{ l.tax.raw.name }}</td>
+            <td>{% if l.render.amount %}{{ l.raw.company_amount | render(digits=l.invoice.company.currency.raw.digits)}}{% else %}0.0{% endif %}</td>
+            {% set total = l.raw.company_base + l.raw.company_amount %}
+            <td>{{ total | render(l.invoice.company.currency.raw.digits) }} </td>
+            <td class="bold">{{ l.invoice.raw.company_total_amount | render(digits=l.invoice.company.currency.raw.digits)}}</td>
+        </tr>
+    {% else %}
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{% if l.render.base %}{{l.raw.company_base | render(digits=l.invoice.company.currency.raw.digits)}}{% else %}0.0{% endif %}</td>
+            <td>{{ l.tax.raw.name }}</td>
+            <td>{% if l.render.amount %}{{ l.raw.company_amount | render(digits=l.invoice.company.currency.raw.digits)}}{% else %}0.0{% endif %}</td>
+            {% set total = l.raw.company_base + l.raw.company_amount %}
+            <td>{{ total | render(l.invoice.company.currency.raw.digits) }} </td>
+        </tr>
+    {% endif %}
+    {% set nc.before_invoice_id = l.invoice.raw.id %}
 {% endfor %}
