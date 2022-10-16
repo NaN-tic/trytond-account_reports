@@ -294,6 +294,7 @@ class TaxesByInvoiceReport(HTMLReport):
             taxes = AccountInvoiceTax.search(domain,
                 order=[
                     ('invoice.move.period', 'ASC'),
+                    ('invoice.invoice_date', 'ASC'),
                     ('invoice', 'ASC'),
                     ])
 
@@ -326,8 +327,12 @@ class TaxesByInvoiceReport(HTMLReport):
             parameters['totals'] = totals
 
         else:
-            taxes = AccountInvoiceTax.search(domain, order=[('account', 'ASC'),
-                ('invoice', 'ASC')])
+            taxes = AccountInvoiceTax.search(domain,
+                order=[
+                    ('account', 'ASC'),
+                    ('invoice.move.date', 'ASC'),
+                    ('invoice', 'ASC'),
+                    ])
 
             for tax in taxes:
                 records.setdefault(tax.tax, []).append(DualRecord(tax))
