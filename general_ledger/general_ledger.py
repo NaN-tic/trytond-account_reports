@@ -51,6 +51,7 @@ class PrintGeneralLedgerStart(ModelView):
     output_format = fields.Selection([
             ('pdf', 'PDF'),
             ('html', 'HTML'),
+            ('xls', 'Excel'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
 
