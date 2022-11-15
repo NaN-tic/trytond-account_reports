@@ -26,8 +26,8 @@
     <tr>
       <td>
         {{ _('Fiscal Year') }}: {{ data['parameters']['fiscal_year'] }}<br/>
-        {% if data['parameters']['start_period'] %}{{ _('Start Period') }}: {{ data['parameters']['start_period'] }}{% endif %}
-        {% if data['parameters']['end_period'] %} {{ _('End Period') }}: {{ data['parameters']['end_period'] }}{% endif %}
+        {% if data['parameters']['start_period'] %}{{ _('Start Period') }}: {{ data['parameters']['start_period'].name|render }}{% endif %}
+        {% if data['parameters']['end_period'] %} {{ _('End Period') }}: {{ data['parameters']['end_period'].name|render }}{% endif %}
       </td>
       <td class="right">
         {% if data['parameters']['parties'] %}{{ _('Parties') }}: {{ data['parameters']['parties'] }}{% else %}{{ _('All Parties' )}}{% endif %}<br/>

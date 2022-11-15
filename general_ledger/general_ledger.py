@@ -2,7 +2,6 @@
 # at the top level of this repository contains the full copyright notices and
 # license terms.
 import os
-import collections
 from datetime import timedelta, datetime
 from decimal import Decimal
 from trytond.pool import Pool
@@ -159,6 +158,10 @@ class GeneralLedgerReport(HTMLReport):
                     key = currentKey[0].name
             return key
 
+        def _get_key_id(currentKey):
+            key = currentKey[0].id
+            return key
+
         fiscalyear = FiscalYear(data['fiscalyear'])
         start_period = None
         if data['start_period']:
@@ -299,7 +302,7 @@ class GeneralLedgerReport(HTMLReport):
                     'balance': balance,
                     }
 
-                key = _get_key(currentKey)
+                key = _get_key_id(currentKey)
                 if records.get(key):
                     records[key]['lines'].append(rline)
                     records[key]['total_debit'] += debit
@@ -328,7 +331,7 @@ class GeneralLedgerReport(HTMLReport):
                 if balance == 0:
                     continue
 
-                key = '%s %s' % (account.code, account.name)
+                key = account.id
                 if records.get(key):
                     records[key]['total_debit'] += debit
                     records[key]['total_credit'] += credit
@@ -380,7 +383,15 @@ class GeneralLedgerReport(HTMLReport):
                                 'total_credit': credit,
                                 'total_balance': balance,
                                 }
-        return collections.OrderedDict(sorted(records.items())), parameters
+
+        accounts = {}
+        for record in records.keys():
+            accounts[records[record]['code']+' '+records[record]['account']] = record
+        sorted_records = {}
+        for account in dict(sorted(accounts.items())).values():
+            sorted_records[account] = records[account]
+
+        return sorted_records, parameters
 
     @classmethod
     def execute(cls, ids, data):
@@ -395,7 +406,7 @@ class GeneralLedgerReport(HTMLReport):
         with Transaction().set_context(**context):
             return super(GeneralLedgerReport, cls).execute(records, {
                     'name': 'account_reports.general_ledger',
-                    'model': 'account.move.line',
+                    'model': 'account.account',
                     'records': records,
                     'parameters': parameters,
                     'output_format': data.get('output_format', 'pdf'),
