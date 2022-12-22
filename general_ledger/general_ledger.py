@@ -143,6 +143,7 @@ class GeneralLedgerReport(HTMLReport):
         Account = pool.get('account.account')
         Party = pool.get('party.party')
         Line = pool.get('account.move.line')
+        InvoiceLine = pool.get('account.invoice.line')
 
         def _get_key(currentKey):
             account_code = currentKey[0].code or currentKey[0].name
@@ -292,14 +293,38 @@ class GeneralLedgerReport(HTMLReport):
                 balance += line.debit - line.credit
                 sequence += 1
 
+                party = None
+                ref = None
+
+                if line.origin and isinstance(line.origin, InvoiceLine):
+                    # If the account have the check "party_required", try to
+                    # get from the invoice
+                    if line.account.party_required:
+                        party = line.origin.invoice.party
+
+                    if line.origin.invoice.number:
+                        ref = '%s' % line.origin.invoice.number
+                    if line.origin.invoice.reference:
+                        ref += ' [%s]' % line.origin.invoice.reference
+                    if line.origin.invoice.party.rec_name:
+                        ref += ' %s' % line.origin.invoice.party.rec_name
+                else:
+                    ref = (line.origin.rec_name if line.origin and
+                        hasattr(line.origin, 'rec_name') else None)
+
+                # If we dont fill the party in a party_required account, try
+                # get the party field in the line
+                if line.account.party_required and not party:
+                    party = line.party
+
                 rline = {
                     'sequence': sequence,
                     'line': line,
-                    'ref': (line.origin.rec_name if line.origin and
-                        hasattr(line.origin, 'rec_name') else None),
+                    'ref': ref,
                     'credit': credit,
                     'debit': debit,
                     'balance': balance,
+                    'party': party
                     }
 
                 key = _get_key_id(currentKey)
@@ -313,6 +338,7 @@ class GeneralLedgerReport(HTMLReport):
                         'account': line.account.name,
                         'code': line.account.code,
                         'party': line.party.name if line.party else None,
+                        'party_required': line.account.party_required,
                         'lines': [rline],
                         'previous_balance': (balance + credit - debit),
                         'total_debit': debit,
@@ -340,6 +366,7 @@ class GeneralLedgerReport(HTMLReport):
                     records[key] = {
                         'account': account.name,
                         'code': account.code,
+                        'party_required': line.account.party_required,
                         'lines': [],
                         'previous_balance': (balance + credit - debit),
                         'total_debit': debit,
@@ -378,6 +405,7 @@ class GeneralLedgerReport(HTMLReport):
                                 'account': account.name,
                                 'code': account.code,
                                 'lines': [],
+                                'party_required': line.account.party_required,
                                 'previous_balance': (balance + credit - debit),
                                 'total_debit': debit,
                                 'total_credit': credit,
