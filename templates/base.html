@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="{{ 'account_reports/templates/base.css'|modulepath }}"/>
+    {% if data['output_format'] and data['output_format'] != 'xls' %}
+      <link rel="stylesheet" href="{{ 'account_reports/templates/base.css'|modulepath }}"/>
+    {% endif %}
     {% block style %}{% endblock %}
   </head>
 
