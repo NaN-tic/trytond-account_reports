@@ -15,6 +15,8 @@ from trytond.modules.html_report.engine import DualRecord
 
 from babel.dates import format_datetime
 
+from ..common import deactivate_menu_entry
+
 _ZERO = Decimal(0)
 
 
@@ -93,6 +95,17 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
                     )),
             ], depends=['partner_type'])
     include_cancel = fields.Boolean('Include cancel')
+
+    @classmethod
+    def __register__(cls, module_name):
+        pool = Pool()
+        Modules = pool.get('ir.module')
+        super().__register__(module_name)
+        account_jasper_report_activated = Modules.search([
+            ('name', '=', 'account_jasper_reports'),
+            ('state', '=', 'activated')], limit=1)
+        if account_jasper_report_activated:
+            deactivate_menu_entry('account_jasper_reports', 'menu_print_taxes_by_invoice')
 
     @staticmethod
     def default_partner_type():
