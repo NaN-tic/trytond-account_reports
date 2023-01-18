@@ -14,6 +14,7 @@ from trytond.tools import grouped_slice
 from trytond.modules.html_report.html_report import HTMLReport
 from babel.dates import format_datetime
 from trytond.rpc import RPC
+from ..common import deactivate_menu_entry
 
 _ZERO = Decimal(0)
 
@@ -53,6 +54,18 @@ class PrintGeneralLedgerStart(ModelView):
             ('html', 'HTML'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
+
+    @classmethod
+    def __register__(cls, module_name):
+        pool = Pool()
+        Modules = pool.get('ir.module')
+        super().__register__(module_name)
+        account_jasper_report_activated = Modules.search([
+            ('name', '=', 'account_jasper_reports'),
+            ('state', '=', 'activated')], limit=1)
+        if account_jasper_report_activated:
+            deactivate_menu_entry('account_jasper_reports', 'menu_print_general_ledger')
+
 
     @staticmethod
     def default_fiscalyear():
