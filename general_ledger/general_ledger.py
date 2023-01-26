@@ -13,6 +13,7 @@ from trytond.tools import grouped_slice
 from trytond.modules.html_report.html_report import HTMLReport
 from babel.dates import format_datetime
 from trytond.rpc import RPC
+from ..common import deactivate_menu_entry
 
 _ZERO = Decimal(0)
 
@@ -40,8 +41,9 @@ class PrintGeneralLedgerStart(ModelView):
             ],
         depends=['fiscalyear', 'start_period'])
     accounts = fields.Many2Many('account.account', None, None, 'Accounts')
-    all_accounts = fields.Boolean('All accounts with and without balance', help='If unchecked only '
-        'print accounts with previous balance different from 0 or with moves')
+    all_accounts = fields.Boolean('All accounts with and without balance',
+        help='If unchecked only print accounts with previous balance different'
+        ' from 0 or with moves')
     parties = fields.Many2Many('party.party', None, None, 'Parties',
         context={
             'company': Eval('company'),
@@ -53,6 +55,18 @@ class PrintGeneralLedgerStart(ModelView):
             ('xls', 'Excel'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
+
+    @classmethod
+    def __register__(cls, module_name):
+        pool = Pool()
+        Modules = pool.get('ir.module')
+        super().__register__(module_name)
+        account_jasper_report_activated = Modules.search([
+            ('name', '=', 'account_jasper_reports'),
+            ('state', '=', 'activated')], limit=1)
+        if account_jasper_report_activated:
+            deactivate_menu_entry('account_jasper_reports',
+                'menu_print_general_ledger')
 
     @staticmethod
     def default_fiscalyear():
@@ -199,8 +213,8 @@ class GeneralLedgerReport(HTMLReport):
 
         parameters = {}
         parameters['company'] = company.rec_name
-        parameters['company_vat'] = (company.party.tax_identifier and
-            company.party.tax_identifier.code) or ''
+        parameters['company_vat'] = (company.party.tax_identifier
+            and company.party.tax_identifier.code) or ''
         parameters['start_period'] = start_period and start_period or ''
         parameters['end_period'] = end_period and end_period or ''
         parameters['fiscal_year'] = fiscalyear.rec_name
@@ -252,13 +266,14 @@ class GeneralLedgerReport(HTMLReport):
             """ % where)
         line_ids = [x[0] for x in cursor.fetchall()]
 
-        start_date = start_period.start_date if start_period else fiscalyear.start_date
+        start_date = (start_period.start_date if start_period
+            else fiscalyear.start_date)
         initial_balance_date = start_date - timedelta(days=1)
         with Transaction().set_context(date=initial_balance_date):
             init_values = {}
             if not parties:
-                init_values = Account.read_account_vals(accounts, with_moves=False,
-                    exclude_party_moves=True)
+                init_values = Account.read_account_vals(accounts,
+                    with_moves=False, exclude_party_moves=True)
             init_party_values = Party.get_account_values_by_party(
                 parties, accounts, fiscalyear.company)
 
@@ -271,8 +286,7 @@ class GeneralLedgerReport(HTMLReport):
             for line in Line.browse(group_lines):
                 if line.account not in accounts_w_moves:
                     accounts_w_moves.append(line.account.id)
-                if (line.account.type.receivable == True or
-                        line.account.type.payable == True) :
+                if line.account.type.receivable or line.account.type.payable:
                     currentKey = (line.account, line.party and line.party
                         or None)
                 else:
@@ -286,8 +300,8 @@ class GeneralLedgerReport(HTMLReport):
                         balance = init_party_values.get(account_id,
                             {}).get(party_id, {}).get('balance', Decimal(0))
                     else:
-                        balance = init_values.get(account_id, {}).get('balance',
-                            Decimal(0))
+                        balance = init_values.get(account_id, {}).get(
+                            'balance', Decimal(0))
                 credit = line.credit
                 debit = line.debit
                 balance += line.debit - line.credit
@@ -348,7 +362,8 @@ class GeneralLedgerReport(HTMLReport):
 
         if data.get('all_accounts', True):
             init_values_account_wo_moves = {
-                k: init_values[k] for k in init_values if k not in accounts_w_moves}
+                k: init_values[k] for k in init_values
+                if k not in accounts_w_moves}
             for account_id, values in init_values_account_wo_moves.items():
                 account = Account(account_id)
                 balance = values.get('balance', Decimal(0))
@@ -432,7 +447,7 @@ class GeneralLedgerReport(HTMLReport):
                 os.path.dirname(__file__), 'translations')
 
         with Transaction().set_context(**context):
-            return super(GeneralLedgerReport, cls).execute(records, {
+            return super(GeneralLedgerReport, cls).execute(ids, {
                     'name': 'account_reports.general_ledger',
                     'model': 'account.account',
                     'records': records,
