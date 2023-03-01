@@ -2,21 +2,21 @@
 
 {% language party and party.raw.lang and party.lang.raw.code or company.party.lang and company.party.raw.lang.code or 'en' %}
 
-<header id="header" style="width:650px;">
+<header id="header" style="width: 760px !important;margin-left: -70px !important;">
   <table>
     <tr id="header-details">
       <td>
         <h1><em>{{ data['parameters']['company'] }} </em></h1> <br>
         {{ _('VAT') }}: {{ data['parameters']['company_vat'] }}
       </td>
+      <td>
+        <br>
+        <h1>{{ _('General Ledger') }}</h1>
+      </td>
       <td class="right">
         {{ data['parameters']['now'] }}
       </td>
     </tr>
-    <tr>
-      <td colspan="2" style="text-align: center;">
-        <h1>{{ _('General Ledger') }}</h1>
-      </td>
     <tr>
       <td>
         {{ _('Fiscal Year') }}: {{ data['parameters']['fiscal_year'] }}
@@ -24,6 +24,11 @@
         {% if data['parameters']['end_period'] %} {{ _('End Period') }}: {{ data['parameters']['end_period'].name|render }}{% endif %} <br>
         {% if data['parameters']['parties'] %}{{ _('Parties') }}: {{ data['parameters']['parties'] }}{% else %}{{ _('All Parties' )}}{% endif %}<br/>
         {% if data['parameters']['accounts'] %}{{ _('Accounts') }}: {{ data['parameters']['accounts'] }}{% else %}{{ _('All Accounts' )}}{% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3" >
+        {{ _("When the Move number is between '()' means it hasn't Post Number and the shown number is the provisional one.") }}
       </td>
     </tr>
   </table>
