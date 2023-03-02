@@ -3,34 +3,34 @@
     <th>{{ _('Date') }}</th>
     <th>{{ _('Número') }}</th>
     <th>{{ _('Reference') }} // {{ _('Description') }}</th>
-    <th>{{ _('Debit') }}</th>
-    <th>{{ _('Credit') }}</th>
-    <th>{{ _('Balance') }}</th>
+    <th style="text-align: right;">{{ _('Debit') }}</th>
+    <th style="text-align: right;">{{ _('Credit') }}</th>
+    <th style="text-align: right;">{{ _('Balance') }}</th>
   </tr>
   {% for k, record in records.items() %}
     {% if not record.party_required %}
       <tr>
         <td colspan="2" class="bold">{{ record.code }}</td>
         <td class="bold">{{ record.account }}</td>
-        <td colspan="2"class="right">{% if record.lines %}{{ _('Previous balance...') }}{% endif %}</td>
-        <td>{% if record.lines %}{{ record.previous_balance|numberformat }}{% endif %}</td>
+        <td colspan="2" style="text-align: right;">{% if record.lines %}{{ _('Previous balance...') }}{% endif %}</td>
+        <td style="text-align: right;">{% if record.lines %}{{ record.previous_balance|render }}{% endif %}</td>
       </tr>
     {% endif %}
 
     {{ show_detail_lines(record) }}
 
     <tr class="bold">
-      <td colspan="3" class="right">{{ _('Total Fiscal Year') }}</td>
-      <td>{{ record.total_debit|numberformat }}</td>
-      <td>{{ record.total_credit|numberformat }}</td>
-      <td>{{ (record.total_debit - record.total_credit)|numberformat }}</td>
+      <td colspan="3" style="text-align: right;">{{ _('Total Fiscal Year') }}</td>
+      <td style="text-align: right;">{{ record.total_debit|render }}</td>
+      <td style="text-align: right;">{{ record.total_credit|render }}</td>
+      <td style="text-align: right;">{{ (record.total_debit - record.total_credit)|render }}</td>
     </tr>
 
     <tr class="bold bottom">
       <td colspan="2" class="bold">{{ record.code }}</td>
       <td class="bold">{{ record.account }}</td>
       <td colspan="2" class="left">{{ _('Total') }}</td>
-      <td>{{ record.total_balance|numberformat }}</td>
+      <td style="text-align: right;">{{ record.total_balance|render }}</td>
     </tr>
   {% endfor %}
 </table>
