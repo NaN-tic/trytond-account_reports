@@ -71,4 +71,20 @@ copyright notices and license terms. -->
             parent="account.menu_reporting" action="wizard_print_taxes_by_invoice"
             icon="tryton-print"/>
     </data>
+    <data noupdate="1">
+        <record model="html.template.translation" id="report_translation_invoice_ca">
+            <field name="report" ref="report_taxes_by_invoice"/>
+            <field name="src">Invoice</field>
+            <field name="value">Factura</field>
+            <!-- <field name="lang" ref="ir.lang_ca"/> -->
+            <field name="lang">ca</field>
+        </record>
+        <record model="html.template.translation" id="report_translation_invoice_es">
+            <field name="report" ref="report_taxes_by_invoice"/>
+            <field name="src">Invoice</field>
+            <field name="value">Factura</field>
+            <!-- <field name="lang" ref="ir.lang_ca"/> -->
+            <field name="lang">es</field>
+        </record>
+    </data>
 </tryton>
