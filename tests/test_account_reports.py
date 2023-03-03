@@ -471,7 +471,7 @@ class AccountReportsTestCase(ModuleTestCase):
         self.assertEqual(len(data['parties']), 0)
         self.assertEqual(data['output_format'], 'pdf')
         records, parameters = GeneralLedgerReport.prepare(data)
-        self.assertEqual(len(records), 6)
+        self.assertEqual(len(records), 4)
         self.assertEqual(parameters['start_period'].name, period.name)
         self.assertEqual(parameters['end_period'].name, last_period.name)
         self.assertEqual(parameters['fiscal_year'], fiscalyear.name)
@@ -497,7 +497,7 @@ class AccountReportsTestCase(ModuleTestCase):
         print_general_ledger.start.output_format = 'pdf'
         _, data = print_general_ledger.do_print_(None)
         records, parameters = GeneralLedgerReport.prepare(data)
-        self.assertEqual(len(records), 6)
+        self.assertEqual(len(records), 4)
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
         self.assertEqual(credit, debit)
@@ -586,13 +586,10 @@ class AccountReportsTestCase(ModuleTestCase):
         print_general_ledger.start.all_accounts = False
         _, data = print_general_ledger.do_print_(None)
         records, parameters = GeneralLedgerReport.prepare(data)
-        self.assertEqual(len(records), 6)
-        # balance = sum([line['balance'] for k, m in records.items() for line in m['lines']])
+        self.assertEqual(len(records), 4)
         results = [(m['total_balance'], m['account']) for k, m in records.items()]
         balances = [
-            (Decimal('-30'), 'Main Payable'),
             (Decimal('-100'), 'Main Payable'),
-            (Decimal('100'), 'Main Receivable'),
             (Decimal('500'), 'Main Receivable'),
             (Decimal('130'), 'Main Expense'),
             (Decimal('-600'), 'Main Revenue'),
@@ -1082,251 +1079,257 @@ class AccountReportsTestCase(ModuleTestCase):
     #     self.assertEqual(credit, Decimal('730.0'))
     #     self.assertEqual(balance, Decimal('0.0'))
 
-    # @with_transaction()
-    # def test_taxes_by_invoice(self):
-    #     'Test taxes by invoice'
-    #     pool = Pool()
-    #     PaymentTerm = pool.get('account.invoice.payment_term')
-    #     TaxCode = pool.get('account.tax.code')
-    #     Tax = pool.get('account.tax')
-    #     Invoice = pool.get('account.invoice')
-    #     InvoiceTax = pool.get('account.invoice.tax')
-    #     PrintTaxesByInvoice = pool.get(
-    #         'account_reports.print_taxes_by_invoice', type='wizard')
-    #     TaxesByInvoiceReport = pool.get(
-    #         'account_reports.taxes_by_invoice', type='report')
-    #     company = create_company()
-    #     fiscalyear = self.create_moves(company)
-    #     period = fiscalyear.periods[0]
-    #     last_period = fiscalyear.periods[-1]
-    #     accounts = self.get_accounts(company)
-    #     revenue = accounts['revenue']
-    #     receivable = accounts['receivable']
-    #     expense = accounts['expense']
-    #     payable = accounts['payable']
-    #     account_tax = accounts['tax']
-    #     journals = self.get_journals()
-    #     journal_revenue = journals['REV']
-    #     journal_expense = journals['EXP']
-    #
-    #     term, = PaymentTerm.create([{
-    #                 'name': 'Payment term',
-    #                 'lines': [
-    #                     ('create', [{
-    #                                 'type': 'remainder',
-    #                                 'relativedeltas': [
-    #                                     ('create', [{
-    #                                                 'sequence': 0,
-    #                                                 'days': 0,
-    #                                                 'months': 0,
-    #                                                 'weeks': 0,
-    #                                                 }])],
-    #                                 }])],
-    #                 }])
-    #
-    #     with set_company(company):
-    #         tx = TaxCode.create([{
-    #                         'name': 'invoice base',
-    #                         },
-    #                     {
-    #                         'name': 'invoice tax',
-    #                         },
-    #                     {
-    #                         'name': 'credit note base',
-    #                         },
-    #                     {
-    #                         'name': 'credit note tax',
-    #                     }])
-    #         invoice_base, invoice_tax, credit_note_base, credit_note_tax = tx
-    #         tax1, tax2 = Tax.create([{
-    #                     'name': 'Tax 1',
-    #                     'description': 'Tax 1',
-    #                     'type': 'percentage',
-    #                     'rate': Decimal('.10'),
-    #                     'invoice_account': account_tax.id,
-    #                     'credit_note_account': account_tax.id,
-    #                     },
-    #                 {
-    #                     'name': 'Tax 2',
-    #                     'description': 'Tax 2',
-    #                     'type': 'percentage',
-    #                     'rate': Decimal('.04'),
-    #                     'invoice_account': account_tax.id,
-    #                     'credit_note_account': account_tax.id,
-    #                     }])
-    #         customer, _, supplier, supplier2 = self.get_parties()
-    #         customer_address, = customer.addresses
-    #         supplier_address, = supplier.addresses
-    #         invoices = Invoice.create([{
-    #                     'number': '1',
-    #                     'invoice_date': period.start_date,
-    #                     'company': company.id,
-    #                     'type': 'out',
-    #                     'currency': company.currency.id,
-    #                     'party': customer.id,
-    #                     'invoice_address': customer_address.id,
-    #                     'journal': journal_revenue.id,
-    #                     'account': receivable.id,
-    #                     'payment_term': term.id,
-    #                     'lines': [
-    #                         ('create', [{
-    #                                     'invoice_type': 'out',
-    #                                     'type': 'line',
-    #                                     'sequence': 0,
-    #                                     'description': 'invoice_line',
-    #                                     'account': revenue.id,
-    #                                     'quantity': 1,
-    #                                     'unit_price': Decimal('50.0'),
-    #                                     'taxes': [
-    #                                         ('add', [tax1.id, tax2.id])],
-    #                                     }])],
-    #                     },
-    #                 {
-    #                     'number': '2',
-    #                     'invoice_date': period.start_date,
-    #                     'company': company.id,
-    #                     'type': 'in',
-    #                     'currency': company.currency.id,
-    #                     'party': supplier.id,
-    #                     'invoice_address': supplier_address.id,
-    #                     'journal': journal_expense.id,
-    #                     'account': payable.id,
-    #                     'payment_term': term.id,
-    #                     'lines': [
-    #                         ('create', [{
-    #                                     'invoice_type': 'in',
-    #                                     'type': 'line',
-    #                                     'sequence': 0,
-    #                                     'description': 'invoice_line',
-    #                                     'account': expense.id,
-    #                                     'quantity': 1,
-    #                                     'unit_price': Decimal('20.0'),
-    #                                     'taxes': [
-    #                                         ('add', [tax1.id, tax2.id])],
-    #                                     }])],
-    #                     },
-    #                 ])
-    #         Invoice.post(invoices)
-    #     invoice1, invoice2 = invoices
-    #     session_id, _, _ = PrintTaxesByInvoice.create()
-    #     print_taxes_by_invoice = PrintTaxesByInvoice(session_id)
-    #     print_taxes_by_invoice.start.company = company
-    #     print_taxes_by_invoice.start.fiscalyear = fiscalyear
-    #     print_taxes_by_invoice.start.periods = []
-    #     print_taxes_by_invoice.start.parties = []
-    #     print_taxes_by_invoice.start.partner_type = 'customers'
-    #     print_taxes_by_invoice.start.grouping = 'invoice'
-    #     print_taxes_by_invoice.start.totals_only = False
-    #     print_taxes_by_invoice.start.start_date = None
-    #     print_taxes_by_invoice.start.end_date = None
-    #     print_taxes_by_invoice.start.tax_type = 'all'
-    #     print_taxes_by_invoice.start.output_format = 'pdf'
-    #     _, data = print_taxes_by_invoice.do_print_(None)
-    #     # Customer data
-    #     self.assertEqual(data['company'], company.id)
-    #     self.assertEqual(data['fiscalyear'], fiscalyear.id)
-    #     self.assertEqual(data['partner_type'], 'customers')
-    #     self.assertEqual(data['grouping'], 'invoice')
-    #     self.assertEqual(data['totals_only'], False)
-    #     self.assertEqual(len(data['periods']), 0)
-    #     self.assertEqual(len(data['parties']), 0)
-    #     self.assertEqual(data['output_format'], 'pdf')
-    #     ids, parameters = TaxesByInvoiceReport.prepare(data)
-    #     records = InvoiceTax.browse(ids)
-    #     self.assertEqual(len(records), 2)
-    #     self.assertEqual(parameters['fiscal_year'], fiscalyear.name)
-    #     self.assertEqual(parameters['parties'], '')
-    #     self.assertEqual(parameters['periods'], '')
-    #     self.assertEqual(parameters['TOTALS_ONLY'], False)
-    #     base = sum([m.company_base for m in records])
-    #     tax = sum([m.company_amount for m in records])
-    #     self.assertEqual(base, Decimal('100.0'))
-    #     self.assertEqual(tax, Decimal('7.0'))
-    #     for tax in records:
-    #         self.assertEqual(tax.invoice, invoice1)
-    #     session_id, _, _ = PrintTaxesByInvoice.create()
-    #     print_taxes_by_invoice = PrintTaxesByInvoice(session_id)
-    #     print_taxes_by_invoice.start.company = company
-    #     print_taxes_by_invoice.start.fiscalyear = fiscalyear
-    #     print_taxes_by_invoice.start.periods = []
-    #     print_taxes_by_invoice.start.parties = []
-    #     print_taxes_by_invoice.start.partner_type = 'suppliers'
-    #     print_taxes_by_invoice.start.grouping = 'invoice'
-    #     print_taxes_by_invoice.start.totals_only = False
-    #     print_taxes_by_invoice.start.start_date = None
-    #     print_taxes_by_invoice.start.end_date = None
-    #     print_taxes_by_invoice.start.tax_type = 'all'
-    #     print_taxes_by_invoice.start.output_format = 'pdf'
-    #     _, data = print_taxes_by_invoice.do_print_(None)
-    #     # Supplier data
-    #     ids, parameters = TaxesByInvoiceReport.prepare(data)
-    #     records = InvoiceTax.browse(ids)
-    #     self.assertEqual(len(records), 2)
-    #     base = sum([m.company_base for m in records])
-    #     tax = sum([m.company_amount for m in records])
-    #     self.assertEqual(base, Decimal('40.0'))
-    #     self.assertEqual(tax, Decimal('2.8'))
-    #     for tax in records:
-    #         self.assertEqual(tax.invoice, invoice2)
-    #     session_id, _, _ = PrintTaxesByInvoice.create()
-    #     print_taxes_by_invoice = PrintTaxesByInvoice(session_id)
-    #     print_taxes_by_invoice.start.company = company
-    #     print_taxes_by_invoice.start.fiscalyear = fiscalyear
-    #     print_taxes_by_invoice.start.periods = []
-    #     print_taxes_by_invoice.start.parties = [supplier2.id]
-    #     print_taxes_by_invoice.start.partner_type = 'suppliers'
-    #     print_taxes_by_invoice.start.grouping = 'invoice'
-    #     print_taxes_by_invoice.start.totals_only = False
-    #     print_taxes_by_invoice.start.output_format = 'pdf'
-    #     print_taxes_by_invoice.start.start_date = None
-    #     print_taxes_by_invoice.start.tax_type = 'all'
-    #     print_taxes_by_invoice.start.end_date = None
-    #     _, data = print_taxes_by_invoice.do_print_(None)
-    #     # Filter by supplier
-    #     ids, parameters = TaxesByInvoiceReport.prepare(data)
-    #     self.assertEqual(parameters['parties'], supplier2.rec_name)
-    #     records = InvoiceTax.browse(ids)
-    #     self.assertEqual(len(records), 0)
-    #     session_id, _, _ = PrintTaxesByInvoice.create()
-    #     print_taxes_by_invoice = PrintTaxesByInvoice(session_id)
-    #     print_taxes_by_invoice.start.company = company
-    #     print_taxes_by_invoice.start.fiscalyear = fiscalyear
-    #     print_taxes_by_invoice.start.periods = [last_period.id]
-    #     print_taxes_by_invoice.start.parties = []
-    #     print_taxes_by_invoice.start.partner_type = 'suppliers'
-    #     print_taxes_by_invoice.start.grouping = 'invoice'
-    #     print_taxes_by_invoice.start.totals_only = False
-    #     print_taxes_by_invoice.start.output_format = 'pdf'
-    #     print_taxes_by_invoice.start.start_date = None
-    #     print_taxes_by_invoice.start.end_date = None
-    #     print_taxes_by_invoice.start.tax_type = 'all'
-    #     _, data = print_taxes_by_invoice.do_print_(None)
-    #     # Filter by periods
-    #     ids, parameters = TaxesByInvoiceReport.prepare(data)
-    #     self.assertEqual(parameters['periods'], last_period.rec_name)
-    #     records = InvoiceTax.browse(ids)
-    #     self.assertEqual(len(records), 0)
-    #     # Filter by start/end date
-    #     session_id, _, _ = PrintTaxesByInvoice.create()
-    #     print_taxes_by_invoice = PrintTaxesByInvoice(session_id)
-    #     print_taxes_by_invoice.start.company = company
-    #     print_taxes_by_invoice.start.fiscalyear = fiscalyear
-    #     print_taxes_by_invoice.start.periods = []
-    #     print_taxes_by_invoice.start.parties = []
-    #     print_taxes_by_invoice.start.partner_type = 'customers'
-    #     print_taxes_by_invoice.start.grouping = 'invoice'
-    #     print_taxes_by_invoice.start.totals_only = False
-    #     print_taxes_by_invoice.start.start_date = period.start_date
-    #     print_taxes_by_invoice.start.end_date = period.end_date
-    #     print_taxes_by_invoice.start.output_format = 'pdf'
-    #     print_taxes_by_invoice.start.tax_type = 'all'
-    #     _, data = print_taxes_by_invoice.do_print_(None)
-    #     ids, parameters = TaxesByInvoiceReport.prepare(data)
-    #     self.assertEqual(parameters['start_date'], period.start_date.strftime('%d/%m/%Y'))
-    #     self.assertEqual(parameters['end_date'], period.end_date.strftime('%d/%m/%Y'))
-    #     records = InvoiceTax.browse(ids)
-    #     self.assertEqual(len(records), 2)
-    #
+    @with_transaction()
+    def test_taxes_by_invoice(self):
+        'Test taxes by invoice'
+        pool = Pool()
+        PaymentTerm = pool.get('account.invoice.payment_term')
+        TaxCode = pool.get('account.tax.code')
+        Tax = pool.get('account.tax')
+        Invoice = pool.get('account.invoice')
+        InvoiceTax = pool.get('account.invoice.tax')
+        PrintTaxesByInvoice = pool.get(
+            'account_reports.print_taxes_by_invoice', type='wizard')
+        TaxesByInvoiceReport = pool.get(
+            'account_reports.taxes_by_invoice', type='report')
+        company = create_company()
+        fiscalyear = self.create_moves(company)
+        period = fiscalyear.periods[0]
+        last_period = fiscalyear.periods[-1]
+        accounts = self.get_accounts(company)
+        revenue = accounts['revenue']
+        receivable = accounts['receivable']
+        expense = accounts['expense']
+        payable = accounts['payable']
+        account_tax = accounts['tax']
+        journals = self.get_journals()
+        journal_revenue = journals['REV']
+        journal_expense = journals['EXP']
+
+        term, = PaymentTerm.create([{
+                    'name': 'Payment term',
+                    'lines': [
+                        ('create', [{
+                                    'type': 'remainder',
+                                    'relativedeltas': [
+                                        ('create', [{
+                                                    'sequence': 0,
+                                                    'days': 0,
+                                                    'months': 0,
+                                                    'weeks': 0,
+                                                    }])],
+                                    }])],
+                    }])
+
+        with set_company(company):
+            tx = TaxCode.create([{
+                            'name': 'invoice base',
+                            },
+                        {
+                            'name': 'invoice tax',
+                            },
+                        {
+                            'name': 'credit note base',
+                            },
+                        {
+                            'name': 'credit note tax',
+                        }])
+            invoice_base, invoice_tax, credit_note_base, credit_note_tax = tx
+            tax1, tax2 = Tax.create([{
+                        'name': 'Tax 1',
+                        'description': 'Tax 1',
+                        'type': 'percentage',
+                        'rate': Decimal('.10'),
+                        'invoice_account': account_tax.id,
+                        'credit_note_account': account_tax.id,
+                        },
+                    {
+                        'name': 'Tax 2',
+                        'description': 'Tax 2',
+                        'type': 'percentage',
+                        'rate': Decimal('.04'),
+                        'invoice_account': account_tax.id,
+                        'credit_note_account': account_tax.id,
+                        }])
+            customer, _, supplier, supplier2 = self.get_parties()
+            customer_address, = customer.addresses
+            supplier_address, = supplier.addresses
+            invoices = Invoice.create([{
+                        'number': '1',
+                        'invoice_date': last_period.end_date,
+                        'company': company.id,
+                        'type': 'out',
+                        'currency': company.currency.id,
+                        'party': customer.id,
+                        'invoice_address': customer_address.id,
+                        'journal': journal_revenue.id,
+                        'account': receivable.id,
+                        'payment_term': term.id,
+                        'lines': [
+                            ('create', [{
+                                        'invoice_type': 'out',
+                                        'type': 'line',
+                                        'sequence': 0,
+                                        'description': 'invoice_line',
+                                        'account': revenue.id,
+                                        'quantity': 1,
+                                        'unit_price': Decimal('50.0'),
+                                        'taxes': [
+                                            ('add', [tax1.id, tax2.id])],
+                                        }])],
+                        },
+                    {
+                        'number': '2',
+                        'invoice_date': last_period.end_date,
+                        'company': company.id,
+                        'type': 'in',
+                        'currency': company.currency.id,
+                        'party': supplier.id,
+                        'invoice_address': supplier_address.id,
+                        'journal': journal_expense.id,
+                        'account': payable.id,
+                        'payment_term': term.id,
+                        'lines': [
+                            ('create', [{
+                                        'invoice_type': 'in',
+                                        'type': 'line',
+                                        'sequence': 0,
+                                        'description': 'invoice_line',
+                                        'account': expense.id,
+                                        'quantity': 1,
+                                        'unit_price': Decimal('20.0'),
+                                        'taxes': [
+                                            ('add', [tax1.id, tax2.id])],
+                                        }])],
+                        },
+                    ])
+            Invoice.post(invoices)
+        invoice1, invoice2 = invoices
+        session_id, _, _ = PrintTaxesByInvoice.create()
+        print_taxes_by_invoice = PrintTaxesByInvoice(session_id)
+        print_taxes_by_invoice.start.company = company
+        print_taxes_by_invoice.start.fiscalyear = fiscalyear
+        print_taxes_by_invoice.start.periods = []
+        print_taxes_by_invoice.start.parties = []
+        print_taxes_by_invoice.start.taxes = []
+        print_taxes_by_invoice.start.partner_type = 'customers'
+        print_taxes_by_invoice.start.grouping = 'invoice'
+        print_taxes_by_invoice.start.totals_only = False
+        print_taxes_by_invoice.start.start_date = None
+        print_taxes_by_invoice.start.end_date = None
+        print_taxes_by_invoice.start.tax_type = 'all'
+        print_taxes_by_invoice.start.output_format = 'pdf'
+        print_taxes_by_invoice.start.include_cancel = True
+        _, data = print_taxes_by_invoice.do_print_(None)
+        # Customer data
+        self.assertEqual(data['company'], company.id)
+        self.assertEqual(data['fiscalyear'], fiscalyear.id)
+        self.assertEqual(data['partner_type'], 'customers')
+        self.assertEqual(data['grouping'], 'invoice')
+        self.assertEqual(data['totals_only'], False)
+        self.assertEqual(len(data['periods']), 0)
+        self.assertEqual(len(data['parties']), 0)
+        self.assertEqual(data['output_format'], 'pdf')
+        ids, parameters = TaxesByInvoiceReport.prepare(data)
+        records = InvoiceTax.browse(ids)
+        self.assertEqual(len(records), 1)
+        self.assertEqual(parameters['fiscal_year'], fiscalyear.name)
+        self.assertEqual(parameters['parties'], '')
+        self.assertEqual(parameters['periods'], '')
+        self.assertEqual(parameters['totals_only'], False)
+        base = parameters['totals']['total_untaxed']
+        tax = parameters['totals']['total_tax']
+        self.assertEqual(base, Decimal('100.0'))
+        self.assertEqual(tax, Decimal('7.0'))
+        session_id, _, _ = PrintTaxesByInvoice.create()
+        print_taxes_by_invoice = PrintTaxesByInvoice(session_id)
+        print_taxes_by_invoice.start.company = company
+        print_taxes_by_invoice.start.fiscalyear = fiscalyear
+        print_taxes_by_invoice.start.periods = []
+        print_taxes_by_invoice.start.parties = []
+        print_taxes_by_invoice.start.taxes = []
+        print_taxes_by_invoice.start.partner_type = 'suppliers'
+        print_taxes_by_invoice.start.grouping = 'invoice'
+        print_taxes_by_invoice.start.totals_only = False
+        print_taxes_by_invoice.start.start_date = None
+        print_taxes_by_invoice.start.end_date = None
+        print_taxes_by_invoice.start.tax_type = 'all'
+        print_taxes_by_invoice.start.output_format = 'pdf'
+        print_taxes_by_invoice.start.include_cancel = True
+        _, data = print_taxes_by_invoice.do_print_(None)
+        # Supplier data
+        ids, parameters = TaxesByInvoiceReport.prepare(data)
+        records = InvoiceTax.browse(ids)
+        self.assertEqual(len(records), 1)
+        base = parameters['totals']['total_untaxed']
+        tax = parameters['totals']['total_tax']
+        self.assertEqual(base, Decimal('40.0'))
+        self.assertEqual(tax, Decimal('2.8'))
+        session_id, _, _ = PrintTaxesByInvoice.create()
+        print_taxes_by_invoice = PrintTaxesByInvoice(session_id)
+        print_taxes_by_invoice.start.company = company
+        print_taxes_by_invoice.start.fiscalyear = fiscalyear
+        print_taxes_by_invoice.start.periods = []
+        print_taxes_by_invoice.start.parties = [supplier2.id]
+        print_taxes_by_invoice.start.taxes = []
+        print_taxes_by_invoice.start.partner_type = 'suppliers'
+        print_taxes_by_invoice.start.grouping = 'invoice'
+        print_taxes_by_invoice.start.totals_only = False
+        print_taxes_by_invoice.start.output_format = 'pdf'
+        print_taxes_by_invoice.start.start_date = None
+        print_taxes_by_invoice.start.tax_type = 'all'
+        print_taxes_by_invoice.start.end_date = None
+        print_taxes_by_invoice.start.include_cancel = True
+        _, data = print_taxes_by_invoice.do_print_(None)
+        # Filter by supplier
+        ids, parameters = TaxesByInvoiceReport.prepare(data)
+        self.assertEqual(parameters['parties'], supplier2.rec_name)
+        records = InvoiceTax.browse(ids)
+        self.assertEqual(len(records), 0)
+        session_id, _, _ = PrintTaxesByInvoice.create()
+        print_taxes_by_invoice = PrintTaxesByInvoice(session_id)
+        print_taxes_by_invoice.start.company = company
+        print_taxes_by_invoice.start.fiscalyear = fiscalyear
+        print_taxes_by_invoice.start.periods = [period.id]
+        print_taxes_by_invoice.start.parties = []
+        print_taxes_by_invoice.start.taxes = []
+        print_taxes_by_invoice.start.partner_type = 'suppliers'
+        print_taxes_by_invoice.start.grouping = 'invoice'
+        print_taxes_by_invoice.start.totals_only = False
+        print_taxes_by_invoice.start.output_format = 'pdf'
+        print_taxes_by_invoice.start.start_date = None
+        print_taxes_by_invoice.start.end_date = None
+        print_taxes_by_invoice.start.tax_type = 'all'
+        print_taxes_by_invoice.start.include_cancel = True
+        _, data = print_taxes_by_invoice.do_print_(None)
+        # Filter by periods
+        ids, parameters = TaxesByInvoiceReport.prepare(data)
+        self.assertEqual(parameters['periods'], period.rec_name)
+        records = InvoiceTax.browse(ids)
+        self.assertEqual(len(records), 0)
+        # Filter by start/end date
+        session_id, _, _ = PrintTaxesByInvoice.create()
+        print_taxes_by_invoice = PrintTaxesByInvoice(session_id)
+        print_taxes_by_invoice.start.company = company
+        print_taxes_by_invoice.start.fiscalyear = fiscalyear
+        print_taxes_by_invoice.start.periods = []
+        print_taxes_by_invoice.start.parties = []
+        print_taxes_by_invoice.start.taxes = []
+        print_taxes_by_invoice.start.partner_type = 'customers'
+        print_taxes_by_invoice.start.grouping = 'invoice'
+        print_taxes_by_invoice.start.totals_only = False
+        print_taxes_by_invoice.start.start_date = last_period.start_date
+        print_taxes_by_invoice.start.end_date = last_period.end_date
+        print_taxes_by_invoice.start.output_format = 'pdf'
+        print_taxes_by_invoice.start.tax_type = 'all'
+        print_taxes_by_invoice.start.include_cancel = True
+        _, data = print_taxes_by_invoice.do_print_(None)
+        ids, parameters = TaxesByInvoiceReport.prepare(data)
+        self.assertEqual(parameters['start_date'], last_period.start_date.strftime('%d/%m/%Y'))
+        self.assertEqual(parameters['end_date'], last_period.end_date.strftime('%d/%m/%Y'))
+        records = InvoiceTax.browse(ids)
+        self.assertEqual(len(records), 1)
+
     # @with_transaction()
     # def test_fiscalyear_not_closed(self):
     #     'Test fiscalyear not closed'

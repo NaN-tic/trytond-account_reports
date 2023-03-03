@@ -30,7 +30,7 @@
                 </thead>
         {% endif %}
         <tr>
-            <td class="bold">{{ k.name }}</td>
+            <td colspan="11" style="text-align: left !important;padding-left: 35px !important;" class="bold">{{ k.name }}</td>
         </tr>
         {% set record = data['records'][k] %}
         {% if not data['parameters']['totals_only'] %}

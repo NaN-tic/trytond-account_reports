@@ -2,7 +2,6 @@
 # at the top level of this repository contains the full copyright notices and
 # license terms.
 import os
-import collections
 from datetime import timedelta, datetime
 from decimal import Decimal
 from trytond.pool import Pool
@@ -53,6 +52,7 @@ class PrintGeneralLedgerStart(ModelView):
     output_format = fields.Selection([
             ('pdf', 'PDF'),
             ('html', 'HTML'),
+            ('xls', 'Excel'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
 
@@ -157,6 +157,7 @@ class GeneralLedgerReport(HTMLReport):
         Account = pool.get('account.account')
         Party = pool.get('party.party')
         Line = pool.get('account.move.line')
+        InvoiceLine = pool.get('account.invoice.line')
 
         def _get_key(currentKey):
             account_code = currentKey[0].code or currentKey[0].name
@@ -170,6 +171,10 @@ class GeneralLedgerReport(HTMLReport):
                     key = '%s %s' % (account_code, currentKey[0].name)
                 else:
                     key = currentKey[0].name
+            return key
+
+        def _get_key_id(currentKey):
+            key = currentKey[0].id
             return key
 
         fiscalyear = FiscalYear(data['fiscalyear'])
@@ -302,17 +307,41 @@ class GeneralLedgerReport(HTMLReport):
                 balance += line.debit - line.credit
                 sequence += 1
 
+                party = None
+                ref = None
+
+                if line.origin and isinstance(line.origin, InvoiceLine):
+                    # If the account have the check "party_required", try to
+                    # get from the invoice
+                    if line.account.party_required:
+                        party = line.origin.invoice.party
+
+                    if line.origin.invoice.number:
+                        ref = '%s' % line.origin.invoice.number
+                    if line.origin.invoice.reference:
+                        ref += ' [%s]' % line.origin.invoice.reference
+                    if line.origin.invoice.party.rec_name:
+                        ref += ' %s' % line.origin.invoice.party.rec_name
+                else:
+                    ref = (line.origin.rec_name if line.origin and
+                        hasattr(line.origin, 'rec_name') else None)
+
+                # If we dont fill the party in a party_required account, try
+                # get the party field in the line
+                if line.account.party_required and not party:
+                    party = line.party
+
                 rline = {
                     'sequence': sequence,
                     'line': line,
-                    'ref': (line.origin.rec_name if line.origin
-                        and hasattr(line.origin, 'rec_name') else None),
+                    'ref': ref,
                     'credit': credit,
                     'debit': debit,
                     'balance': balance,
+                    'party': party
                     }
 
-                key = _get_key(currentKey)
+                key = _get_key_id(currentKey)
                 if records.get(key):
                     records[key]['lines'].append(rline)
                     records[key]['total_debit'] += debit
@@ -323,6 +352,7 @@ class GeneralLedgerReport(HTMLReport):
                         'account': line.account.name,
                         'code': line.account.code,
                         'party': line.party.name if line.party else None,
+                        'party_required': line.account.party_required,
                         'lines': [rline],
                         'previous_balance': (balance + credit - debit),
                         'total_debit': debit,
@@ -342,7 +372,7 @@ class GeneralLedgerReport(HTMLReport):
                 if balance == 0:
                     continue
 
-                key = '%s %s' % (account.code, account.name)
+                key = account.id
                 if records.get(key):
                     records[key]['total_debit'] += debit
                     records[key]['total_credit'] += credit
@@ -351,6 +381,7 @@ class GeneralLedgerReport(HTMLReport):
                     records[key] = {
                         'account': account.name,
                         'code': account.code,
+                        'party_required': line.account.party_required,
                         'lines': [],
                         'previous_balance': (balance + credit - debit),
                         'total_debit': debit,
@@ -389,12 +420,21 @@ class GeneralLedgerReport(HTMLReport):
                                 'account': account.name,
                                 'code': account.code,
                                 'lines': [],
+                                'party_required': line.account.party_required,
                                 'previous_balance': (balance + credit - debit),
                                 'total_debit': debit,
                                 'total_credit': credit,
                                 'total_balance': balance,
                                 }
-        return collections.OrderedDict(sorted(records.items())), parameters
+
+        accounts = {}
+        for record in records.keys():
+            accounts[records[record]['code']+' '+records[record]['account']] = record
+        sorted_records = {}
+        for account in dict(sorted(accounts.items())).values():
+            sorted_records[account] = records[account]
+
+        return sorted_records, parameters
 
     @classmethod
     def execute(cls, ids, data):
@@ -409,7 +449,7 @@ class GeneralLedgerReport(HTMLReport):
         with Transaction().set_context(**context):
             return super(GeneralLedgerReport, cls).execute(ids, {
                     'name': 'account_reports.general_ledger',
-                    'model': 'account.move.line',
+                    'model': 'account.account',
                     'records': records,
                     'parameters': parameters,
                     'output_format': data.get('output_format', 'pdf'),
