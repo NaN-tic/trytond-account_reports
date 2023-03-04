@@ -1203,7 +1203,8 @@ class AccountReportsTestCase(ModuleTestCase):
                                         }])],
                         },
                     ])
-            Invoice.post(invoices)
+            with Transaction().set_context(_skip_warnings=True):
+                Invoice.post(invoices)
         invoice1, invoice2 = invoices
         session_id, _, _ = PrintTaxesByInvoice.create()
         print_taxes_by_invoice = PrintTaxesByInvoice(session_id)
