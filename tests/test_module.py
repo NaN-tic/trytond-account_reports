@@ -307,7 +307,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(len(data['parties']), 0)
         self.assertEqual(data['output_format'], 'pdf')
         records, parameters = GeneralLedgerReport.prepare(data)
-        self.assertEqual(len(records), 6)
+        self.assertEqual(len(records), 4)
         self.assertEqual(parameters['start_period'].name, period.name)
         self.assertEqual(parameters['end_period'].name, last_period.name)
         self.assertEqual(parameters['fiscal_year'], fiscalyear.name)
@@ -333,7 +333,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.output_format = 'pdf'
         _, data = print_general_ledger.do_print_(None)
         records, parameters = GeneralLedgerReport.prepare(data)
-        self.assertEqual(len(records), 6)
+        self.assertEqual(len(records), 4)
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
         self.assertEqual(credit, debit)
@@ -422,16 +422,16 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.all_accounts = False
         _, data = print_general_ledger.do_print_(None)
         records, parameters = GeneralLedgerReport.prepare(data)
-        self.assertEqual(len(records), 6)
+        self.assertEqual(len(records), 4)
         # balance = sum([line['balance'] for k, m in records.items() for line in m['lines']])
         results = [(m['total_balance'], m['account']) for k, m in records.items()]
         balances = [
-            (Decimal('-30'), 'Main Payable'),
             (Decimal('-100'), 'Main Payable'),
-            (Decimal('100'), 'Main Receivable'),
             (Decimal('500'), 'Main Receivable'),
             (Decimal('130'), 'Main Expense'),
             (Decimal('-600'), 'Main Revenue'),
+            (Decimal('-30'), 'Main Payable'),
+            (Decimal('100'), 'Main Receivable'),
             ]
         for result, balance in zip(results, balances):
             self.assertEqual(result, balance)
