@@ -13,7 +13,6 @@ from trytond.tools import grouped_slice
 from trytond.modules.html_report.html_report import HTMLReport
 from babel.dates import format_datetime
 from trytond.rpc import RPC
-from ..common import deactivate_menu_entry
 
 _ZERO = Decimal(0)
 
