@@ -146,7 +146,10 @@ class GeneralLedgerReport(HTMLReport):
         Line = pool.get('account.move.line')
         Invoice = pool.get('account.invoice')
         InvoiceLine = pool.get('account.invoice.line')
-        BankLine = pool.get('account.bank.statement.line')
+        try:
+            BankLine = pool.get('account.bank.statement.line')
+        except:
+            BankLine = None
 
         def _get_key(currentKey):
             account_code = currentKey[0].code or currentKey[0].name
@@ -311,7 +314,8 @@ class GeneralLedgerReport(HTMLReport):
                         ref += ' [%s]' % line.origin.invoice.reference
                     if line.origin.invoice.party.rec_name:
                         ref += ' %s' % line.origin.invoice.party.rec_name
-                elif line.move_origin and isinstance(line.move_origin, Invoice):
+                elif (line.move_origin
+                        and isinstance(line.move_origin, Invoice)):
                     # If the account have the check "party_required", try to
                     # get from the invoice
                     if line.account.party_required:
@@ -323,7 +327,8 @@ class GeneralLedgerReport(HTMLReport):
                         ref += ' [%s]' % line.move_origin.reference
                     if line.move_origin.party.rec_name:
                         ref += ' %s' % line.move_origin.party.rec_name
-                elif line.origin and isinstance(line.origin, BankLine):
+                elif (line.origin and BankLine
+                        and isinstance(line.origin, BankLine)):
                     if line.origin.description:
                         ref = '%s' % line.origin.description
                     else:
@@ -436,7 +441,8 @@ class GeneralLedgerReport(HTMLReport):
 
         accounts = {}
         for record in records.keys():
-            accounts[records[record]['code']+' '+records[record]['account']] = record
+            accounts[records[record]['code']
+                + ' ' + records[record]['account']] = record
         sorted_records = {}
         for account in dict(sorted(accounts.items())).values():
             sorted_records[account] = records[account]
