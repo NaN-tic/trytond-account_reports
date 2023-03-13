@@ -10,7 +10,7 @@
       <tr>
         <td>{{ l.line.date }}</td>
         <td>{% if l.line.move.post_number %}{{ l.line.move.post_number }}{% else %}{{ l.line.move.move_number }}{{ l.line.party and l.line.party.name }}{% endif %}</td>
-        <td>{% if l.ref %}{{ l.ref }}{% endif %}{% if l.ref and l.line.description %} // {% endif %}{% if l.line and l.line.description %} {{ l.line.description }} {% endif %}</td>
+        <td>{% if l.ref %}{{ l.ref }}{% endif %}{% if l.ref and l.line and l.line.description %} // {% endif %}{% if l.line and l.line.description %} {{ l.line.description }} {% endif %}</td>
         <td style="text-align: right;">{{ l.debit|render }} {% set ns.total_debit = ns.total_debit + l.debit %}</td>
         <td style="text-align: right;">{{ l.credit|render }} {% set ns.total_credit = ns.total_credit + l.credit %}</td>
         <td style="text-align: right;">{{ l.balance|render }}</td>
