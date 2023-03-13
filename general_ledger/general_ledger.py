@@ -144,7 +144,9 @@ class GeneralLedgerReport(HTMLReport):
         Account = pool.get('account.account')
         Party = pool.get('party.party')
         Line = pool.get('account.move.line')
+        Invoice = pool.get('account.invoice')
         InvoiceLine = pool.get('account.invoice.line')
+        BankLine = pool.get('account.bank.statement.line')
 
         def _get_key(currentKey):
             account_code = currentKey[0].code or currentKey[0].name
@@ -309,9 +311,27 @@ class GeneralLedgerReport(HTMLReport):
                         ref += ' [%s]' % line.origin.invoice.reference
                     if line.origin.invoice.party.rec_name:
                         ref += ' %s' % line.origin.invoice.party.rec_name
+                elif line.move_origin and isinstance(line.move_origin, Invoice):
+                    # If the account have the check "party_required", try to
+                    # get from the invoice
+                    if line.account.party_required:
+                        party = line.move_origin.party
+
+                    if line.move_origin.number:
+                        ref = '%s' % line.move_origin.number
+                    if line.move_origin.reference:
+                        ref += ' [%s]' % line.move_origin.reference
+                    if line.move_origin.party.rec_name:
+                        ref += ' %s' % line.move_origin.party.rec_name
+                elif line.origin and isinstance(line.origin, BankLine):
+                    if line.origin.description:
+                        ref = '%s' % line.origin.description
+                    else:
+                        ref = (line.origin.rec_name if line.origin
+                            and hasattr(line.origin, 'rec_name') else None)
                 else:
-                    ref = (line.origin.rec_name if line.origin and
-                        hasattr(line.origin, 'rec_name') else None)
+                    ref = (line.origin.rec_name if line.origin
+                        and hasattr(line.origin, 'rec_name') else None)
 
                 # If we dont fill the party in a party_required account, try
                 # get the party field in the line
