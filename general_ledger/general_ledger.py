@@ -13,6 +13,7 @@ from trytond.tools import grouped_slice
 from trytond.modules.html_report.html_report import HTMLReport
 from babel.dates import format_datetime
 from trytond.rpc import RPC
+from trytond.modules.account.exceptions import FiscalYearNotFoundError
 
 _ZERO = Decimal(0)
 
@@ -57,9 +58,14 @@ class PrintGeneralLedgerStart(ModelView):
 
     @staticmethod
     def default_fiscalyear():
-        FiscalYear = Pool().get('account.fiscalyear')
-        return FiscalYear.find(
-            Transaction().context.get('company'), exception=False)
+        pool = Pool()
+        FiscalYear = pool.get('account.fiscalyear')
+        try:
+            fiscalyear = FiscalYear.find(
+                Transaction().context.get('company'), test_state=False)
+        except FiscalYearNotFoundError:
+            return None
+        return fiscalyear.id
 
     @staticmethod
     def default_all_accounts():
