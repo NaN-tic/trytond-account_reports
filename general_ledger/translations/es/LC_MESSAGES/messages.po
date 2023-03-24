@@ -53,7 +53,7 @@ msgstr "Balance anterior"
 
 #: templates/detail_macro.html:35
 msgid "Total Fiscal Year"
-msgstr "Total Ejercicio fiscal"
+msgstr "Total ejercicio fiscal"
 
 #: templates/detail_macro.html:43
 msgid "Total"

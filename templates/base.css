@@ -162,3 +162,7 @@ td.hide {
 tr.bottom {
   border-bottom: 1pt solid black;
 }
+
+.no-wrap {
+  white-space: nowrap;
+}
