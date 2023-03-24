@@ -362,7 +362,7 @@ class GeneralLedgerReport(HTMLReport):
                 else:
                     records[key] = {
                         'account': line.account.name,
-                        'code': line.account.code,
+                        'code': line.account.code or str(line.account.id),
                         'party': line.party.name if line.party else None,
                         'party_required': line.account.party_required,
                         'lines': [rline],
@@ -392,7 +392,7 @@ class GeneralLedgerReport(HTMLReport):
                 else:
                     records[key] = {
                         'account': account.name,
-                        'code': account.code,
+                        'code': account.code or str(account.id),
                         'party_required': line.account.party_required,
                         'lines': [],
                         'previous_balance': (balance + credit - debit),
@@ -430,7 +430,7 @@ class GeneralLedgerReport(HTMLReport):
                         else:
                             records[key] = {
                                 'account': account.name,
-                                'code': account.code,
+                                'code': account.code or str(account.id),
                                 'lines': [],
                                 'party_required': line.account.party_required,
                                 'previous_balance': (balance + credit - debit),
