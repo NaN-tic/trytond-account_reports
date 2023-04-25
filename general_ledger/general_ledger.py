@@ -454,7 +454,7 @@ class GeneralLedgerReport(HTMLReport):
         with Transaction().set_context(active_test=False):
             records, parameters = cls.prepare(data)
 
-        context = Transaction().context
+        context = Transaction().context.copy()
         context['report_lang'] = Transaction().language
         context['report_translations'] = os.path.join(
                 os.path.dirname(__file__), 'translations')
