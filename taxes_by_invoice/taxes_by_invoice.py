@@ -90,7 +90,6 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
                     ('group.kind', 'in', ('both', 'purchase'))
                     )),
             ], depends=['partner_type'])
-    include_cancel = fields.Boolean('Include cancel')
 
     @staticmethod
     def default_partner_type():
@@ -153,7 +152,6 @@ class PrintTaxesByInvoiceAndPeriod(Wizard):
             'grouping': self.start.grouping,
             'tax_type': self.start.tax_type,
             'taxes': [x.id for x in self.start.taxes],
-            'include_cancel': self.start.include_cancel,
             }
 
         return action, data
@@ -243,7 +241,6 @@ class TaxesByInvoiceReport(HTMLReport):
             company.party.tax_identifier.code) or ''
         parameters['jump_page'] = (True if data['grouping'] == 'invoice'
             else False)
-        parameters['include_cancel'] = data['include_cancel'] or False
         parameters['records_found'] = True
 
         domain = [
@@ -278,9 +275,6 @@ class TaxesByInvoiceReport(HTMLReport):
         if data['taxes']:
             domain += [('tax', 'in', data.get('taxes', []))]
 
-        if not data['include_cancel']:
-            domain += [('invoice.state', '!=', 'cancelled')]
-
         records = {}
         totals = {
             'total_untaxed': _ZERO,
@@ -302,7 +296,7 @@ class TaxesByInvoiceReport(HTMLReport):
 
                 # If the invoice is cancelled, do not add its values to the
                 # totals
-                if data['include_cancel'] and tax.invoice.state == 'cancelled':
+                if tax.invoice.state == 'cancelled' and not tax.invoice.cancel_move:
                     continue
 
                 # With this we have the total for each tax (total base, total

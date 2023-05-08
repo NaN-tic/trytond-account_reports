@@ -1,7 +1,7 @@
 {% set nc = namespace(before_invoice_id=None) %}
 {%for l in record %}
     {% if nc.before_invoice_id != l.invoice.raw.id %}
-        <tr>
+        <tr class="{% if l.invoice.raw.state == 'cancelled' %}grey{% endif %}">
             <td>{{ l.invoice.move.render.date }}</td>
             <td>{{ l.account.render.code}}</td>
             <td style="text-align: left;">{{ l.invoice.party.render.rec_name}}</td>
