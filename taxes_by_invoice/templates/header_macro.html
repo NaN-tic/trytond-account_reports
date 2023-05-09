@@ -1,19 +1,29 @@
-<link rel="stylesheet" href="{{ 'html_report/templates/base.css'|modulepath }}">
-
 <style>
-#header-table {
-  width: 17cm;
+@page {
+  size: A4 landscape;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding-top: 1cm;
+  padding-left: 0.5cm;
+  text-align: left;
+  font-size: 9px;
+  width: 100%;
+  font-family: 'Arial';
 }
 </style>
 
 <header id="header">
-    <table style="width: 1110px !important; margin-left: -70px !important;">
+    <table>
         <thead>
         <tr>
             <td style="font-style: italic;font-size: 14px;font-weight: bold;">
                 {{ data['parameters']['company_rec_name']}}
             </td>
-            <td class="center" style="width:60%;text-align: right;font-size: 15px;">
+            <td class="center" style="width:60%;text-align: center;font-size: 15px;">
                 <h1 style="font-size:20px">{% if data['parameters']['jump_page'] %}{{ _('Taxes By Invoice and Period') }}{% else %}{{ _('Taxes By Invoice') }}{% endif %}</h1>
             </td>
             <td style="text-align: right;">
@@ -23,8 +33,8 @@
         </thead>
     </table>
 
-    <table style="width: 1110px !important; margin-left: -70px !important;">
-        <thead>
+    <table>
+        <tbody>
         {% if data['parameters']['start_date'] %}
             <tr>
                 <td colspan="2" style="text-align: right;">{{ _('Initial posting date: ')}} {{ data['parameters']['start_date'] }}</td>
@@ -35,13 +45,13 @@
             </tr>
         {% else %}
             <tr>
-                <td>{{ _('Fiscal Year') }}: {{ data['parameters']['fiscal_year']}} {% if data['parameters']['periods'] %}{{ _('Periods:') }} {{data['parameters']['periods']}} {% else %}{{ _('All Periods') }}{% endif %}</td>
+                <td colspan="2">{{ _('Fiscal Year') }}: {{ data['parameters']['fiscal_year']}} {% if data['parameters']['periods'] %}{{ _('Periods:') }} {{data['parameters']['periods']}} {% else %}{{ _('All Periods') }}{% endif %}</td>
             </tr>
         {% endif %}
         <tr>
             <td>{% if data['parameters']['parties'] %}{{ _('Parties: ') }}{{ data['parameters']['parties']}}{% else %}{{ _('All Parties') }}{% endif %}</td>
             <td style="text-align: right;">{% if data['parameters']['include_cancel'] %}{{ _('This document includes cancelled invoices marked with a *') }}{% else %}{{ _('This document not includes cancelled invoices') }}{% endif %}</td>
         </tr>
-        </thead>
+        </tbody>
     </table>
 </header>
