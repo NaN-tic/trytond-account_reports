@@ -1,25 +1,9 @@
 {% extends 'account_reports/templates/base.html' %}
 
-{% block style %}
-<style type="text/css">
-  @page {
-    size: A4;
-  }
-
-  @media print {
-  #header-details {
-    display: none;
-  }
-}
-</style>
-{% endblock %}
-
 {% block title %}
   {{ _('General Ledger') }} - {{ data['parameters']['company'] }} - {{ data['parameters']['now'] }}
 {% endblock %}
 
 {% block main %}
-  <div>
-    {{ show_detail(data['records']) }}
-  </div>
+  {{ show_detail(data['records']) }}
 {% endblock %}
