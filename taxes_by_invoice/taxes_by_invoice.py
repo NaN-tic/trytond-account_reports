@@ -174,11 +174,13 @@ class PrintTaxesByInvoiceAndPeriod(Wizard):
 
 class TaxesByInvoiceReport(HTMLReport):
     __name__ = 'account_reports.taxes_by_invoice'
+    side_margin = 0
 
     @classmethod
     def __setup__(cls):
         super(TaxesByInvoiceReport, cls).__setup__()
         cls.__rpc__['execute'] = RPC(False)
+        cls.side_margin = 0.3
 
     @classmethod
     def prepare(cls, data):
