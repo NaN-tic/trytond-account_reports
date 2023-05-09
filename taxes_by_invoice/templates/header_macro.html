@@ -45,11 +45,12 @@ header {
             </tr>
         {% else %}
             <tr>
-                <td>{{ _('Fiscal Year') }}: {{ data['parameters']['fiscal_year']}} {% if data['parameters']['periods'] %}{{ _('Periods:') }} {{data['parameters']['periods']}} {% else %}{{ _('All Periods') }}{% endif %}</td>
+                <td colspan="2">{{ _('Fiscal Year') }}: {{ data['parameters']['fiscal_year']}} {% if data['parameters']['periods'] %}{{ _('Periods:') }} {{data['parameters']['periods']}} {% else %}{{ _('All Periods') }}{% endif %}</td>
             </tr>
         {% endif %}
         <tr>
-            <td colspan="2">{% if data['parameters']['parties'] %}{{ _('Parties: ') }}{{ data['parameters']['parties']}}{% else %}{{ _('All Parties') }}{% endif %}</td>
+            <td>{% if data['parameters']['parties'] %}{{ _('Parties: ') }}{{ data['parameters']['parties']}}{% else %}{{ _('All Parties') }}{% endif %}</td>
+            <td style="text-align: right;">{% if data['parameters']['include_cancel'] %}{{ _('This document includes cancelled invoices marked with a *') }}{% else %}{{ _('This document not includes cancelled invoices') }}{% endif %}</td>
         </tr>
         </tbody>
     </table>
