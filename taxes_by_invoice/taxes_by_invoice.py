@@ -185,6 +185,7 @@ class TaxesByInvoiceReport(HTMLReport):
         FiscalYear = pool.get('account.fiscalyear')
         Period = pool.get('account.period')
         Party = pool.get('party.party')
+        Invoice = pool.get('account.invoice')
         AccountInvoiceTax = pool.get('account.invoice.tax')
 
         fiscalyear = (FiscalYear(data['fiscalyear']) if data.get('fiscalyear')
@@ -296,7 +297,10 @@ class TaxesByInvoiceReport(HTMLReport):
 
                 # If the invoice is cancelled, do not add its values to the
                 # totals
-                if tax.invoice.state == 'cancelled' and not tax.invoice.cancel_move:
+                if (tax.invoice.state == 'cancelled'
+                        and tax.invoice.cancel_move
+                        and tax.invoice.cancel_move.origin
+                        and not isinstance(tax.invoice.cancel_move.origin, Invoice)):
                     continue
 
                 # With this we have the total for each tax (total base, total
@@ -331,7 +335,11 @@ class TaxesByInvoiceReport(HTMLReport):
 
                 # If the invoice is cancelled, do not add its values to the
                 # totals
-                if tax.invoice.state == 'cancelled' and not tax.invoice.cancel_move:
+                tax.invoice.state == 'cancelled' and tax.invoice.cancel_move
+                if (tax.invoice.state == 'cancelled'
+                        and tax.invoice.cancel_move
+                        and tax.invoice.cancel_move.origin
+                        and not isinstance(tax.invoice.cancel_move.origin, Invoice)):
                     continue
 
                 # With this we have the total for each tax (total base, total
