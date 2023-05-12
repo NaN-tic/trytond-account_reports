@@ -335,7 +335,6 @@ class TaxesByInvoiceReport(HTMLReport):
 
                 # If the invoice is cancelled, do not add its values to the
                 # totals
-                tax.invoice.state == 'cancelled' and tax.invoice.cancel_move
                 if (tax.invoice.state == 'cancelled'
                         and tax.invoice.cancel_move
                         and tax.invoice.cancel_move.origin
