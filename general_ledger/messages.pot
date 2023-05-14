@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-03-24 13:46+0100\n"
+"POT-Creation-Date: 2023-05-09 16:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.10.3\n"
 
 #: templates/detail_lines_macro.html:7 templates/detail_macro.html:15
 msgid "Previous balance..."
@@ -38,7 +38,7 @@ msgid "Date"
 msgstr ""
 
 #: templates/detail_macro.html:4
-msgid "Número"
+msgid "Number"
 msgstr ""
 
 #: templates/detail_macro.html:5
@@ -61,7 +61,45 @@ msgstr ""
 msgid "Balance"
 msgstr ""
 
-#: templates/general_ledger.html:18
+#: templates/general_ledger.html:4 templates/header_macro.html:28
 msgid "General Ledger"
+msgstr ""
+
+#: templates/header_macro.html:25
+msgid "VAT"
+msgstr ""
+
+#: templates/header_macro.html:41
+msgid "Fiscal Year"
+msgstr ""
+
+#: templates/header_macro.html:42
+msgid "Start Period"
+msgstr ""
+
+#: templates/header_macro.html:43
+msgid "End Period"
+msgstr ""
+
+#: templates/header_macro.html:44
+msgid "Parties"
+msgstr ""
+
+#: templates/header_macro.html:44
+msgid "All Parties"
+msgstr ""
+
+#: templates/header_macro.html:45
+msgid "Accounts"
+msgstr ""
+
+#: templates/header_macro.html:45
+msgid "All Accounts"
+msgstr ""
+
+#: templates/header_macro.html:50
+msgid ""
+"When the Move number is between '()' means it hasn't Post Number and the "
+"shown number is the provisional one."
 msgstr ""
 

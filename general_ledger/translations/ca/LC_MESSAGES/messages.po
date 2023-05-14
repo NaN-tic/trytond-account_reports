@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-06-04 17:08+0200\n"
-"PO-Revision-Date: 2023-03-24 13:58+0100\n"
+"POT-Creation-Date: 2023-05-09 16:54+0200\n"
+"PO-Revision-Date: 2023-05-09 16:54+0200\n"
 "Last-Translator: \n"
 "Language: es\n"
 "Language-Team: es <LL@li.org>\n"
@@ -16,12 +16,32 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.10.3\n"
 "X-Generator: Poedit 2.4.2\n"
+
+#: templates/detail_lines_macro.html:7 templates/detail_macro.html:15
+msgid "Previous balance..."
+msgstr "Balanç anterior..."
+
+#: templates/detail_lines_macro.html:20 templates/detail_macro.html:23
+msgid "Total Fiscal Year"
+msgstr "Total exercisi fiscal"
+
+#: templates/detail_lines_macro.html:28 templates/detail_macro.html:32
+msgid "Total"
+msgstr "Total"
+
+#: templates/detail_lines_macro.html:47
+msgid "Previous balance"
+msgstr "Balanç anterior"
 
 #: templates/detail_macro.html:3
 msgid "Date"
 msgstr "Data"
+
+#: templates/detail_macro.html:4
+msgid "Number"
+msgstr "Número"
 
 #: templates/detail_macro.html:5
 msgid "Reference"
@@ -43,65 +63,49 @@ msgstr "Haver"
 msgid "Balance"
 msgstr "Saldo"
 
-#: templates/detail_macro.html:13
-msgid "Previous balance..."
-msgstr "Balanç anterior..."
-
-#: templates/detail_macro.html:28
-msgid "Previous balance"
-msgstr "Balanç anterior"
-
-#: templates/detail_macro.html:35
-msgid "Total Fiscal Year"
-msgstr "Total exercisi fiscal"
-
-#: templates/detail_macro.html:43
-msgid "Total"
-msgstr "Total"
-
-#: templates/general_ledger.html:7 templates/header_macro.html:4
-msgid "VAT"
-msgstr "NIF"
-
-#: templates/general_ledger.html:23 templates/header_macro.html:12
+#: templates/general_ledger.html:4 templates/header_macro.html:28
 msgid "General Ledger"
 msgstr "Llibre major"
 
-#: templates/general_ledger.html:37
+#: templates/header_macro.html:25
+msgid "VAT"
+msgstr "NIF"
+
+#: templates/header_macro.html:41
+msgid "Fiscal Year"
+msgstr "Exercisi fiscal"
+
+#: templates/header_macro.html:42
+msgid "Start Period"
+msgstr "Període inicial"
+
+#: templates/header_macro.html:43
+msgid "End Period"
+msgstr "Període final"
+
+#: templates/header_macro.html:44
+msgid "Parties"
+msgstr "Tercers"
+
+#: templates/header_macro.html:44
+msgid "All Parties"
+msgstr "Tots els tercers"
+
+#: templates/header_macro.html:45
+msgid "Accounts"
+msgstr "Comptes"
+
+#: templates/header_macro.html:45
+msgid "All Accounts"
+msgstr "Tots els comptes"
+
+#: templates/header_macro.html:50
 msgid ""
 "When the Move number is between '()' means it hasn't Post Number and the "
 "shown number is the provisional one."
 msgstr ""
 "Si el número d'assentament es troba amb parèntesis indica que no té un "
 "número confirmat i el número el que es mostra es provisional."
-
-#: templates/header_macro.html:16
-msgid "Fiscal Year"
-msgstr "Exercisi fiscal"
-
-#: templates/header_macro.html:17
-msgid "Start Period"
-msgstr "Període inicial"
-
-#: templates/header_macro.html:18
-msgid "End Period"
-msgstr "Període final"
-
-#: templates/header_macro.html:21
-msgid "Parties"
-msgstr "Tercers"
-
-#: templates/header_macro.html:21
-msgid "All Parties"
-msgstr "Tots els tercers"
-
-#: templates/header_macro.html:22
-msgid "Accounts"
-msgstr "Comptes"
-
-#: templates/header_macro.html:22
-msgid "All Accounts"
-msgstr "Tots els comptes"
 
 #~ msgid "Traceability"
 #~ msgstr "Prova"
