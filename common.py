@@ -13,19 +13,6 @@ from trytond.transaction import Transaction
 __all__ = ['FiscalYear', 'Account', 'Party']
 
 
-def deactivate_menu_entry(module_name, xml_id):
-    pool = Pool()
-    Menu = pool.get('ir.ui.menu')
-    ModelData = pool.get('ir.model.data')
-
-    menu = Menu.search([
-        ('id', '=', ModelData.get_id(module_name, xml_id)),
-    ])
-    if menu:
-        menu[0].active = False
-        menu[0].save()
-
-
 class FiscalYear(metaclass=PoolMeta):
     __name__ = 'account.fiscalyear'
 
