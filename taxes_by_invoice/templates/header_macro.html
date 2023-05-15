@@ -42,7 +42,7 @@
             <td colspan="2">{% if data['parameters']['parties'] %}{{ _('Parties: ') }}{{ data['parameters']['parties']}}{% else %}{{ _('All Parties') }}{% endif %}</td>
         </tr>
         <tr>
-            <td colspan="2"><small>{{ _('Cancelled invoices are shown in grey and that those with a cancel move are not added to the total.') }}</small></td>
+            <td colspan="2"><small>{{ _('Cancelled invoices are shown in gray and those without a cancel move or a cancel move not related to an invoice are not added to the total.') }}</small></td>
         </tr>
         </thead>
     </table>

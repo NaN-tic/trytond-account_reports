@@ -297,10 +297,12 @@ class TaxesByInvoiceReport(HTMLReport):
 
                 # If the invoice is cancelled, do not add its values to the
                 # totals
-                if (tax.invoice.state == 'cancelled'
-                        and tax.invoice.cancel_move
-                        and tax.invoice.cancel_move.origin
-                        and not isinstance(tax.invoice.cancel_move.origin, Invoice)):
+                if (tax.invoice.state == 'cancelled' and (
+                        (tax.invoice.cancel_move
+                            and tax.invoice.cancel_move.origin
+                            and not isinstance(tax.invoice.cancel_move.origin, Invoice))
+                        or not tax.invoice.cancel_move
+                        or not tax.invoice.cancel_move.origin)):
                     continue
 
                 # With this we have the total for each tax (total base, total
@@ -335,10 +337,12 @@ class TaxesByInvoiceReport(HTMLReport):
 
                 # If the invoice is cancelled, do not add its values to the
                 # totals
-                if (tax.invoice.state == 'cancelled'
-                        and tax.invoice.cancel_move
-                        and tax.invoice.cancel_move.origin
-                        and not isinstance(tax.invoice.cancel_move.origin, Invoice)):
+                if (tax.invoice.state == 'cancelled' and (
+                        (tax.invoice.cancel_move
+                            and tax.invoice.cancel_move.origin
+                            and not isinstance(tax.invoice.cancel_move.origin, Invoice))
+                        or not tax.invoice.cancel_move
+                        or not tax.invoice.cancel_move.origin)):
                     continue
 
                 # With this we have the total for each tax (total base, total
