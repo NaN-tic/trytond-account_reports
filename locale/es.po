@@ -50,10 +50,6 @@ msgctxt "field:account_reports.print_taxes_by_invoice.start,grouping:"
 msgid "Grouping"
 msgstr "Agrupación"
 
-msgctxt "field:account_reports.print_taxes_by_invoice.start,include_cancel:"
-msgid "Include cancel"
-msgstr "Incluir cancelados"
-
 msgctxt "field:account_reports.print_taxes_by_invoice.start,output_format:"
 msgid "Output Format"
 msgstr "Tipo de fichero"
