@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-19 15:23+0200\n"
-"PO-Revision-Date: 2023-04-19 15:27+0200\n"
+"POT-Creation-Date: 2023-05-15 15:49+0200\n"
+"PO-Revision-Date: 2023-05-15 15:50+0200\n"
 "Last-Translator: \n"
 "Language: ca\n"
 "Language-Team: ca <LL@li.org>\n"
@@ -99,14 +99,21 @@ msgstr "Tercers: "
 msgid "All Parties"
 msgstr "Tots els tercers"
 
-#: templates/header_macro.html:43
-msgid "This document includes cancelled invoices marked with a *"
-msgstr "Aquest document inclou factures cancel·lades marcades amb un *"
-
-#: templates/header_macro.html:43
-msgid "This document not includes cancelled invoices"
-msgstr "Aquest document no inclou factures cancel·lades"
+#: templates/header_macro.html:45
+msgid ""
+"Cancelled invoices are shown in gray and those without a cancel move or "
+"a cancel move not related to an invoice are not added to the total."
+msgstr ""
+"Les factures cancel·lades es mostren en gris i les que no tenen un "
+"moviment de cancel·lació, o un moviment de cancel·lació no relacionat "
+"amb una factura, no es sumen al total."
 
 #: templates/taxes_by_invoice.html:28
 msgid "No records found"
 msgstr "No s'han trobat registres"
+
+#~ msgid "This document includes cancelled invoices marked with a *"
+#~ msgstr "Aquest document inclou factures cancel·lades marcades amb un *"
+
+#~ msgid "This document not includes cancelled invoices"
+#~ msgstr "Aquest document no inclou factures cancel·lades"

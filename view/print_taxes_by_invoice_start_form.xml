@@ -20,8 +20,6 @@ copyright notices and license terms. -->
     <field name="end_date"/>
     <label name="totals_only"/>
     <field name="totals_only"/>
-    <label name="include_cancel"/>
-    <field name="include_cancel"/>
     <newline/>
     <label id="select_periods" string="Left empty to select all periods"/>
     <field name="periods" colspan="4"/>
