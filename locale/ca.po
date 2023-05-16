@@ -50,10 +50,6 @@ msgctxt "field:account_reports.print_taxes_by_invoice.start,grouping:"
 msgid "Grouping"
 msgstr "Agrupació"
 
-msgctxt "field:account_reports.print_taxes_by_invoice.start,include_cancel:"
-msgid "Include cancel"
-msgstr "Incloure cancel·lats"
-
 msgctxt "field:account_reports.print_taxes_by_invoice.start,output_format:"
 msgid "Output Format"
 msgstr "Tipus de fitxer"

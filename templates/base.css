@@ -165,3 +165,7 @@ tr.bottom {
 .no-wrap {
   white-space: nowrap;
 }
+
+.grey {
+  background-color: #f2f2f2;
+}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-19 15:23+0200\n"
+"POT-Creation-Date: 2023-05-15 15:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -97,12 +97,10 @@ msgstr ""
 msgid "All Parties"
 msgstr ""
 
-#: templates/header_macro.html:43
-msgid "This document includes cancelled invoices marked with a *"
-msgstr ""
-
-#: templates/header_macro.html:43
-msgid "This document not includes cancelled invoices"
+#: templates/header_macro.html:45
+msgid ""
+"Cancelled invoices are shown in gray and those without a cancel move or a"
+" cancel move not related to an invoice are not added to the total."
 msgstr ""
 
 #: templates/taxes_by_invoice.html:28
