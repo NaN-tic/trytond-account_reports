@@ -350,7 +350,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         for date in dates:
             self.assertEqual(date, period.start_date)
 
-        # # Filtered by dates
+        # Filtered by dates
         session_id, _, _ = PrintGeneralLedger.create()
         print_general_ledger = PrintGeneralLedger(session_id)
         print_general_ledger.start.company = company
