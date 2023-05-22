@@ -214,8 +214,8 @@ class GeneralLedgerReport(HTMLReport):
         end_period = None
         if data['end_period']:
             end_period = Period(data['end_period'])
-        start_date = data['start_date'] if data.get('start_date') else None
-        end_date = data['end_date'] if data .get('end_date') else None
+        start_date = data.get('start_date', None)
+        end_date = data.get('end_date', None)
         with Transaction().set_context(active_test=False):
             accounts = Account.browse(data.get('accounts', []))
             parties = Party.browse(data.get('parties', []))
