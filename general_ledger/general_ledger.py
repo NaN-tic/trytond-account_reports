@@ -258,7 +258,7 @@ class GeneralLedgerReport(HTMLReport):
             if start_date else '')
         parameters['end_date'] = (end_date.strftime('%d/%m/%Y')
             if end_date else '')
-        parameters['fiscal_year'] = fiscalyear.rec_name if fiscalyear else None
+        parameters['fiscal_year'] = fiscalyear.rec_name if fiscalyear else ''
         parameters['accounts'] = accounts_subtitle
         parameters['parties'] = parties_subtitle
         parameters['now'] = format_datetime(datetime.now(), format='short',
