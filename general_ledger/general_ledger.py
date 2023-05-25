@@ -67,7 +67,7 @@ class PrintGeneralLedgerStart(ModelView):
                 ()),
             ],
         states={
-            'invisible': Bool(Eval('periods')),
+            'invisible': Eval('start_period') | Eval('end_period'),
             'required': ((Eval('end_date') | Eval('start_date')) &
                 ~Bool(Eval('start_period') | Eval('end_period')))
             },
@@ -76,6 +76,8 @@ class PrintGeneralLedgerStart(ModelView):
     all_accounts = fields.Boolean('All accounts with and without balance',
         help='If unchecked only print accounts with previous balance different'
         ' from 0 or with moves')
+    final_accounts = fields.Boolean('Only final accounts',
+        help='If unchecked print all tree accounts from 1 to all digits')
     parties = fields.Many2Many('party.party', None, None, 'Parties',
         context={
             'company': Eval('company'),
@@ -96,6 +98,10 @@ class PrintGeneralLedgerStart(ModelView):
 
     @staticmethod
     def default_all_accounts():
+        return True
+
+    @staticmethod
+    def default_final_accounts():
         return True
 
     @staticmethod
@@ -138,6 +144,7 @@ class PrintGeneralLedger(Wizard):
             'end_date': self.start.end_date,
             'accounts': [x.id for x in self.start.accounts],
             'all_accounts': self.start.all_accounts,
+            'final_accounts': self.start.final_accounts,
             'parties': [x.id for x in self.start.parties],
             'output_format': self.start.output_format,
             }
@@ -320,9 +327,10 @@ class GeneralLedgerReport(HTMLReport):
         with Transaction().set_context(date=initial_balance_date):
             init_values = {}
             if not parties:
-                init_values = Account.read_account_vals(accounts,
-                    with_moves=False, exclude_party_moves=True)
-            init_party_values = Party.get_account_values_by_party(
+                init_values = Account.html_read_account_vals(accounts,
+                    with_moves=False, exclude_party_moves=True,
+                    final_accounts=data.get('final_accounts', False))
+            init_party_values = Party.html_get_account_values_by_party(
                 parties, accounts, company)
 
         records = {}
@@ -453,48 +461,41 @@ class GeneralLedgerReport(HTMLReport):
                         'total_credit': credit,
                         }
 
-            if parties or parties_general_ledger:
+            if parties:
                 account_ids = [k for k, _ in init_party_values.items()]
                 accounts = dict((a.id, a) for a in Account.browse(account_ids))
-                if parties:
-                    parties = dict((p.id, p) for p in parties)
-                elif parties_general_ledger:
-                    parties = dict((p, Party(p))
-                        for a, av in init_party_values.items()
-                        for p, pv in av.items()
-                        if p and p not in parties_general_ledger)
+                parties = dict((p.id, p) for p in parties)
 
-                if parties:
-                    for k, v in init_party_values.items():
-                        account = accounts[k]
-                        for p, z in v.items():
-                            # check if party is in current general ledger
-                            if p in parties_general_ledger:
-                                continue
-                            party = parties[p]
-                            if account.type.receivable or account.type.payable:
-                                currentKey = (account, party)
-                            else:
-                                currentKey = (account,)
-                            sequence += 1
-                            credit = z.get('credit', Decimal(0))
-                            debit = z.get('debit', Decimal(0))
-                            balance = z.get('balance', Decimal(0))
+                for k, v in init_party_values.items():
+                    account = accounts[k]
+                    for p, z in v.items():
+                        # check if party is in current general ledger
+                        if p in parties_general_ledger:
+                            continue
+                        party = parties[p]
+                        if account.type.receivable or account.type.payable:
+                            currentKey = (account, party)
+                        else:
+                            currentKey = (account,)
+                        sequence += 1
+                        credit = z.get('credit', Decimal(0))
+                        debit = z.get('debit', Decimal(0))
+                        balance = z.get('balance', Decimal(0))
 
-                            key = _get_key(currentKey)
-                            if records.get(key):
-                                records[key]['total_debit'] += debit
-                                records[key]['total_credit'] += credit
-                            else:
-                                records[key] = {
-                                    'account': account.name,
-                                    'code': account.code or str(account.id),
-                                    'lines': [],
-                                    'party_required': account.party_required,
-                                    'previous_balance': (balance + credit - debit),
-                                    'total_debit': debit,
-                                    'total_credit': credit,
-                                    }
+                        key = _get_key(currentKey)
+                        if records.get(key):
+                            records[key]['total_debit'] += debit
+                            records[key]['total_credit'] += credit
+                        else:
+                            records[key] = {
+                                'account': account.name,
+                                'code': account.code or str(account.id),
+                                'lines': [],
+                                'party_required': account.party_required,
+                                'previous_balance': (balance + credit - debit),
+                                'total_debit': debit,
+                                'total_credit': credit,
+                                }
 
         accounts = {}
         for record in records.keys():

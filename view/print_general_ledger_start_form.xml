@@ -20,6 +20,8 @@ copyright notices and license terms. -->
     <field name="accounts" colspan="4"/>
     <label name="all_accounts"/>
     <field name="all_accounts"/>
+    <label name="final_accounts"/>
+    <field name="final_accounts"/>
     <label name="output_format"/>
     <field name="output_format"/>
 </form>
