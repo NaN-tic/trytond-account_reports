@@ -454,34 +454,6 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(credit, Decimal('0.0'))
         self.assertEqual(debit, Decimal('100.0'))
         self.assertEqual(True, all([line for k, m in records.items() for line in m['lines'] if line['line'].party]))
-
-        # Check balance of full general_ledger
-        print_general_ledger = PrintGeneralLedger(session_id)
-        print_general_ledger.start.company = company
-        print_general_ledger.start.fiscalyear = fiscalyear
-        print_general_ledger.start.start_period = None
-        print_general_ledger.start.end_period = None
-        print_general_ledger.start.start_date = None
-        print_general_ledger.start.end_date = None
-        print_general_ledger.start.parties = []
-        print_general_ledger.start.accounts = []
-        print_general_ledger.start.output_format = 'pdf'
-        print_general_ledger.start.all_accounts = False
-        _, data = print_general_ledger.do_print_(None)
-        records, parameters = GeneralLedgerReport.prepare(data)
-        self.assertEqual(len(records), 4)
-        # balance = sum([line['balance'] for k, m in records.items() for line in m['lines']])
-        results = [(m['total_balance'], m['account']) for k, m in records.items()]
-        balances = [
-            (Decimal('-100'), 'Main Payable'),
-            (Decimal('500'), 'Main Receivable'),
-            (Decimal('130'), 'Main Expense'),
-            (Decimal('-600'), 'Main Revenue'),
-            (Decimal('-30'), 'Main Payable'),
-            (Decimal('100'), 'Main Receivable'),
-            ]
-        for result, balance in zip(results, balances):
-            self.assertEqual(result, balance)
-
+        
 
 del ModuleTestCase

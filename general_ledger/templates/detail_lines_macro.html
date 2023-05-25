@@ -1,11 +1,12 @@
 {% if record.lines and record.party_required %}
   {% for party, lines in record.lines|groupby('party') %}
-    {% set ns = namespace(total_debit=0,total_credit=0,total_balance=0) %}
+    {% set ns = namespace(total_debit=0, total_credit=0) %}
+    {% set previous_balance = lines[0].balance + lines[0].credit - lines[0].debit %}
     <tr>
       <td colspan="2" class="bold">{{ record.code }}</td>
       <td class="bold">{{ party.rec_name }}</td>
       <td colspan="2" style="text-align: right;">{% if record.lines %}{{ _('Previous balance...') }}{% endif %}</td>
-      <td style="text-align: right;"> {{ (lines[0].balance+lines[0].credit-lines[0].debit)|render }}</td>
+      <td style="text-align: right;"> {{ previous_balance|render }}</td>
     </tr>{% for l in lines %}
       <tr>
         <td>{{ l.line.date and l.line.date|render }}</td>
@@ -26,7 +27,7 @@
       <td colspan="2" class="bold">{{ record.code }}</td>
       <td class="bold">{{ party.rec_name }}</td>
       <td colspan="2" class="left no-wrap">{{ _('Total') }}</td>
-      <td style="text-align: right;">{{ lines[-1].balance|render }}</td>
+      <td style="text-align: right;">{{ (previous_balance + ns.total_debit - ns.total_credit)|render }}</td>
     </tr>
   {% endfor %}
 {% elif record.lines %}
