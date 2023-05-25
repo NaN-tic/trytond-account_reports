@@ -67,7 +67,7 @@ class PrintGeneralLedgerStart(ModelView):
                 ()),
             ],
         states={
-            'invisible': Bool(Eval('periods')),
+            'invisible': Eval('start_period') | Eval('end_period'),
             'required': ((Eval('end_date') | Eval('start_date')) &
                 ~Bool(Eval('start_period') | Eval('end_period')))
             },
