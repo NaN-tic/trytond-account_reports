@@ -30,7 +30,7 @@
       <td colspan="2" class="bold">{{ record.code }}</td>
       <td class="bold">{{ record.account }}</td>
       <td colspan="2" class="left">{{ _('Total') }}</td>
-      <td style="text-align: right;" class="no-wrap">{{ record.total_balance|render }}</td>
+      <td style="text-align: right;" class="no-wrap">{{ (record.previous_balance + record.total_debit - record.total_credit)|render }}</td>
     </tr>
   {% endfor %}
 </table>

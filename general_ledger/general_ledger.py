@@ -285,9 +285,9 @@ class GeneralLedgerReport(HTMLReport):
             for line in Line.browse(group_lines):
                 if line.account not in accounts_w_moves:
                     accounts_w_moves.append(line.account.id)
-                if line.account.type.receivable or line.account.type.payable:
-                    currentKey = (line.account, line.party and line.party
-                        or None)
+                if ((line.account.type.receivable or line.account.type.payable
+                            or line.account.party_required) and line.party):
+                    currentKey = (line.account, line.party)
                 else:
                     currentKey = (line.account,)
                 if lastKey != currentKey:
@@ -365,7 +365,6 @@ class GeneralLedgerReport(HTMLReport):
                     records[key]['lines'].append(rline)
                     records[key]['total_debit'] += debit
                     records[key]['total_credit'] += credit
-                    records[key]['total_balance'] = balance
                 else:
                     records[key] = {
                         'account': line.account.name,
@@ -376,7 +375,6 @@ class GeneralLedgerReport(HTMLReport):
                         'previous_balance': (balance + credit - debit),
                         'total_debit': debit,
                         'total_credit': credit,
-                        'total_balance': balance,
                         }
 
         if data.get('all_accounts', True):
@@ -395,7 +393,6 @@ class GeneralLedgerReport(HTMLReport):
                 if records.get(key):
                     records[key]['total_debit'] += debit
                     records[key]['total_credit'] += credit
-                    records[key]['total_balance'] = balance
                 else:
                     records[key] = {
                         'account': account.name,
@@ -405,7 +402,6 @@ class GeneralLedgerReport(HTMLReport):
                         'previous_balance': (balance + credit - debit),
                         'total_debit': debit,
                         'total_credit': credit,
-                        'total_balance': balance,
                         }
 
             if parties:
@@ -433,7 +429,6 @@ class GeneralLedgerReport(HTMLReport):
                         if records.get(key):
                             records[key]['total_debit'] += debit
                             records[key]['total_credit'] += credit
-                            records[key]['total_balance'] = balance
                         else:
                             records[key] = {
                                 'account': account.name,
@@ -443,7 +438,6 @@ class GeneralLedgerReport(HTMLReport):
                                 'previous_balance': (balance + credit - debit),
                                 'total_debit': debit,
                                 'total_credit': credit,
-                                'total_balance': balance,
                                 }
 
         accounts = {}
