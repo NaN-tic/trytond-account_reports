@@ -14,6 +14,10 @@ msgctxt "field:account_reports.print_general_ledger.start,company:"
 msgid "Company"
 msgstr "Empresa"
 
+msgctxt "field:account_reports.print_general_ledger.start,end_date:"
+msgid "Final Posting Date"
+msgstr "Data de comptabilització final"
+
 msgctxt "field:account_reports.print_general_ledger.start,end_period:"
 msgid "End Period"
 msgstr "Període final"
@@ -29,6 +33,10 @@ msgstr "Tipus de fitxer"
 msgctxt "field:account_reports.print_general_ledger.start,parties:"
 msgid "Parties"
 msgstr "Tercers"
+
+msgctxt "field:account_reports.print_general_ledger.start,start_date:"
+msgid "Initial Posting Date"
+msgstr "Data de comptabilització inicial"
 
 msgctxt "field:account_reports.print_general_ledger.start,start_period:"
 msgid "Start Period"

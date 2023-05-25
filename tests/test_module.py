@@ -292,6 +292,8 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.fiscalyear = fiscalyear
         print_general_ledger.start.start_period = period
         print_general_ledger.start.end_period = last_period
+        print_general_ledger.start.start_date = None
+        print_general_ledger.start.end_date = None
         print_general_ledger.start.parties = []
         print_general_ledger.start.accounts = []
         print_general_ledger.start.output_format = 'pdf'
@@ -319,6 +321,10 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(credit, Decimal('730.0'))
         with_party = [line for k, m in records.items() for line in m['lines'] if not line['line'].party]
         self.assertEqual(len(with_party), 6)
+        dates = sorted(set([line['line'].date for k, m in records.items() for line in m['lines']]))
+        for date, expected_value in zip(dates, [period.start_date,
+                    last_period.end_date]):
+            self.assertEqual(date, expected_value)
 
         # Filtered by periods
         session_id, _, _ = PrintGeneralLedger.create()
@@ -327,6 +333,8 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.fiscalyear = fiscalyear
         print_general_ledger.start.start_period = period
         print_general_ledger.start.end_period = period
+        print_general_ledger.start.start_date = None
+        print_general_ledger.start.end_date = None
         print_general_ledger.start.parties = []
         print_general_ledger.start.accounts = []
         print_general_ledger.start.all_accounts = False
@@ -338,6 +346,33 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
         self.assertEqual(credit, debit)
         self.assertEqual(credit, Decimal('380.0'))
+        dates = sorted(set([line['line'].date for k, m in records.items() for line in m['lines']]))
+        for date in dates:
+            self.assertEqual(date, period.start_date)
+
+        # Filtered by dates
+        session_id, _, _ = PrintGeneralLedger.create()
+        print_general_ledger = PrintGeneralLedger(session_id)
+        print_general_ledger.start.company = company
+        print_general_ledger.start.fiscalyear = None
+        print_general_ledger.start.start_period = None
+        print_general_ledger.start.end_period = None
+        print_general_ledger.start.start_date = period.start_date
+        print_general_ledger.start.end_date = period.end_date
+        print_general_ledger.start.parties = []
+        print_general_ledger.start.accounts = []
+        print_general_ledger.start.all_accounts = False
+        print_general_ledger.start.output_format = 'pdf'
+        _, data = print_general_ledger.do_print_(None)
+        records, parameters = GeneralLedgerReport.prepare(data)
+        self.assertEqual(len(records), 4)
+        credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
+        debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
+        self.assertEqual(credit, debit)
+        self.assertEqual(credit, Decimal('380.0'))
+        dates = sorted(set([line['line'].date for k, m in records.items() for line in m['lines']]))
+        for date in dates:
+            self.assertEqual(date, period.start_date)
 
         # Filtered by accounts
         expense, = Account.search([
@@ -349,6 +384,8 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.fiscalyear = fiscalyear
         print_general_ledger.start.start_period = period
         print_general_ledger.start.end_period = last_period
+        print_general_ledger.start.start_date = None
+        print_general_ledger.start.end_date = None
         print_general_ledger.start.parties = []
         print_general_ledger.start.accounts = [expense.id]
         print_general_ledger.start.all_accounts = False
@@ -370,6 +407,8 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.fiscalyear = fiscalyear
         print_general_ledger.start.start_period = period
         print_general_ledger.start.end_period = last_period
+        print_general_ledger.start.start_date = None
+        print_general_ledger.start.end_date = None
         print_general_ledger.start.parties = [customer1.id]
         print_general_ledger.start.accounts = []
         print_general_ledger.start.all_accounts = False
@@ -382,6 +421,10 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
         self.assertEqual(credit, Decimal('0.0'))
         self.assertEqual(debit, Decimal('100.0'))
+        credit = sum([line['credit'] for k, m in records.items() for line in m['lines'] if m['party'] == ''])
+        debit = sum([line['debit'] for k, m in records.items() for line in m['lines'] if m['party'] == ''])
+        self.assertEqual(credit, Decimal('0.0'))
+        self.assertEqual(debit, Decimal('0.0'))
         parties = [line for k, m in records.items() for line in m['lines'] if not line['line'].party]
         self.assertEqual(len(parties), 0)
 
@@ -395,6 +438,8 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.fiscalyear = fiscalyear
         print_general_ledger.start.start_period = period
         print_general_ledger.start.end_period = last_period
+        print_general_ledger.start.start_date = None
+        print_general_ledger.start.end_date = None
         print_general_ledger.start.parties = [customer1.id]
         print_general_ledger.start.accounts = [receivable.id]
         print_general_ledger.start.output_format = 'pdf'
@@ -409,6 +454,6 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(credit, Decimal('0.0'))
         self.assertEqual(debit, Decimal('100.0'))
         self.assertEqual(True, all([line for k, m in records.items() for line in m['lines'] if line['line'].party]))
-
+        
 
 del ModuleTestCase
