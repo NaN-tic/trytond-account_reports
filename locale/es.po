@@ -22,6 +22,10 @@ msgctxt "field:account_reports.print_general_ledger.start,end_period:"
 msgid "End Period"
 msgstr "Período final"
 
+msgctxt "field:account_reports.print_general_ledger.start,final_accounts:"
+msgid "Only final accounts"
+msgstr "Solo cuentas finales"
+
 msgctxt "field:account_reports.print_general_ledger.start,fiscalyear:"
 msgid "Fiscal Year"
 msgstr "Ejercicio fiscal"
@@ -97,6 +101,12 @@ msgid ""
 msgstr ""
 "Si no está marcado, solo imprime cuentas con saldo anterior diferente de 0 o"
 " con movimientos"
+
+msgctxt "help:account_reports.print_general_ledger.start,final_accounts:"
+msgid "If unchecked print all tree accounts from 1 to all digits"
+msgstr ""
+"Si no está marcado, imprime todas las cuentas del árbol de cuentas desde 1 "
+"dígito a todos"
 
 msgctxt "model:account_reports.print_general_ledger.start,name:"
 msgid "Print General Ledger"

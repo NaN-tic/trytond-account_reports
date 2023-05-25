@@ -51,8 +51,8 @@ class Account(metaclass=PoolMeta):
         cls.general_ledger_balance.states['invisible'] = True
 
     @classmethod
-    def read_account_vals(cls, accounts, with_moves=False,
-            exclude_party_moves=False):
+    def html_read_account_vals(cls, accounts, with_moves=False,
+            exclude_party_moves=False, final_accounts=False):
         pool = Pool()
         Account = pool.get('account.account')
         Move = pool.get('account.move')
@@ -68,9 +68,12 @@ class Account(metaclass=PoolMeta):
         cursor = transaction.connection.cursor()
         move_join = 'INNER' if with_moves else 'LEFT'
         if not accounts:
-            accounts = Account.search([
+            domain = [
                     ('company', '=', transaction.context.get('company')),
-                    ])
+                    ]
+            if final_accounts:
+                domain.append(('childs', '=', None))
+            accounts = Account.search(domain)
         account_ids = [a.id for a in accounts]
         group_by = (table_a.id,)
         columns = (group_by + (Sum(Coalesce(line.debit, 0)).as_('debit'),
@@ -125,7 +128,7 @@ class Party(metaclass=PoolMeta):
     __name__ = 'party.party'
 
     @classmethod
-    def get_account_values_by_party(cls, parties, accounts, company):
+    def html_get_account_values_by_party(cls, parties, accounts, company):
         '''
         Function to compute credit,debit and balance for party ids.
         '''
