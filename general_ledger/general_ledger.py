@@ -21,8 +21,14 @@ class PrintGeneralLedgerStart(ModelView):
     'Print General Ledger'
     __name__ = 'account_reports.print_general_ledger.start'
     fiscalyear = fields.Many2One('account.fiscalyear', 'Fiscal Year',
-            required=True)
+        states={
+            'invisible': Eval('start_date') | Eval('end_date'),
+            'required': ~Eval('start_date') & ~Eval('end_date'),
+            })
     start_period = fields.Many2One('account.period', 'Start Period',
+        states={
+            'invisible': Eval('start_date') | Eval('end_date'),
+            },
         domain=[
             ('fiscalyear', '=', Eval('fiscalyear')),
             If(Bool(Eval('end_period')),
@@ -31,6 +37,9 @@ class PrintGeneralLedgerStart(ModelView):
                 ),
             ], depends=['fiscalyear', 'end_period'])
     end_period = fields.Many2One('account.period', 'End Period',
+        states={
+            'invisible': Eval('start_date') | Eval('end_date'),
+            },
         domain=[
             ('fiscalyear', '=', Eval('fiscalyear')),
             If(Bool(Eval('start_period')),
@@ -39,6 +48,30 @@ class PrintGeneralLedgerStart(ModelView):
                 ),
             ],
         depends=['fiscalyear', 'start_period'])
+    start_date = fields.Date('Initial Posting Date',
+        domain=[
+            If(Eval('start_date') & Eval('end_date'),
+                ('start_date', '<=', Eval('end_date', None)),
+                ()),
+            ],
+        states={
+            'invisible': Eval('start_period') | Eval('end_period'),
+            'required': ((Eval('start_date') | Eval('end_date')) &
+                ~Bool(Eval('start_period') | Eval('end_period'))),
+            },
+        depends=['end_date'])
+    end_date = fields.Date('Final Posting Date',
+        domain=[
+            If(Eval('start_date') & Eval('end_date'),
+                ('end_date', '>=', Eval('start_date', None)),
+                ()),
+            ],
+        states={
+            'invisible': Bool(Eval('periods')),
+            'required': ((Eval('end_date') | Eval('start_date')) &
+                ~Bool(Eval('start_period') | Eval('end_period')))
+            },
+        depends=['start_date'])
     accounts = fields.Many2Many('account.account', None, None, 'Accounts')
     all_accounts = fields.Boolean('All accounts with and without balance',
         help='If unchecked only print accounts with previous balance different'
@@ -98,9 +131,11 @@ class PrintGeneralLedger(Wizard):
             end_period = self.start.end_period.id
         data = {
             'company': self.start.company.id,
-            'fiscalyear': self.start.fiscalyear.id,
+            'fiscalyear': self.start.fiscalyear.id if self.start.fiscalyear else None,
             'start_period': start_period,
             'end_period': end_period,
+            'start_date': self.start.start_date,
+            'end_date': self.start.end_date,
             'accounts': [x.id for x in self.start.accounts],
             'all_accounts': self.start.all_accounts,
             'parties': [x.id for x in self.start.parties],
@@ -140,6 +175,7 @@ class GeneralLedgerReport(HTMLReport):
     @classmethod
     def prepare(cls, data):
         pool = Pool()
+        Company = pool.get('company.company')
         FiscalYear = pool.get('account.fiscalyear')
         Period = pool.get('account.period')
         Account = pool.get('account.account')
@@ -170,13 +206,16 @@ class GeneralLedgerReport(HTMLReport):
             key = currentKey[0].id
             return key
 
-        fiscalyear = FiscalYear(data['fiscalyear'])
+        fiscalyear = (FiscalYear(data['fiscalyear']) if data.get('fiscalyear')
+            else None)
         start_period = None
         if data['start_period']:
             start_period = Period(data['start_period'])
         end_period = None
         if data['end_period']:
             end_period = Period(data['end_period'])
+        start_date = data.get('start_date', None)
+        end_date = data.get('end_date', None)
         with Transaction().set_context(active_test=False):
             accounts = Account.browse(data.get('accounts', []))
             parties = Party.browse(data.get('parties', []))
@@ -202,7 +241,12 @@ class GeneralLedgerReport(HTMLReport):
             else:
                 parties_subtitle = ''
 
-        company = fiscalyear.company
+        if data['company']:
+            company = Company(data['company'])
+        elif fiscalyear:
+            company = fiscalyear.company
+        else:
+            company = Company(Transaction().context.get('company', -1))
 
         parameters = {}
         parameters['company'] = company.rec_name
@@ -210,7 +254,11 @@ class GeneralLedgerReport(HTMLReport):
             and company.party.tax_identifier.code) or ''
         parameters['start_period'] = start_period and start_period or ''
         parameters['end_period'] = end_period and end_period or ''
-        parameters['fiscal_year'] = fiscalyear.rec_name
+        parameters['start_date'] = (start_date.strftime('%d/%m/%Y')
+            if start_date else '')
+        parameters['end_date'] = (end_date.strftime('%d/%m/%Y')
+            if end_date else '')
+        parameters['fiscal_year'] = fiscalyear.rec_name if fiscalyear else ''
         parameters['accounts'] = accounts_subtitle
         parameters['parties'] = parties_subtitle
         parameters['now'] = format_datetime(datetime.now(), format='short',
@@ -223,10 +271,15 @@ class GeneralLedgerReport(HTMLReport):
         else:
             where += "aa.parent is not null "
 
-        filter_periods = fiscalyear.get_periods(start_period, end_period)
-
-        where += "and am.period in (%s) " % (
-            ",".join([str(a.id) for a in filter_periods]))
+        if start_date:
+            if company:
+                where += "and am.company = %s " % company.id
+            where += "and am.date >= '%s' " % start_date
+            where += "and am.date <= '%s' " % end_date
+        else:
+            filter_periods = fiscalyear.get_periods(start_period, end_period)
+            where += "and am.period in (%s) " % (
+                ",".join([str(a.id) for a in filter_periods]))
 
         if parties:
             where += " and aml.party in (%s)" % (
@@ -250,8 +303,9 @@ class GeneralLedgerReport(HTMLReport):
                 aml.account,
                 -- Sort by party only when account is of
                 -- type 'receivable' or 'payable'
-                CASE WHEN aat.receivable or aat.payable THEN
-                       aml.party ELSE 0 END,
+                -- or party_requierd is True
+                CASE WHEN aat.receivable or aat.payable or
+                    aa.party_required THEN aml.party ELSE 0 END,
                 am.date,
                 am.id,
                 am.description,
@@ -259,8 +313,9 @@ class GeneralLedgerReport(HTMLReport):
             """ % where)
         line_ids = [x[0] for x in cursor.fetchall()]
 
-        start_date = (start_period.start_date if start_period
-            else fiscalyear.start_date)
+        if not start_date:
+            start_date = (start_period.start_date if start_period
+                else fiscalyear.start_date)
         initial_balance_date = start_date - timedelta(days=1)
         with Transaction().set_context(date=initial_balance_date):
             init_values = {}
@@ -268,7 +323,7 @@ class GeneralLedgerReport(HTMLReport):
                 init_values = Account.read_account_vals(accounts,
                     with_moves=False, exclude_party_moves=True)
             init_party_values = Party.get_account_values_by_party(
-                parties, accounts, fiscalyear.company)
+                parties, accounts, company)
 
         records = {}
         parties_general_ledger = set()
@@ -398,41 +453,48 @@ class GeneralLedgerReport(HTMLReport):
                         'total_credit': credit,
                         }
 
-            if parties:
+            if parties or parties_general_ledger:
                 account_ids = [k for k, _ in init_party_values.items()]
                 accounts = dict((a.id, a) for a in Account.browse(account_ids))
-                parties = dict((p.id, p) for p in parties)
+                if parties:
+                    parties = dict((p.id, p) for p in parties)
+                elif parties_general_ledger:
+                    parties = dict((p, Party(p))
+                        for a, av in init_party_values.items()
+                        for p, pv in av.items()
+                        if p and p not in parties_general_ledger)
 
-                for k, v in init_party_values.items():
-                    account = accounts[k]
-                    for p, z in v.items():
-                        # check if party is in current general ledger
-                        if p in parties_general_ledger:
-                            continue
-                        party = parties[p]
-                        if account.type.receivable or account.type.payable:
-                            currentKey = (account, party)
-                        else:
-                            currentKey = (account,)
-                        sequence += 1
-                        credit = z.get('credit', Decimal(0))
-                        debit = z.get('debit', Decimal(0))
-                        balance = z.get('balance', Decimal(0))
+                if parties:
+                    for k, v in init_party_values.items():
+                        account = accounts[k]
+                        for p, z in v.items():
+                            # check if party is in current general ledger
+                            if p in parties_general_ledger:
+                                continue
+                            party = parties[p]
+                            if account.type.receivable or account.type.payable:
+                                currentKey = (account, party)
+                            else:
+                                currentKey = (account,)
+                            sequence += 1
+                            credit = z.get('credit', Decimal(0))
+                            debit = z.get('debit', Decimal(0))
+                            balance = z.get('balance', Decimal(0))
 
-                        key = _get_key(currentKey)
-                        if records.get(key):
-                            records[key]['total_debit'] += debit
-                            records[key]['total_credit'] += credit
-                        else:
-                            records[key] = {
-                                'account': account.name,
-                                'code': account.code or str(account.id),
-                                'lines': [],
-                                'party_required': account.party_required,
-                                'previous_balance': (balance + credit - debit),
-                                'total_debit': debit,
-                                'total_credit': credit,
-                                }
+                            key = _get_key(currentKey)
+                            if records.get(key):
+                                records[key]['total_debit'] += debit
+                                records[key]['total_credit'] += credit
+                            else:
+                                records[key] = {
+                                    'account': account.name,
+                                    'code': account.code or str(account.id),
+                                    'lines': [],
+                                    'party_required': account.party_required,
+                                    'previous_balance': (balance + credit - debit),
+                                    'total_debit': debit,
+                                    'total_credit': credit,
+                                    }
 
         accounts = {}
         for record in records.keys():

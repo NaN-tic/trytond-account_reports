@@ -10,6 +10,10 @@ copyright notices and license terms. -->
     <field name="start_period"/>
     <label name="end_period"/>
     <field name="end_period"/>
+    <label name="start_date"/>
+    <field name="start_date"/>
+    <label name="end_date"/>
+    <field name="end_date"/>
     <label id="select_parties" string="Left empty to select all parties"/>
     <field name="parties" colspan="4"/>
     <label id="select_accounts" string="Left empty to select all accounts"/>
