@@ -186,6 +186,42 @@ class GeneralLedgerReport(HTMLReport):
         cls.side_margin = 0.3
 
     @classmethod
+    def _ref_origin_invoice_line(cls, line):
+        ref = []
+        if line.origin.invoice.number:
+            ref.append('%s' % line.origin.invoice.number)
+        if line.origin.invoice.reference:
+            ref.append('[%s]' % line.origin.invoice.reference)
+        if line.origin.invoice.party.rec_name:
+            ref.append('%s' % line.origin.invoice.party.rec_name)
+        return ' '.join(ref)
+
+    @classmethod
+    def _ref_origin_invoice(cls, line):
+        ref = []
+        if line.move_origin.number:
+            ref.append('%s' % line.move_origin.number)
+        if line.move_origin.reference:
+            ref.append('[%s]' % line.move_origin.reference)
+        if line.move_origin.party.rec_name:
+            ref.append('%s' % line.move_origin.party.rec_name)
+        return ' '.join(ref)
+
+    @classmethod
+    def _ref_origin_bank_line(cls, line):
+        if line.origin.description:
+            ref = '%s' % line.origin.description
+        else:
+            ref = (line.origin.rec_name if line.origin
+                and hasattr(line.origin, 'rec_name') else None)
+        return ref
+
+    @classmethod
+    def _ref_origin(cls, line):
+        return (line.origin.rec_name if line.origin
+            and hasattr(line.origin, 'rec_name') else None)
+
+    @classmethod
     def prepare(cls, data):
         pool = Pool()
         Company = pool.get('company.company')
@@ -373,40 +409,25 @@ class GeneralLedgerReport(HTMLReport):
                 ref = None
 
                 if line.origin and isinstance(line.origin, InvoiceLine):
+                    ref = cls._ref_origin_invoice_line(line)
+
                     # If the account have the check "party_required", try to
                     # get from the invoice
                     if line.account.party_required:
                         party = line.origin.invoice.party
-
-                    if line.origin.invoice.number:
-                        ref = '%s' % line.origin.invoice.number
-                    if line.origin.invoice.reference:
-                        ref += ' [%s]' % line.origin.invoice.reference
-                    if line.origin.invoice.party.rec_name:
-                        ref += ' %s' % line.origin.invoice.party.rec_name
                 elif (line.move_origin
                         and isinstance(line.move_origin, Invoice)):
+                    ref = cls._ref_origin_invoice(line)
+
                     # If the account have the check "party_required", try to
                     # get from the invoice
                     if line.account.party_required:
                         party = line.move_origin.party
-
-                    if line.move_origin.number:
-                        ref = '%s' % line.move_origin.number
-                    if line.move_origin.reference:
-                        ref += ' [%s]' % line.move_origin.reference
-                    if line.move_origin.party.rec_name:
-                        ref += ' %s' % line.move_origin.party.rec_name
                 elif (line.origin and BankLine
                         and isinstance(line.origin, BankLine)):
-                    if line.origin.description:
-                        ref = '%s' % line.origin.description
-                    else:
-                        ref = (line.origin.rec_name if line.origin
-                            and hasattr(line.origin, 'rec_name') else None)
+                    ref = cls._ref_origin_bank_line(line)
                 else:
-                    ref = (line.origin.rec_name if line.origin
-                        and hasattr(line.origin, 'rec_name') else None)
+                    ref = cls._ref_origin(line)
 
                 # If we dont fill the party in a party_required account, try
                 # get the party field in the line
