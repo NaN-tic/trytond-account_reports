@@ -67,7 +67,7 @@ copyright notices and license terms. -->
         </record>
 
         <!-- menu wizard -->
-        <menuitem id="menu_print_taxes_by_invoice" name="Print Taxes by Invoice and Period HTML"
+        <menuitem id="menu_print_taxes_by_invoice" name="Print Taxes by Invoice and Period"
             parent="account.menu_reporting" action="wizard_print_taxes_by_invoice"
             icon="tryton-print"/>
     </data>

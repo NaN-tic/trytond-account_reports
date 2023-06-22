@@ -182,7 +182,7 @@ msgid "Print General Ledger"
 msgstr "Imprimeix llibre major"
 
 msgctxt "model:ir.ui.menu,name:menu_print_taxes_by_invoice"
-msgid "Print Taxes by Invoice and Period HTML"
+msgid "Print Taxes by Invoice and Period"
 msgstr "Imprimeix impostos per factura i període"
 
 msgctxt "report:account_reports.general_ledger:"
