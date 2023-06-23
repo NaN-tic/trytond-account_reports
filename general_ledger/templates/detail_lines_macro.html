@@ -1,4 +1,4 @@
-{% if record.lines and record.party_required %}
+{% if record.lines and record.party_required %}{% set show_description = data['parameters']['show_description'] %}
   {% for party, lines in record.lines|groupby('party') %}
     {% set ns = namespace(total_debit=0, total_credit=0) %}
     {% set previous_balance = lines[0].balance + lines[0].credit - lines[0].debit %}
@@ -35,7 +35,7 @@
     <tr>
       <td>{{ l.line.date and l.line.date|render }}</td>
       <td>{% if l.line.move.post_number %}{{ l.line.move.post_number }}{% else %}{{ l.line.move.move_number }}{{ l.line.party and l.line.party.name }}{% endif %}</td>
-      <td>{% if l.ref %}{{ l.ref }}{% endif %}{% if l.ref and l.line and (l.line.description or l.line.move_description) %} // {% endif %}{% if l.line and l.line.description %} {{ l.line.description }} {% elif l.line and l.line.move_description %} {{ l.line.move_description }} {% endif %}</td>
+      <td>{% if l.ref %}{{ l.ref }}{% endif %}{% if l.ref and show_description and l.line and (l.line.description or l.line.move_description) %} // {% endif %}{% if show_description and l.line and l.line.description %} {{ l.line.description }} {% elif show_description and l.line and l.line.move_description %} {{ l.line.move_description }} {% endif %}</td>
       <td style="text-align: right;" class="no-wrap">{{ l.debit|render }}</td>
       <td style="text-align: right;" class="no-wrap">{{ l.credit|render }}</td>
       <td style="text-align: right;" class="no-wrap">{{ l.balance|render }}</td>
