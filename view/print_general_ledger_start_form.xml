@@ -24,4 +24,6 @@ copyright notices and license terms. -->
     <field name="final_accounts"/>
     <label name="output_format"/>
     <field name="output_format"/>
+    <label name="show_description"/>
+    <field name="show_description"/>
 </form>

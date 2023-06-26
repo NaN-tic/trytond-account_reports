@@ -90,6 +90,8 @@ class PrintGeneralLedgerStart(ModelView):
             ('xls', 'Excel'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
+    show_description = fields.Boolean('Show Description',
+        help='If checked show description from Account Move Line')
 
     @staticmethod
     def default_fiscalyear():
@@ -117,6 +119,10 @@ class PrintGeneralLedgerStart(ModelView):
     @staticmethod
     def default_output_format():
         return 'pdf'
+
+    @staticmethod
+    def default_show_description():
+        return True
 
     @fields.depends('fiscalyear')
     def on_change_fiscalyear(self):
@@ -153,6 +159,7 @@ class PrintGeneralLedger(Wizard):
             'final_accounts': self.start.final_accounts,
             'parties': [x.id for x in self.start.parties],
             'output_format': self.start.output_format,
+            'show_description': self.start.show_description,
             }
         return action, data
 
@@ -312,6 +319,7 @@ class GeneralLedgerReport(HTMLReport):
         parameters['parties'] = parties_subtitle
         parameters['now'] = format_datetime(datetime.now(), format='short',
             locale=Transaction().language or 'en')
+        parameters['show_description'] = data.get('show_description', True)
 
         where = ''
         if accounts:
