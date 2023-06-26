@@ -38,6 +38,10 @@ msgctxt "field:account_reports.print_general_ledger.start,parties:"
 msgid "Parties"
 msgstr "Terceros"
 
+msgctxt "field:account_reports.print_general_ledger.start,show_description:"
+msgid "Show Description"
+msgstr "Mostrar descripción"
+
 msgctxt "field:account_reports.print_general_ledger.start,start_date:"
 msgid "Initial Posting Date"
 msgstr "Fecha de contabilización inicial"
@@ -107,6 +111,10 @@ msgid "If unchecked print all tree accounts from 1 to all digits"
 msgstr ""
 "Si no está marcado, imprime todas las cuentas del árbol de cuentas desde 1 "
 "dígito a todos"
+
+msgctxt "help:account_reports.print_general_ledger.start,show_description:"
+msgid "If checked show description from Account Move Line"
+msgstr "Si está marcado, muestra las descripciones de los apuntes contables"
 
 msgctxt "model:account_reports.print_general_ledger.start,name:"
 msgid "Print General Ledger"
