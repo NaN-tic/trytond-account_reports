@@ -299,6 +299,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.output_format = 'pdf'
         print_general_ledger.start.all_accounts = False
         print_general_ledger.start.final_accounts = False
+        print_general_ledger.start.show_description = True
         _, data = print_general_ledger.do_print_(None)
 
         # Full general_ledger
@@ -340,6 +341,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.accounts = []
         print_general_ledger.start.all_accounts = False
         print_general_ledger.start.final_accounts = False
+        print_general_ledger.start.show_description = True
         print_general_ledger.start.output_format = 'pdf'
         _, data = print_general_ledger.do_print_(None)
         records, parameters = GeneralLedgerReport.prepare(data)
@@ -365,6 +367,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.accounts = []
         print_general_ledger.start.all_accounts = False
         print_general_ledger.start.final_accounts = False
+        print_general_ledger.start.show_description = True
         print_general_ledger.start.output_format = 'pdf'
         _, data = print_general_ledger.do_print_(None)
         records, parameters = GeneralLedgerReport.prepare(data)
@@ -393,6 +396,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.accounts = [expense.id]
         print_general_ledger.start.all_accounts = False
         print_general_ledger.start.final_accounts = False
+        print_general_ledger.start.show_description = True
         print_general_ledger.start.output_format = 'pdf'
         _, data = print_general_ledger.do_print_(None)
         records, parameters = GeneralLedgerReport.prepare(data)
@@ -417,6 +421,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.accounts = []
         print_general_ledger.start.all_accounts = False
         print_general_ledger.start.final_accounts = False
+        print_general_ledger.start.show_description = True
         print_general_ledger.start.output_format = 'pdf'
         _, data = print_general_ledger.do_print_(None)
         records, parameters = GeneralLedgerReport.prepare(data)
@@ -450,6 +455,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.output_format = 'pdf'
         print_general_ledger.start.all_accounts = False
         print_general_ledger.start.final_accounts = False
+        print_general_ledger.start.show_description = True
         _, data = print_general_ledger.do_print_(None)
         records, parameters = GeneralLedgerReport.prepare(data)
         self.assertEqual(parameters['parties'], customer1.rec_name)
