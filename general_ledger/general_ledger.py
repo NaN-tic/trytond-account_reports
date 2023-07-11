@@ -329,8 +329,7 @@ class GeneralLedgerReport(HTMLReport):
             where += "aa.parent is not null "
 
         if start_date:
-            if company:
-                where += "and am.company = %s " % company.id
+            where += "and am.company = %s " % company.id
             where += "and am.date >= '%s' " % start_date
             where += "and am.date <= '%s' " % end_date
         else:
@@ -377,11 +376,13 @@ class GeneralLedgerReport(HTMLReport):
         with Transaction().set_context(date=initial_balance_date):
             init_values = {}
             if not parties:
-                init_values = Account.html_read_account_vals(accounts,
+                init_values = Account.html_read_account_vals(accounts, company,
                     with_moves=False, exclude_party_moves=True,
                     final_accounts=data.get('final_accounts', False))
             init_party_values = Party.html_get_account_values_by_party(
                 parties, accounts, company)
+            init_parties = set([p for a, av in init_party_values.items()
+                    for p, pv in av.items()])
 
         records = {}
         parties_general_ledger = set()
@@ -468,6 +469,52 @@ class GeneralLedgerReport(HTMLReport):
                         'total_debit': debit,
                         'total_credit': credit,
                         }
+
+        # Control if there are some party moves with initial value, but not
+        # values in the current period control moves and must be to set.
+        missing_init_parties = list(
+            set(init_parties) - set(parties_general_ledger))
+        if missing_init_parties:
+            account_ids = [k for k, _ in init_party_values.items()]
+            accounts = dict((a.id, a) for a in Account.browse(account_ids))
+            for k, v in init_party_values.items():
+                account = accounts[k]
+                for p, z in v.items():
+                    if not p or p not in missing_init_parties:
+                        continue
+                    party = Party(p)
+                    currentKey = (account, party)
+                    credit = z.get('credit', Decimal(0))
+                    debit = z.get('debit', Decimal(0))
+                    balance = z.get('balance', Decimal(0))
+                    if balance == Decimal(0):
+                        continue
+                    sequence += 1
+                    rline = {
+                        'sequence': sequence,
+                        'line': None,
+                        'ref': None,
+                        'credit': credit,
+                        'debit': debit,
+                        'balance': balance,
+                        'party': party
+                        }
+                    key = _get_key_id(currentKey)
+                    if records.get(key):
+                        records[key]['lines'].append(rline)
+                        records[key]['total_debit'] += debit
+                        records[key]['total_credit'] += credit
+                    else:
+                        records[key] = {
+                            'account': account.name,
+                            'code': account.code or str(account.id),
+                            'party': party.name if party else None,
+                            'party_required': account.party_required,
+                            'lines': [rline],
+                            'previous_balance': (balance + credit - debit),
+                            'total_debit': debit,
+                            'total_credit': credit,
+                            }
 
         if data.get('all_accounts', True):
             init_values_account_wo_moves = {
