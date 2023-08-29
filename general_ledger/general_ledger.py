@@ -573,19 +573,23 @@ class GeneralLedgerReport(HTMLReport):
         Config = Pool().get('account.configuration')
 
         config = Config(1)
-        timeout = data.get('timeout') or config.default_timeout or 30
+        timeout = data.get('timeout') or config.default_timeout or 300
         checker = TimeoutChecker(timeout, cls.timeout_exception)
 
+        start_prepare = datetime.now()
         with Transaction().set_context(active_test=False):
             try:
                 records, parameters = cls.prepare(data, checker)
             except TimeoutException:
                 raise UserError(gettext('account_reports.timeout_exception'))
+        end_prepare = datetime.now()
 
         context = Transaction().context.copy()
         context['report_lang'] = Transaction().language
         context['report_translations'] = os.path.join(
                 os.path.dirname(__file__), 'translations')
+        if timeout:
+            context['timeout'] = timeout - int((end_prepare - start_prepare).total_seconds())
 
         with Transaction().set_context(**context):
             return super(GeneralLedgerReport, cls).execute(ids, {
