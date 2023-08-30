@@ -1,4 +1,5 @@
-{% if record.lines and record.party_required %}{% set show_description = data['parameters']['show_description'] %}
+{% set show_description = data['parameters']['show_description'] %}
+{% if record.lines and record.party_required %}
   {% for party, lines in record.lines|groupby('party') %}
     {% set ns = namespace(total_debit=0, total_credit=0) %}
     {% set previous_balance = lines[0].balance + lines[0].credit - lines[0].debit %}
