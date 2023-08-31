@@ -10,7 +10,7 @@ this repository contains the full copyright notices and license terms. -->
           <field name="text">The final posting date does not match the fiscal year "%(fiscalyear)s".</field>
       </record>
       <record model="ir.message" id="timeout_exception">
-          <field name="text">Report computation timed out. You may consider increasing the timeout of the account reports.</field>
+          <field name="text">Report computation timed out. You may consider increasing the timeout of the account reports or export to XLS format.</field>
       </record>
     </data>
 </tryton>
