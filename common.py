@@ -68,13 +68,13 @@ class Account(metaclass=PoolMeta):
         cursor = transaction.connection.cursor()
         move_join = 'INNER' if with_moves else 'LEFT'
         if not accounts:
-            domain = [
+            accounts = Account.search([
                     ('company', '=', company),
-                    ]
-            if final_accounts:
-                domain.append(('childs', '=', None))
-            accounts = Account.search(domain)
-        account_ids = [a.id for a in accounts]
+                    ])
+        if final_accounts:
+            account_ids = [a.id for a in accounts if a.childs is None]
+        else:
+            account_ids = [a.id for a in accounts]
         group_by = (table_a.id,)
         columns = (group_by + (Sum(Coalesce(line.debit, 0)).as_('debit'),
                 Sum(Coalesce(line.credit, 0)).as_('credit'),
