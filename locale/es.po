@@ -285,6 +285,11 @@ msgstr ""
 "Si el número de asiento aparece entre paréntesis indica que no tiene número "
 "confirmado y el número que se muestra es el provisional."
 
+msgctxt "report:account_reports.general_ledger:"
+msgid ""
+"When the Move Lines header is in read means it's not correct the Move Lines."
+msgstr "Si la cabecera es en rojo indica que los apuntes no son correctos."
+
 msgctxt "report:account_reports.taxes_by_invoice:"
 msgid "Account"
 msgstr "Cuenta"
