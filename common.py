@@ -72,7 +72,7 @@ class Account(metaclass=PoolMeta):
                     ('company', '=', company),
                     ])
         if final_accounts:
-            account_ids = [a.id for a in accounts if a.childs is None]
+            account_ids = [a.id for a in accounts if not a.childs]
         else:
             account_ids = [a.id for a in accounts]
         group_by = (table_a.id,)

@@ -279,16 +279,11 @@ msgstr "NIF"
 
 msgctxt "report:account_reports.general_ledger:"
 msgid ""
-"When the Move number is between '()' means it hasn't Post Number and the "
-"shown number is the provisional one."
+"When move number is between parentheses it means that it has no post number "
+"and the number shown is the provisional one."
 msgstr ""
 "Si el número d'assentament apareix entre parèntesis indica que no té número "
 "confirmat i el número que es mostra és el provisional."
-
-msgctxt "report:account_reports.general_ledger:"
-msgid ""
-"When the Move Lines header is in read means it's not correct the Move Lines."
-msgstr "Si la capçalera es en vermell indica que els apunts no son correctes."
 
 msgctxt "report:account_reports.taxes_by_invoice:"
 msgid "Account"

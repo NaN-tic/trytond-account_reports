@@ -8,12 +8,7 @@
     <th style="text-align: right;">{{ _('Balance') }}</th>
   </tr>
   {% for k, record in records.items() %}
-    {% if (not record.party and record.party_required) or (record.party and not record.party_required) %}
-      {% set style = 'color: #FF0000;' %}
-    {% else %}
-      {% set style = '' %}
-    {% endif %}
-    <tr style='{{ style }}'>
+    <tr>
       <td colspan="2" class="bold">{{ record.code }}</td>
       <td class="bold">{% if record.party %}{{ record.party }}{% else %}{{ record.account }}{% endif %}</td>
       <td colspan="2" style="text-align: right;">{% if record.lines %}{{ _('Previous balance...') }}{% endif %}</td>

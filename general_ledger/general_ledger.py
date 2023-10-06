@@ -241,8 +241,7 @@ class GeneralLedgerReport(HTMLReport):
         def _get_key(currentKey):
             party = (currentKey[1].name if len(currentKey) > 1
                 and currentKey[1] else 'None')
-            key = '%s %s' % (currentKey[0].code, party)
-            return key
+            return (currentKey[0].code, party)
 
         fiscalyear = (FiscalYear(data['fiscalyear']) if data.get('fiscalyear')
             else None)
@@ -375,10 +374,7 @@ class GeneralLedgerReport(HTMLReport):
             for line in Line.browse(group_lines):
                 if line.account not in accounts_w_moves:
                     accounts_w_moves.append(line.account.id)
-                if line.party:
-                    currentKey = (line.account, line.party)
-                else:
-                    currentKey = (line.account,)
+                currentKey = (line.account, line.party)
                 if lastKey != currentKey:
                     lastKey = currentKey
                     account_id = currentKey[0].id
