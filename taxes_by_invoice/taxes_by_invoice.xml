@@ -40,7 +40,7 @@ copyright notices and license terms. -->
             <field name="name">show_detail(records)</field>
         </record>
         <record model="html.template" id="taxes_by_invoice_show_detail_macro_html">
-            <field name="name">Detail</field>
+            <field name="name">Taxes By Invoice Detail</field>
             <field name="type">macro</field>
             <field name="sequence" eval="99"/>
             <field name="filename">account_reports/taxes_by_invoice/templates/detail_macro.html</field>
@@ -55,7 +55,7 @@ copyright notices and license terms. -->
             <field name="name">show_detail_lines(record)</field>
         </record>
         <record model='html.template' id="taxes_by_invoice_show_detail_lines_macro_html">
-            <field name="name">Detail Lines</field>
+            <field name="name">Taxes By Invoice Detail Lines</field>
             <field name="type">macro</field>
             <field name="sequence" eval="99"/>
             <field name="filename">account_reports/taxes_by_invoice/templates/detail_lines_macro.html</field>
