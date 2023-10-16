@@ -239,22 +239,9 @@ class GeneralLedgerReport(HTMLReport):
             BankLine = None
 
         def _get_key(currentKey):
-            account_code = currentKey[0].code or currentKey[0].name
-            if len(currentKey) > 1:
-                if currentKey[1]:
-                    key = '%s %s' % (account_code, currentKey[1].name)
-                else:
-                    key = account_code
-            else:
-                if currentKey[0].code:
-                    key = '%s %s' % (account_code, currentKey[0].name)
-                else:
-                    key = currentKey[0].name
-            return key
-
-        def _get_key_id(currentKey):
-            key = currentKey[0].id
-            return key
+            party = (currentKey[1].name if len(currentKey) > 1
+                and currentKey[1] else 'None')
+            return (currentKey[0].code, party)
 
         fiscalyear = (FiscalYear(data['fiscalyear']) if data.get('fiscalyear')
             else None)
@@ -377,32 +364,26 @@ class GeneralLedgerReport(HTMLReport):
                 parties, accounts, company)
             init_parties = set([p for a, av in init_party_values.items()
                     for p, pv in av.items()])
-
         records = {}
         parties_general_ledger = set()
         lastKey = None
         sequence = 0
         accounts_w_moves = []
+        # Add the asked period/date lines in records
         for group_lines in grouped_slice(line_ids):
             for line in Line.browse(group_lines):
                 if line.account not in accounts_w_moves:
                     accounts_w_moves.append(line.account.id)
-                if ((line.account.type.receivable or line.account.type.payable
-                            or line.account.party_required) and line.party):
-                    currentKey = (line.account, line.party)
-                else:
-                    currentKey = (line.account,)
+                currentKey = (line.account, line.party)
                 if lastKey != currentKey:
                     lastKey = currentKey
                     account_id = currentKey[0].id
-                    if len(currentKey) > 1:
-                        party_id = currentKey[1].id if currentKey[1] else None
-                        parties_general_ledger.add(party_id)
-                        balance = init_party_values.get(account_id,
-                            {}).get(party_id, {}).get('balance', Decimal(0))
-                    else:
-                        balance = init_values.get(account_id, {}).get(
-                            'balance', Decimal(0))
+                    party_id = (currentKey[1].id if len(currentKey) > 1
+                        and currentKey[1] else None)
+                    parties_general_ledger.add(party_id)
+                    balance = init_party_values.get(account_id,
+                        {}).get(party_id, {}).get('balance', Decimal(0))
+
                 credit = line.credit
                 debit = line.debit
                 balance += line.debit - line.credit
@@ -432,7 +413,7 @@ class GeneralLedgerReport(HTMLReport):
                 else:
                     ref = cls._ref_origin(line)
 
-                # If we dont fill the party in a party_required account, try
+                # If we don't fill the party in a party_required account, try
                 # get the party field in the line
                 if line.account.party_required and not party:
                     party = line.party
@@ -447,7 +428,7 @@ class GeneralLedgerReport(HTMLReport):
                     'party': party
                     }
 
-                key = _get_key_id(currentKey)
+                key = _get_key(currentKey)
                 if records.get(key):
                     records[key]['lines'].append(rline)
                     records[key]['total_debit'] += debit
@@ -474,9 +455,9 @@ class GeneralLedgerReport(HTMLReport):
             for k, v in init_party_values.items():
                 account = accounts[k]
                 for p, z in v.items():
-                    if not p or p not in missing_init_parties:
+                    if p not in missing_init_parties:
                         continue
-                    party = Party(p)
+                    party = Party(p) if p else None
                     currentKey = (account, party)
                     credit = z.get('credit', Decimal(0))
                     debit = z.get('debit', Decimal(0))
@@ -493,7 +474,7 @@ class GeneralLedgerReport(HTMLReport):
                         'balance': balance,
                         'party': party
                         }
-                    key = _get_key_id(currentKey)
+                    key = _get_key(currentKey)
                     if records.get(key):
                         records[key]['lines'].append(rline)
                         records[key]['total_debit'] += debit
@@ -522,7 +503,8 @@ class GeneralLedgerReport(HTMLReport):
                 if balance == 0:
                     continue
 
-                key = account.id
+                currentKey = (account,)
+                key = _get_key(currentKey)
                 if records.get(key):
                     records[key]['total_debit'] += debit
                     records[key]['total_credit'] += credit
@@ -530,6 +512,7 @@ class GeneralLedgerReport(HTMLReport):
                     records[key] = {
                         'account': account.name,
                         'code': account.code or str(account.id),
+                        'party': None,
                         'party_required': account.party_required,
                         'lines': [],
                         'previous_balance': (balance + credit - debit),
@@ -549,10 +532,7 @@ class GeneralLedgerReport(HTMLReport):
                         if p in parties_general_ledger:
                             continue
                         party = parties[p]
-                        if account.type.receivable or account.type.payable:
-                            currentKey = (account, party)
-                        else:
-                            currentKey = (account,)
+                        currentKey = (account, party)
                         sequence += 1
                         credit = z.get('credit', Decimal(0))
                         debit = z.get('debit', Decimal(0))
@@ -567,21 +547,14 @@ class GeneralLedgerReport(HTMLReport):
                                 'account': account.name,
                                 'code': account.code or str(account.id),
                                 'lines': [],
+                                'party': party.name if party else None,
                                 'party_required': account.party_required,
                                 'previous_balance': (balance + credit - debit),
                                 'total_debit': debit,
                                 'total_credit': credit,
                                 }
 
-        accounts = {}
-        for record in records.keys():
-            accounts[records[record]['code']
-                + ' ' + records[record]['account']] = record
-        sorted_records = {}
-        for account in dict(sorted(accounts.items())).values():
-            sorted_records[account] = records[account]
-
-        return sorted_records, parameters
+        return dict(sorted(records.items())), parameters
 
     @classmethod
     def execute(cls, ids, data):
