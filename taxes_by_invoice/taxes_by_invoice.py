@@ -271,9 +271,9 @@ class TaxesByInvoiceReport(HTMLReport):
             domain += [('invoice.party', 'in', parties)],
 
         if data['tax_type'] == 'invoiced':
-            domain += [('base', '>=', 0)]
+            domain += [('invoice.untaxed_amount', '>=', 0)]
         elif data['tax_type'] == 'refunded':
-            domain += [('base', '<', 0)]
+            domain += [('invoice.untaxed_amount', '<', 0)]
 
         if data['taxes']:
             domain += [('tax', 'in', data.get('taxes', []))]
