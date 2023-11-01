@@ -28,7 +28,7 @@ header {
                 <h1 style="font-size:20px">{{ _('General Ledger') }}</h1>
             </td>
             <td style="text-align: right;">
-                {{ data['parameters']['now']}}
+                {{ time|render }}
             </td>
         </tr>
         </thead>

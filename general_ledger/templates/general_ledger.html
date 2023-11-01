@@ -1,7 +1,7 @@
 {% extends 'account_reports/templates/base.html' %}
 
 {% block title %}
-  {{ _('General Ledger') }} - {{ data['parameters']['company'] }} - {{ data['parameters']['now'] }}
+  {{ _('General Ledger') }} - {{ data['parameters']['company'] }} - {{ time|render }}
 {% endblock %}
 
 {% block main %}

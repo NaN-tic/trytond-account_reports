@@ -2,9 +2,9 @@
 
 {% block title %}
   {% if data['parameters']['jump_page'] %}
-    {{ _('Taxes By Invoice and Period') }} - {{ data['parameters']['company_rec_name'] }} - {{ data['parameters']['now'] }}
+    {{ _('Taxes By Invoice and Period') }} - {{ data['parameters']['company_rec_name'] }} - {{ time|render }}
   {% else %}
-    {{ _('Taxes By Invoice') }} - {{ data['parameters']['company_rec_name'] }} - {{ data['parameters']['now'] }}
+    {{ _('Taxes By Invoice') }} - {{ data['parameters']['company_rec_name'] }} - {{ time|render }}
   {% endif %}
 {% endblock %}
 
