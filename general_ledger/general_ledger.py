@@ -298,8 +298,6 @@ class GeneralLedgerReport(HTMLReport):
         parameters['fiscal_year'] = fiscalyear.rec_name if fiscalyear else ''
         parameters['accounts'] = accounts_subtitle
         parameters['parties'] = parties_subtitle
-        parameters['now'] = format_datetime(datetime.now(), format='short',
-            locale=Transaction().language or 'en')
         parameters['show_description'] = data.get('show_description', True)
 
         where = ''
