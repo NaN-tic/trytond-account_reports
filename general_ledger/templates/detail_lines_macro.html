@@ -4,7 +4,7 @@
     {% if l.line %}
       <tr>
         <td>{{ l.line.date and l.line.date|render }}</td>
-        <td>{% if l.line.move.post_number %}{{ l.line.move.post_number }}{% else %}{{ l.line.move.move_number }}{{ l.line.party and l.line.party.name }}{% endif %}</td>
+        <td>{% if l.line.move and l.line.move.post_number %}{{ l.line.move.post_number }}{% else %}{{ l.line.move and l.line.move.move_number or '' }}{{ l.line.party and l.line.party.name }}{% endif %}</td>
         <td>{% if l.ref %}{{ l.ref }}{% endif %}{% if l.ref and show_description and l.line and (l.line.description or l.line.move_description) %} // {% endif %}{% if show_description and l.line and l.line.description %} {{ l.line.description }} {% elif show_description and l.line and l.line.move_description %} {{ l.line.move_description }} {% endif %}</td>
         <td style="text-align: right;" class="no-wrap">{{ l.debit|render }}</td>
         <td style="text-align: right;" class="no-wrap">{{ l.credit|render }}</td>
