@@ -81,7 +81,7 @@ class PrintGeneralLedgerStart(ModelView):
         help='If unchecked print all tree accounts from 1 to all digits')
     parties = fields.Many2Many('party.party', None, None, 'Parties',
         context={
-            'company': Eval('company'),
+            'company': Eval('company', -1),
             },
         depends=['company'])
     output_format = fields.Selection([
