@@ -48,7 +48,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
     totals_only = fields.Boolean('Totals Only')
     parties = fields.Many2Many('party.party', None, None, 'Parties',
         context={
-            'company': Eval('company'),
+            'company': Eval('company', -1),
             },
         depends=['company'])
     output_format = fields.Selection([
