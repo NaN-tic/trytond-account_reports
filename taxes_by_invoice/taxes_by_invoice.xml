@@ -27,6 +27,7 @@ copyright notices and license terms. -->
             <field name="sequence" eval="99"/>
             <field name="filename">account_reports/taxes_by_invoice/templates/taxes_by_invoice.html</field>
         </record>
+
         <record model="ir.action.report" id="report_taxes_by_invoice">
             <field name="name">Taxes by Invoice</field>
             <field name="report_name">account_reports.taxes_by_invoice</field>
@@ -67,7 +68,7 @@ copyright notices and license terms. -->
         </record>
 
         <!-- menu wizard -->
-        <menuitem id="menu_print_taxes_by_invoice" name="Print Taxes by Invoice and Period HTML"
+        <menuitem id="menu_print_taxes_by_invoice" name="Print Taxes by Invoice and Period"
             parent="account.menu_reporting" action="wizard_print_taxes_by_invoice"
             icon="tryton-print"/>
     </data>
