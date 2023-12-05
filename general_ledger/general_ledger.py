@@ -589,7 +589,7 @@ class GeneralLedgerReport(HTMLReport):
         context['report_translations'] = os.path.join(
                 os.path.dirname(__file__), 'translations')
         if timeout:
-            context['timeout'] = timeout - int((end_prepare - start_prepare).total_seconds())
+            context['timeout_report'] = timeout - int((end_prepare - start_prepare).total_seconds())
 
         with Transaction().set_context(**context):
             return super(GeneralLedgerReport, cls).execute(ids, {
