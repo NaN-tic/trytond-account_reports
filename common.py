@@ -2,15 +2,39 @@
 # at the top level of this repository contains the full copyright notices and
 # license terms.
 from decimal import Decimal
+from datetime import datetime
 from sql.aggregate import Sum
 from sql.conditionals import Coalesce
 from sql.operators import In
 
+from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
 from trytond.tools import reduce_ids
 from trytond.transaction import Transaction
 
-__all__ = ['FiscalYear', 'Account', 'Party']
+
+class TimeoutException(Exception):
+    pass
+
+
+class TimeoutChecker:
+    def __init__(self, timeout, callback):
+        self._timeout = timeout
+        self._callback = callback
+        self._start = datetime.now()
+
+    @property
+    def elapsed(self):
+        return (datetime.now() - self._start).seconds
+
+    def check(self):
+        if self.elapsed > self._timeout:
+            self._callback()
+
+
+class Configuration(metaclass=PoolMeta):
+    __name__ = 'account.configuration'
+    default_timeout = fields.Integer('Timeout (s)')
 
 
 class FiscalYear(metaclass=PoolMeta):

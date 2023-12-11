@@ -91,6 +91,9 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
                     ('group.kind', 'in', ('both', 'purchase'))
                     )),
             ], depends=['partner_type'])
+    timeout = fields.Integer('Timeout', required=True, help='If report '
+        'calculation should take more than the specified timeout (in seconds) '
+        'the process will be stopped automatically.')
 
     @staticmethod
     def default_partner_type():
@@ -122,6 +125,12 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
     @staticmethod
     def default_output_format():
         return 'pdf'
+
+    @staticmethod
+    def default_timeout():
+        Config = Pool().get('account.configuration')
+        config = Config(1)
+        return config.default_timeout or 30
 
     @fields.depends('fiscalyear')
     def on_change_fiscalyear(self):
