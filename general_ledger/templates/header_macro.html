@@ -28,7 +28,7 @@ header {
                 <h1 style="font-size:20px">{{ _('General Ledger') }}</h1>
             </td>
             <td style="text-align: right;">
-                {{ data['parameters']['now']}}
+                {{ time|render }}
             </td>
         </tr>
         </thead>
@@ -51,8 +51,8 @@ header {
           </tr>
           <tr>
               <td>
-                {{ _("When the Move number is between '()' means it hasn't Post Number and the shown number is the provisional one.") }}
-              </td>  
+                <p>{{ _("When move number is between parentheses it means that it has no post number and the number shown is the provisional one.") }}<br/>
+              </td>
           </tr>
           </tbody>
       </table>

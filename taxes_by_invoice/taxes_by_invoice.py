@@ -48,7 +48,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
     totals_only = fields.Boolean('Totals Only')
     parties = fields.Many2Many('party.party', None, None, 'Parties',
         context={
-            'company': Eval('company'),
+            'company': Eval('company', -1),
             },
         depends=['company'])
     output_format = fields.Selection([
@@ -246,8 +246,6 @@ class TaxesByInvoiceReport(HTMLReport):
         parameters['periods'] = periods_subtitle
         parameters['totals_only'] = data['totals_only'] and True or False
         parameters['company_rec_name'] = company.rec_name if company else ''
-        parameters['now'] = format_datetime(datetime.now(), format='short',
-            locale=Transaction().language or 'en')
         parameters['company_vat'] = (company
             and company.party.tax_identifier and
             company.party.tax_identifier.code) or ''

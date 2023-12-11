@@ -75,7 +75,7 @@ class Account(metaclass=PoolMeta):
         cls.general_ledger_balance.states['invisible'] = True
 
     @classmethod
-    def html_read_account_vals(cls, accounts, with_moves=False,
+    def html_read_account_vals(cls, accounts, company, with_moves=False,
             exclude_party_moves=False, final_accounts=False):
         pool = Pool()
         Account = pool.get('account.account')
@@ -92,13 +92,13 @@ class Account(metaclass=PoolMeta):
         cursor = transaction.connection.cursor()
         move_join = 'INNER' if with_moves else 'LEFT'
         if not accounts:
-            domain = [
-                    ('company', '=', transaction.context.get('company')),
-                    ]
-            if final_accounts:
-                domain.append(('childs', '=', None))
-            accounts = Account.search(domain)
-        account_ids = [a.id for a in accounts]
+            accounts = Account.search([
+                    ('company', '=', company),
+                    ])
+        if final_accounts:
+            account_ids = [a.id for a in accounts if not a.childs]
+        else:
+            account_ids = [a.id for a in accounts]
         group_by = (table_a.id,)
         columns = (group_by + (Sum(Coalesce(line.debit, 0)).as_('debit'),
                 Sum(Coalesce(line.credit, 0)).as_('credit'),
@@ -115,6 +115,8 @@ class Account(metaclass=PoolMeta):
             date = transaction.context.get('date')
             if date:
                 where &= (move.date <= date)
+                where &= (move.date <= date)
+                where &= (move.company == company.id)
             if exclude_party_moves:
                 # This "where" not use account kind (before a change use it)
                 # because there are some companies that the accounts kind and

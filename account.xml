@@ -1,0 +1,11 @@
+<tryton>
+    <data>
+      <!-- desactive account reports -->
+      <record model="ir.action.report" id="account.report_general_ledger">
+          <field name="active" eval="False"/>
+      </record>
+      <record model="ir.action.report" id="account.report_trial_balance">
+          <field name="active" eval="False"/>
+      </record>
+    </data>
+</tryton>

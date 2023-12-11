@@ -83,7 +83,7 @@ class PrintGeneralLedgerStart(ModelView):
         help='If unchecked print all tree accounts from 1 to all digits')
     parties = fields.Many2Many('party.party', None, None, 'Parties',
         context={
-            'company': Eval('company'),
+            'company': Eval('company', -1),
             },
         depends=['company'])
     output_format = fields.Selection([
@@ -95,6 +95,8 @@ class PrintGeneralLedgerStart(ModelView):
     timeout = fields.Integer('Timeout', required=True, help='If report '
         'calculation should take more than the specified timeout (in seconds) '
         'the process will be stopped automatically.')
+    show_description = fields.Boolean('Show Description',
+        help='If checked show description from Account Move Line')
 
     @staticmethod
     def default_fiscalyear():
@@ -123,6 +125,8 @@ class PrintGeneralLedgerStart(ModelView):
         Config = Pool().get('account.configuration')
         config = Config(1)
         return config.default_timeout or 30
+    def default_show_description():
+        return True
 
     @fields.depends('fiscalyear')
     def on_change_fiscalyear(self):
@@ -160,6 +164,7 @@ class PrintGeneralLedger(Wizard):
             'parties': [x.id for x in self.start.parties],
             'output_format': self.start.output_format,
             'timeout': self.start.timeout,
+            'show_description': self.start.show_description,
             }
         return action, data
 
@@ -245,22 +250,9 @@ class GeneralLedgerReport(HTMLReport):
             BankLine = None
 
         def _get_key(currentKey):
-            account_code = currentKey[0].code or currentKey[0].name
-            if len(currentKey) > 1:
-                if currentKey[1]:
-                    key = '%s %s' % (account_code, currentKey[1].name)
-                else:
-                    key = account_code
-            else:
-                if currentKey[0].code:
-                    key = '%s %s' % (account_code, currentKey[0].name)
-                else:
-                    key = currentKey[0].name
-            return key
-
-        def _get_key_id(currentKey):
-            key = currentKey[0].id
-            return key
+            party = (currentKey[1].name if len(currentKey) > 1
+                and currentKey[1] else 'None')
+            return (currentKey[0].code, party)
 
         fiscalyear = (FiscalYear(data['fiscalyear']) if data.get('fiscalyear')
             else None)
@@ -317,8 +309,7 @@ class GeneralLedgerReport(HTMLReport):
         parameters['fiscal_year'] = fiscalyear.rec_name if fiscalyear else ''
         parameters['accounts'] = accounts_subtitle
         parameters['parties'] = parties_subtitle
-        parameters['now'] = format_datetime(datetime.now(), format='short',
-            locale=Transaction().language or 'en')
+        parameters['show_description'] = data.get('show_description', True)
 
         where = ''
         if accounts:
@@ -328,8 +319,7 @@ class GeneralLedgerReport(HTMLReport):
             where += "aa.parent is not null "
 
         if start_date:
-            if company:
-                where += "and am.company = %s " % company.id
+            where += "and am.company = %s " % company.id
             where += "and am.date >= '%s' " % start_date
             where += "and am.date <= '%s' " % end_date
         else:
@@ -376,193 +366,207 @@ class GeneralLedgerReport(HTMLReport):
         with Transaction().set_context(date=initial_balance_date):
             init_values = {}
             if not parties:
-                init_values = Account.html_read_account_vals(accounts,
+                init_values = Account.html_read_account_vals(accounts, company,
                     with_moves=False, exclude_party_moves=True,
                     final_accounts=data.get('final_accounts', False))
             init_party_values = Party.html_get_account_values_by_party(
                 parties, accounts, company)
-
+            init_parties = set([p for a, av in init_party_values.items()
+                    for p, pv in av.items()])
         records = {}
         parties_general_ledger = set()
         lastKey = None
         sequence = 0
         accounts_w_moves = []
-        count = Transaction().database.IN_MAX
-
-        checker_line_ids = line_ids[:]
-        while checker_line_ids:
+        # Add the asked period/date lines in records
+        for group_lines in grouped_slice(line_ids):
             checker.check()
+            for line in Line.browse(group_lines):
+                if line.account not in accounts_w_moves:
+                    accounts_w_moves.append(line.account.id)
+                currentKey = (line.account, line.party)
+                if lastKey != currentKey:
+                    lastKey = currentKey
+                    account_id = currentKey[0].id
+                    party_id = (currentKey[1].id if len(currentKey) > 1
+                        and currentKey[1] else None)
+                    parties_general_ledger.add(party_id)
+                    balance = init_party_values.get(account_id,
+                        {}).get(party_id, {}).get('balance', Decimal(0))
 
-            for group_lines in grouped_slice(line_ids):
-                for line in Line.browse(group_lines):
-                    if line.account not in accounts_w_moves:
-                        accounts_w_moves.append(line.account.id)
-                    if ((line.account.type.receivable or line.account.type.payable
-                                or line.account.party_required) and line.party):
-                        currentKey = (line.account, line.party)
-                    else:
-                        currentKey = (line.account,)
-                    if lastKey != currentKey:
-                        lastKey = currentKey
-                        account_id = currentKey[0].id
-                        if len(currentKey) > 1:
-                            party_id = currentKey[1].id if currentKey[1] else None
-                            parties_general_ledger.add(party_id)
-                            balance = init_party_values.get(account_id,
-                                {}).get(party_id, {}).get('balance', Decimal(0))
-                        else:
-                            balance = init_values.get(account_id, {}).get(
-                                'balance', Decimal(0))
-                    credit = line.credit
-                    debit = line.debit
-                    balance += line.debit - line.credit
+                credit = line.credit
+                debit = line.debit
+                balance += line.debit - line.credit
+                sequence += 1
+
+                party = None
+                ref = None
+
+                if line.origin and isinstance(line.origin, InvoiceLine):
+                    ref = cls._ref_origin_invoice_line(line)
+
+                    # If the account have the check "party_required", try to
+                    # get from the invoice
+                    if line.account.party_required:
+                        party = line.origin.invoice.party
+                elif (line.move_origin
+                        and isinstance(line.move_origin, Invoice)):
+                    ref = cls._ref_origin_invoice(line)
+
+                    # If the account have the check "party_required", try to
+                    # get from the invoice
+                    if line.account.party_required:
+                        party = line.move_origin.party
+                elif (line.origin and BankLine
+                        and isinstance(line.origin, BankLine)):
+                    ref = cls._ref_origin_bank_line(line)
+                else:
+                    ref = cls._ref_origin(line)
+
+                # If we don't fill the party in a party_required account, try
+                # get the party field in the line
+                if line.account.party_required and not party:
+                    party = line.party
+
+                rline = {
+                    'sequence': sequence,
+                    'line': line,
+                    'ref': ref,
+                    'credit': credit,
+                    'debit': debit,
+                    'balance': balance,
+                    'party': party
+                    }
+
+                key = _get_key(currentKey)
+                if records.get(key):
+                    records[key]['lines'].append(rline)
+                    records[key]['total_debit'] += debit
+                    records[key]['total_credit'] += credit
+                else:
+                    records[key] = {
+                        'account': line.account.name,
+                        'code': line.account.code or str(line.account.id),
+                        'party': line.party.name if line.party else None,
+                        'party_required': line.account.party_required,
+                        'lines': [rline],
+                        'previous_balance': (balance + credit - debit),
+                        'total_debit': debit,
+                        'total_credit': credit,
+                        }
+
+        # Control if there are some party moves with initial value, but not
+        # values in the current period control moves and must be to set.
+        missing_init_parties = list(
+            set(init_parties) - set(parties_general_ledger))
+        if missing_init_parties:
+            account_ids = [k for k, _ in init_party_values.items()]
+            accounts = dict((a.id, a) for a in Account.browse(account_ids))
+            for k, v in init_party_values.items():
+                account = accounts[k]
+                for p, z in v.items():
+                    if p not in missing_init_parties:
+                        continue
+                    party = Party(p) if p else None
+                    currentKey = (account, party)
+                    credit = z.get('credit', Decimal(0))
+                    debit = z.get('debit', Decimal(0))
+                    balance = z.get('balance', Decimal(0))
+                    if balance == Decimal(0):
+                        continue
                     sequence += 1
-
-                    party = None
-                    ref = None
-
-                    if line.origin and isinstance(line.origin, InvoiceLine):
-                        ref = cls._ref_origin_invoice_line(line)
-
-                        # If the account have the check "party_required", try to
-                        # get from the invoice
-                        if line.account.party_required:
-                            party = line.origin.invoice.party
-                    elif (line.move_origin
-                            and isinstance(line.move_origin, Invoice)):
-                        ref = cls._ref_origin_invoice(line)
-
-                        # If the account have the check "party_required", try to
-                        # get from the invoice
-                        if line.account.party_required:
-                            party = line.move_origin.party
-                    elif (line.origin and BankLine
-                            and isinstance(line.origin, BankLine)):
-                        ref = cls._ref_origin_bank_line(line)
-                    else:
-                        ref = cls._ref_origin(line)
-
-                    # If we dont fill the party in a party_required account, try
-                    # get the party field in the line
-                    if line.account.party_required and not party:
-                        party = line.party
-
                     rline = {
                         'sequence': sequence,
-                        'line': line,
-                        'ref': ref,
+                        'line': None,
+                        'ref': None,
                         'credit': credit,
                         'debit': debit,
                         'balance': balance,
                         'party': party
                         }
-
-                    key = _get_key_id(currentKey)
+                    key = _get_key(currentKey)
                     if records.get(key):
                         records[key]['lines'].append(rline)
                         records[key]['total_debit'] += debit
                         records[key]['total_credit'] += credit
                     else:
                         records[key] = {
-                            'account': line.account.name,
-                            'code': line.account.code or str(line.account.id),
-                            'party': line.party.name if line.party else None,
-                            'party_required': line.account.party_required,
+                            'account': account.name,
+                            'code': account.code or str(account.id),
+                            'party': party.name if party else None,
+                            'party_required': account.party_required,
                             'lines': [rline],
                             'previous_balance': (balance + credit - debit),
                             'total_debit': debit,
                             'total_credit': credit,
                             }
-                del checker_line_ids[:count]
-
+            checker.check()
         if data.get('all_accounts', True):
             init_values_account_wo_moves = {
                 k: init_values[k] for k in init_values
                 if k not in accounts_w_moves}
+            for account_id, values in init_values_account_wo_moves.items():
+                account = Account(account_id)
+                balance = values.get('balance', Decimal(0))
+                credit = values.get('credit', Decimal(0))
+                debit = values.get('debit', Decimal(0))
+                if balance == 0:
+                    continue
 
-            checker_init_values_account_wo_moves = list(init_values_account_wo_moves.keys())
-            while checker_init_values_account_wo_moves:
-                checker.check()
-
-                for account_id, values in init_values_account_wo_moves.items():
-                    account = Account(account_id)
-                    balance = values.get('balance', Decimal(0))
-                    credit = values.get('credit', Decimal(0))
-                    debit = values.get('debit', Decimal(0))
-                    if balance == 0:
-                        continue
-
-                    key = account.id
-                    if records.get(key):
-                        records[key]['total_debit'] += debit
-                        records[key]['total_credit'] += credit
-                    else:
-                        records[key] = {
-                            'account': account.name,
-                            'code': account.code or str(account.id),
-                            'party_required': account.party_required,
-                            'lines': [],
-                            'previous_balance': (balance + credit - debit),
-                            'total_debit': debit,
-                            'total_credit': credit,
-                            }
-                del checker_init_values_account_wo_moves[:count]
+                currentKey = (account,)
+                key = _get_key(currentKey)
+                if records.get(key):
+                    records[key]['total_debit'] += debit
+                    records[key]['total_credit'] += credit
+                else:
+                    records[key] = {
+                        'account': account.name,
+                        'code': account.code or str(account.id),
+                        'party': None,
+                        'party_required': account.party_required,
+                        'lines': [],
+                        'previous_balance': (balance + credit - debit),
+                        'total_debit': debit,
+                        'total_credit': credit,
+                        }
+            checker.check()
 
             if parties:
                 account_ids = [k for k, _ in init_party_values.items()]
                 accounts = dict((a.id, a) for a in Account.browse(account_ids))
                 parties = dict((p.id, p) for p in parties)
 
-                checker_init_party_values = list(init_party_values.keys())
-                while checker_init_party_values:
-                    checker.check()
+                for k, v in init_party_values.items():
+                    account = accounts[k]
+                    for p, z in v.items():
+                        # check if party is in current general ledger
+                        if p in parties_general_ledger:
+                            continue
+                        party = parties[p]
+                        currentKey = (account, party)
+                        sequence += 1
+                        credit = z.get('credit', Decimal(0))
+                        debit = z.get('debit', Decimal(0))
+                        balance = z.get('balance', Decimal(0))
 
-                    for k, v in init_party_values.items():
-                        account = accounts[k]
-                        for p, z in v.items():
-                            # check if party is in current general ledger
-                            if p in parties_general_ledger:
-                                continue
-                            party = parties[p]
-                            if account.type.receivable or account.type.payable:
-                                currentKey = (account, party)
-                            else:
-                                currentKey = (account,)
-                            sequence += 1
-                            credit = z.get('credit', Decimal(0))
-                            debit = z.get('debit', Decimal(0))
-                            balance = z.get('balance', Decimal(0))
-
-                            key = _get_key(currentKey)
-                            if records.get(key):
-                                records[key]['total_debit'] += debit
-                                records[key]['total_credit'] += credit
-                            else:
-                                records[key] = {
-                                    'account': account.name,
-                                    'code': account.code or str(account.id),
-                                    'lines': [],
-                                    'party_required': account.party_required,
-                                    'previous_balance': (balance + credit - debit),
-                                    'total_debit': debit,
-                                    'total_credit': credit,
-                                    }
-                        del checker_init_party_values[:count]
-
-            accounts = {}
-            for record in records.keys():
-                accounts[records[record]['code']
-                    + ' ' + records[record]['account']] = record
-
-            sorted_records = {}
-            checker_accounts = list(accounts.keys())
-            while checker_accounts:
+                        key = _get_key(currentKey)
+                        if records.get(key):
+                            records[key]['total_debit'] += debit
+                            records[key]['total_credit'] += credit
+                        else:
+                            records[key] = {
+                                'account': account.name,
+                                'code': account.code or str(account.id),
+                                'lines': [],
+                                'party': party.name if party else None,
+                                'party_required': account.party_required,
+                                'previous_balance': (balance + credit - debit),
+                                'total_debit': debit,
+                                'total_credit': credit,
+                                }
                 checker.check()
-                for account in dict(sorted(accounts.items())).values():
-                    sorted_records[account] = records[account]
-                    del checker_accounts[:count]
 
-        return sorted_records, parameters
+        return dict(sorted(records.items())), parameters
 
     @classmethod
     def timeout_exception(cls):
