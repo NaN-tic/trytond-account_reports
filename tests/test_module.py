@@ -11,7 +11,7 @@ from trytond.transaction import Transaction
 from trytond.modules.company.tests import create_company, set_company
 from trytond.modules.account.tests import create_chart, get_fiscalyear
 from trytond.modules.account_invoice.tests import set_invoice_sequences
-
+from trytond.modules.account_reports.common import TimeoutChecker
 
 class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
     'Test AccountReports module'
@@ -300,6 +300,8 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.all_accounts = False
         print_general_ledger.start.final_accounts = False
         print_general_ledger.start.show_description = True
+        print_general_ledger.start.timeout = 30
+        checker = TimeoutChecker(print_general_ledger.start.timeout, GeneralLedgerReport.timeout_exception)
         _, data = print_general_ledger.do_print_(None)
 
         # Full general_ledger
@@ -310,7 +312,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(len(data['accounts']), 0)
         self.assertEqual(len(data['parties']), 0)
         self.assertEqual(data['output_format'], 'pdf')
-        records, parameters = GeneralLedgerReport.prepare(data)
+        records, parameters = GeneralLedgerReport.prepare(data, checker)
         self.assertEqual(len(records), 6)
         self.assertEqual(parameters['start_period'].name, period.name)
         self.assertEqual(parameters['end_period'].name, last_period.name)
@@ -343,8 +345,10 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.final_accounts = False
         print_general_ledger.start.show_description = True
         print_general_ledger.start.output_format = 'pdf'
+        print_general_ledger.start.timeout = 30
+        checker = TimeoutChecker(print_general_ledger.start.timeout, GeneralLedgerReport.timeout_exception)
         _, data = print_general_ledger.do_print_(None)
-        records, parameters = GeneralLedgerReport.prepare(data)
+        records, parameters = GeneralLedgerReport.prepare(data, checker)
         self.assertEqual(len(records), 6)
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
@@ -369,8 +373,10 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.final_accounts = False
         print_general_ledger.start.show_description = True
         print_general_ledger.start.output_format = 'pdf'
+        print_general_ledger.start.timeout = 30
+        checker = TimeoutChecker(print_general_ledger.start.timeout, GeneralLedgerReport.timeout_exception)
         _, data = print_general_ledger.do_print_(None)
-        records, parameters = GeneralLedgerReport.prepare(data)
+        records, parameters = GeneralLedgerReport.prepare(data, checker)
         self.assertEqual(len(records), 6)
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
@@ -398,8 +404,10 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.final_accounts = False
         print_general_ledger.start.show_description = True
         print_general_ledger.start.output_format = 'pdf'
+        print_general_ledger.start.timeout = 30
+        checker = TimeoutChecker(print_general_ledger.start.timeout, GeneralLedgerReport.timeout_exception)
         _, data = print_general_ledger.do_print_(None)
-        records, parameters = GeneralLedgerReport.prepare(data)
+        records, parameters = GeneralLedgerReport.prepare(data, checker)
         self.assertEqual(parameters['accounts'], expense.code)
         self.assertEqual(len(records), 1)
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
@@ -423,8 +431,10 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.final_accounts = False
         print_general_ledger.start.show_description = True
         print_general_ledger.start.output_format = 'pdf'
+        print_general_ledger.start.timeout = 30
+        checker = TimeoutChecker(print_general_ledger.start.timeout, GeneralLedgerReport.timeout_exception)
         _, data = print_general_ledger.do_print_(None)
-        records, parameters = GeneralLedgerReport.prepare(data)
+        records, parameters = GeneralLedgerReport.prepare(data, checker)
         self.assertEqual(parameters['parties'], customer1.rec_name)
         self.assertEqual(len(records), 1)
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
@@ -456,8 +466,10 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.all_accounts = False
         print_general_ledger.start.final_accounts = False
         print_general_ledger.start.show_description = True
+        print_general_ledger.start.timeout = 30
+        checker = TimeoutChecker(print_general_ledger.start.timeout, GeneralLedgerReport.timeout_exception)
         _, data = print_general_ledger.do_print_(None)
-        records, parameters = GeneralLedgerReport.prepare(data)
+        records, parameters = GeneralLedgerReport.prepare(data, checker)
         self.assertEqual(parameters['parties'], customer1.rec_name)
         self.assertEqual(parameters['accounts'], receivable.code)
         self.assertEqual(len(records), 1)
@@ -466,6 +478,6 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(credit, Decimal('0.0'))
         self.assertEqual(debit, Decimal('100.0'))
         self.assertEqual(True, all([line for k, m in records.items() for line in m['lines'] if line['line'].party]))
-        
+
 
 del ModuleTestCase
