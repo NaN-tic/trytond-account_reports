@@ -9,6 +9,7 @@ from . import taxes_by_invoice
 def register():
     module = 'account_reports'
     Pool.register(
+        common.Configuration,
         common.Account,
         common.Party,
         common.FiscalYear,

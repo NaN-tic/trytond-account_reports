@@ -10,6 +10,9 @@ from trytond.model import ModelView, fields
 from trytond.wizard import Wizard, StateView, StateReport, Button
 from trytond.pyson import Eval, Bool, If
 from trytond.tools import grouped_slice
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
+from trytond.modules.account_reports.common import TimeoutException, TimeoutChecker
 from trytond.modules.html_report.html_report import HTMLReport
 from babel.dates import format_datetime
 from trytond.rpc import RPC
@@ -89,6 +92,9 @@ class PrintGeneralLedgerStart(ModelView):
             ('xls', 'Excel'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
+    timeout = fields.Integer('Timeout', required=True, help='If report '
+        'calculation should take more than the specified timeout (in seconds) '
+        'the process will be stopped automatically.')
     show_description = fields.Boolean('Show Description',
         help='If checked show description from Account Move Line')
 
@@ -115,6 +121,10 @@ class PrintGeneralLedgerStart(ModelView):
         return 'pdf'
 
     @staticmethod
+    def default_timeout():
+        Config = Pool().get('account.configuration')
+        config = Config(1)
+        return config.default_timeout or 30
     def default_show_description():
         return True
 
@@ -153,6 +163,7 @@ class PrintGeneralLedger(Wizard):
             'final_accounts': self.start.final_accounts,
             'parties': [x.id for x in self.start.parties],
             'output_format': self.start.output_format,
+            'timeout': self.start.timeout,
             'show_description': self.start.show_description,
             }
         return action, data
@@ -223,7 +234,7 @@ class GeneralLedgerReport(HTMLReport):
             and hasattr(line.origin, 'rec_name') else None)
 
     @classmethod
-    def prepare(cls, data):
+    def prepare(cls, data, checker):
         pool = Pool()
         Company = pool.get('company.company')
         FiscalYear = pool.get('account.fiscalyear')
@@ -369,6 +380,7 @@ class GeneralLedgerReport(HTMLReport):
         accounts_w_moves = []
         # Add the asked period/date lines in records
         for group_lines in grouped_slice(line_ids):
+            checker.check()
             for line in Line.browse(group_lines):
                 if line.account not in accounts_w_moves:
                     accounts_w_moves.append(line.account.id)
@@ -488,7 +500,7 @@ class GeneralLedgerReport(HTMLReport):
                             'total_debit': debit,
                             'total_credit': credit,
                             }
-
+            checker.check()
         if data.get('all_accounts', True):
             init_values_account_wo_moves = {
                 k: init_values[k] for k in init_values
@@ -517,6 +529,7 @@ class GeneralLedgerReport(HTMLReport):
                         'total_debit': debit,
                         'total_credit': credit,
                         }
+            checker.check()
 
             if parties:
                 account_ids = [k for k, _ in init_party_values.items()]
@@ -551,18 +564,36 @@ class GeneralLedgerReport(HTMLReport):
                                 'total_debit': debit,
                                 'total_credit': credit,
                                 }
+                checker.check()
 
         return dict(sorted(records.items())), parameters
 
     @classmethod
+    def timeout_exception(cls):
+        raise TimeoutException
+
+    @classmethod
     def execute(cls, ids, data):
+        Config = Pool().get('account.configuration')
+
+        config = Config(1)
+        timeout = data.get('timeout') or config.default_timeout or 300
+        checker = TimeoutChecker(timeout, cls.timeout_exception)
+
+        start_prepare = datetime.now()
         with Transaction().set_context(active_test=False):
-            records, parameters = cls.prepare(data)
+            try:
+                records, parameters = cls.prepare(data, checker)
+            except TimeoutException:
+                raise UserError(gettext('account_reports.timeout_exception'))
+        end_prepare = datetime.now()
 
         context = Transaction().context.copy()
         context['report_lang'] = Transaction().language
         context['report_translations'] = os.path.join(
                 os.path.dirname(__file__), 'translations')
+        if timeout:
+            context['timeout_report'] = timeout - int((end_prepare - start_prepare).total_seconds())
 
         with Transaction().set_context(**context):
             return super(GeneralLedgerReport, cls).execute(ids, {
