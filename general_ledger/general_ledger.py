@@ -39,7 +39,7 @@ class PrintGeneralLedgerStart(ModelView):
                 ('start_date', '<=', (Eval('end_period'), 'start_date')),
                 (),
                 ),
-            ], depends=['fiscalyear', 'end_period'])
+            ])
     end_period = fields.Many2One('account.period', 'End Period',
         states={
             'invisible': Eval('start_date') | Eval('end_date'),
@@ -50,8 +50,7 @@ class PrintGeneralLedgerStart(ModelView):
                 ('start_date', '>=', (Eval('start_period'), 'start_date')),
                 (),
                 ),
-            ],
-        depends=['fiscalyear', 'start_period'])
+            ])
     start_date = fields.Date('Initial Posting Date',
         domain=[
             If(Eval('start_date') & Eval('end_date'),
@@ -62,8 +61,7 @@ class PrintGeneralLedgerStart(ModelView):
             'invisible': Eval('start_period') | Eval('end_period'),
             'required': ((Eval('start_date') | Eval('end_date')) &
                 ~Bool(Eval('start_period') | Eval('end_period'))),
-            },
-        depends=['end_date'])
+            })
     end_date = fields.Date('Final Posting Date',
         domain=[
             If(Eval('start_date') & Eval('end_date'),
@@ -74,8 +72,7 @@ class PrintGeneralLedgerStart(ModelView):
             'invisible': Eval('start_period') | Eval('end_period'),
             'required': ((Eval('end_date') | Eval('start_date')) &
                 ~Bool(Eval('start_period') | Eval('end_period')))
-            },
-        depends=['start_date'])
+            })
     accounts = fields.Many2Many('account.account', None, None, 'Accounts')
     all_accounts = fields.Boolean('All accounts with and without balance',
         help='If unchecked only print accounts with previous balance different'

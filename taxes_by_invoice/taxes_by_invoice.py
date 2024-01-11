@@ -32,7 +32,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
             },
         domain=[
             ('fiscalyear', '=', Eval('fiscalyear')),
-            ], depends=['fiscalyear'])
+            ])
     partner_type = fields.Selection([
             ('customers', 'Customers'),
             ('suppliers', 'Suppliers'),
@@ -68,8 +68,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
             'invisible': Bool(Eval('periods')),
             'required': ((Eval('start_date') | Eval('end_date')) &
                 ~Bool(Eval('periods'))),
-            },
-        depends=['end_date', 'periods'])
+            })
     end_date = fields.Date('Final posting date',
         domain=[
             If(Eval('start_date') & Eval('end_date'),
@@ -80,8 +79,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
             'invisible': Bool(Eval('periods')),
             'required': ((Eval('end_date') | Eval('start_date')) &
                 ~Bool(Eval('periods'))),
-            },
-        depends=['start_date', 'periods'])
+            })
     taxes = fields.Many2Many('account.tax', None, None, 'Taxes',
         domain=[
             If(Eval('partner_type') == 'customers',
@@ -90,7 +88,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
                     ('group', '=', None),
                     ('group.kind', 'in', ('both', 'purchase'))
                     )),
-            ], depends=['partner_type'])
+            ])
     timeout = fields.Integer('Timeout', required=True, help='If report '
         'calculation should take more than the specified timeout (in seconds) '
         'the process will be stopped automatically.')
