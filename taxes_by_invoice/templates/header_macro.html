@@ -17,11 +17,12 @@ header {
 </style>
 
 <header id="header">
-    <table>
+    <table style="width:100%;padding-right: 1cm;">
         <thead>
         <tr>
-            <td style="font-style: italic;font-size: 14px;font-weight: bold;">
-                {{ data['parameters']['company_rec_name']}}
+            <td>
+                <span style="font-style: italic;font-size: 14px;font-weight: bold;">{{ data['parameters']['company'] }}</span><br/>
+                {{ _('VAT') }}: {{ data['parameters']['company_vat'] }}
             </td>
             <td class="center" style="width:60%;text-align: center;font-size: 15px;">
                 <h1 style="font-size:20px">{% if data['parameters']['jump_page'] %}{{ _('Taxes By Invoice and Period') }}{% else %}{{ _('Taxes By Invoice') }}{% endif %}</h1>
