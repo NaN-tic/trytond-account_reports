@@ -8,26 +8,26 @@
             <th colspan="2">{{ _('NIF')}}</th>
             <th>{{ _('Invoice')}}</th>
             <th>{{ _('Date')}}</th>
-            <th>{{ _('Base')}}</th>
-            <th colspan="2">{{ _('Tax')}}</th>
-            <th>{{ _('Base + Tax')}}</th>
-            <th>{{ _('Total Invoice')}}</th>
+            <th style="text-align: right;">{{ _('Base')}}</th>
+            <th colspan="2" style="text-align: right;">{{ _('Tax')}}</th>
+            <th style="text-align: right;">{{ _('Base + Tax')}}</th>
+            <th style="text-align: right;">{{ _('Total Invoice')}}</th>
         </tr>
         </thead>
         {% else %}
-                <thead>
-                <tr>
-                    <th>{{ _('Move Date')}}</th>
-                    <th>{{ _('Account')}}</th>
-                    <th colspan="2" style="text-align: right;">{{ _('NIF')}}</th>
-                    <th>{{ _('Invoice')}}</th>
-                    <th>{{ _('Date')}}</th>
-                    <th>{{ _('Base')}}</th>
-                    <th colspan="2">{{ _('Tax')}}</th>
-                    <th>{{ _('Base + Tax')}}</th>
-                    <th>{{ _('Total Invoice')}}</th>
-                </tr>
-                </thead>
+        <thead>
+        <tr>
+            <th>{{ _('Move Date')}}</th>
+            <th>{{ _('Account')}}</th>
+            <th colspan="2" style="text-align: right;">{{ _('NIF')}}</th>
+            <th>{{ _('Invoice')}}</th>
+            <th>{{ _('Date')}}</th>
+            <th style="text-align: right;">{{ _('Base')}}</th>
+            <th colspan="2" style="text-align: right;">{{ _('Tax')}}</th>
+            <th style="text-align: right;">{{ _('Base + Tax')}}</th>
+            <th style="text-align: right;">{{ _('Total Invoice')}}</th>
+        </tr>
+        </thead>
         {% endif %}
         <tr>
             <td colspan="11" style="text-align: left !important;padding-left: 35px !important;" class="bold">{{ k.name }}</td>
