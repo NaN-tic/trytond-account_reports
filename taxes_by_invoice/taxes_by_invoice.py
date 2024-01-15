@@ -245,7 +245,7 @@ class TaxesByInvoiceReport(HTMLReport):
         parameters['parties'] = parties_subtitle
         parameters['periods'] = periods_subtitle
         parameters['totals_only'] = data['totals_only'] and True or False
-        parameters['company_rec_name'] = company.rec_name if company else ''
+        parameters['company'] = company.rec_name if company else ''
         parameters['company_vat'] = (company
             and company.party.tax_identifier and
             company.party.tax_identifier.code) or ''
