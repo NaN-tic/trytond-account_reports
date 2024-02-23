@@ -205,6 +205,8 @@ class GeneralLedgerReport(HTMLReport):
 
     @classmethod
     def _ref_origin_invoice_line(cls, line):
+        if not line.invoice:
+            return ''
         ref = []
         if line.origin.invoice.number:
             ref.append('%s' % line.origin.invoice.number)
