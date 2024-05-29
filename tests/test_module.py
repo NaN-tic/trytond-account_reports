@@ -412,7 +412,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(len(records), 1)
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
-        self.assertEqual(credit, Decimal('0.0'))
+        self.assertEqual(credit, Decimal(0))
         self.assertEqual(debit, Decimal('130.0'))
 
         # Filter by parties
@@ -439,12 +439,12 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(len(records), 1)
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
-        self.assertEqual(credit, Decimal('0.0'))
+        self.assertEqual(credit, Decimal(0))
         self.assertEqual(debit, Decimal('100.0'))
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines'] if m['party'] == ''])
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines'] if m['party'] == ''])
-        self.assertEqual(credit, Decimal('0.0'))
-        self.assertEqual(debit, Decimal('0.0'))
+        self.assertEqual(credit, Decimal(0))
+        self.assertEqual(debit, Decimal(0))
         parties = [line for k, m in records.items() for line in m['lines'] if not line['line'].party]
         self.assertEqual(len(parties), 0)
 
@@ -475,7 +475,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(len(records), 1)
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
-        self.assertEqual(credit, Decimal('0.0'))
+        self.assertEqual(credit, Decimal(0))
         self.assertEqual(debit, Decimal('100.0'))
         self.assertEqual(True, all([line for k, m in records.items() for line in m['lines'] if line['line'].party]))
 
