@@ -90,7 +90,7 @@ class PrintGeneralLedgerStart(ModelView):
             ('xls', 'Excel'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
-    timeout = fields.Integer('Timeout', required=True, help='If report '
+    timeout = fields.Integer('Timeout (s)', required=True, help='If report '
         'calculation should take more than the specified timeout (in seconds) '
         'the process will be stopped automatically.')
     show_description = fields.Boolean('Show Description',
@@ -590,7 +590,7 @@ class GeneralLedgerReport(HTMLReport):
             try:
                 records, parameters = cls.prepare(data, checker)
             except TimeoutException:
-                raise UserError(gettext('account_reports.timeout_exception'))
+                raise UserError(gettext('account_reports.msg_timeout_exception'))
         end_prepare = datetime.now()
 
         context = Transaction().context.copy()
