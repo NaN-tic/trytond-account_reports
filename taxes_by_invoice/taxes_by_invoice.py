@@ -130,9 +130,10 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
         config = Config(1)
         return config.default_timeout or 30
 
-    @fields.depends('fiscalyear')
+    @fields.depends('fiscalyear', 'periods')
     def on_change_fiscalyear(self):
-        self.periods = None
+        if not self.fiscalyear:
+            self.periods = None
 
 
 class PrintTaxesByInvoiceAndPeriod(Wizard):
