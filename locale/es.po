@@ -163,10 +163,6 @@ msgctxt "model:account_reports.print_taxes_by_invoice.start,name:"
 msgid "Print Taxes by Invoice and Period"
 msgstr "Imprimir impuestos por factura y período"
 
-msgctxt "model:ir.action,name:"
-msgid "Abreviated Journal"
-msgstr "Diario abreviado"
-
 msgctxt "model:ir.action,name:report_general_ledger"
 msgid "General Ledger"
 msgstr "Libro mayor"
