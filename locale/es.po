@@ -226,10 +226,6 @@ msgstr ""
 "aumentar el tiempo de espera de los informes de la cuenta o exportarlos al "
 "formato XLS."
 
-msgctxt "model:ir.ui.menu,name:"
-msgid "Print Abreviated Journal"
-msgstr "Imprimir diario abreviado"
-
 msgctxt "model:ir.ui.menu,name:menu_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimir libro mayor"

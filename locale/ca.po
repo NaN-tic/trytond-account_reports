@@ -226,10 +226,6 @@ msgstr ""
 "augmentar el temps d'espera de l'informe o exportar-los al "
 "format XLS."
 
-msgctxt "model:ir.ui.menu,name:"
-msgid "Print Abreviated Journal"
-msgstr "Imprimeix diari abreviat"
-
 msgctxt "model:ir.ui.menu,name:menu_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimeix llibre major"
