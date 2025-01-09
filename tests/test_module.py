@@ -60,7 +60,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         root, = Account.search([
                 ('parent', '=', None),
                 ('company', '=', company.id),
-                ])
+                ], limit=1)
         accounts['root'] = root
         if not accounts['revenue'].code:
             accounts['revenue'].parent = root
@@ -79,23 +79,10 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
             accounts['payable'].code = '41'
             accounts['payable'].save()
 
-        # TODO
-        cash, = Account.search([
-        #        ('kind', '=', 'other'),
-                ('name', '=', 'Main Cash'),
-                ('company', '=', company.id),
-                ])
-        accounts['cash'] = cash
-        tax, = Account.search([
-        #        ('kind', '=', 'other'),
-                ('name', '=', 'Main Tax'),
-                ('company', '=', company.id),
-                ])
-        accounts['tax'] = tax
         views = Account.search([
                 ('name', '=', 'View'),
                 ('company', '=', company.id),
-                ])
+                ], limit=1)
         if views:
             view, = views
         else:
@@ -387,8 +374,9 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
             self.assertEqual(date, period.start_date)
 
         # Filtered by accounts
-        expense, = Account.search([
+        expenses = Account.search([
                 ('type.expense', '=', True),
+                ('closed', '!=', True),
                 ])
         session_id, _, _ = PrintGeneralLedger.create()
         print_general_ledger = PrintGeneralLedger(session_id)
@@ -399,7 +387,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.start_date = None
         print_general_ledger.start.end_date = None
         print_general_ledger.start.parties = []
-        print_general_ledger.start.accounts = [expense.id]
+        print_general_ledger.start.accounts = [e.id for e in expenses]
         print_general_ledger.start.all_accounts = False
         print_general_ledger.start.final_accounts = False
         print_general_ledger.start.show_description = True
@@ -408,7 +396,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         checker = TimeoutChecker(print_general_ledger.start.timeout, GeneralLedgerReport.timeout_exception)
         _, data = print_general_ledger.do_print_(None)
         records, parameters = GeneralLedgerReport.prepare(data, checker)
-        self.assertEqual(parameters['accounts'], expense.code)
+        self.assertEqual(parameters['accounts'], ', '.join([e.code for e in expenses]))
         self.assertEqual(len(records), 1)
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
@@ -449,8 +437,9 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(len(parties), 0)
 
         # Filter by parties and accounts
-        receivable, = Account.search([
+        receivables = Account.search([
                 ('type.receivable', '=', True),
+                ('closed', '!=', True),
                 ])
         session_id, _, _ = PrintGeneralLedger.create()
         print_general_ledger = PrintGeneralLedger(session_id)
@@ -461,7 +450,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.start_date = None
         print_general_ledger.start.end_date = None
         print_general_ledger.start.parties = [customer1.id]
-        print_general_ledger.start.accounts = [receivable.id]
+        print_general_ledger.start.accounts = [r.id for r in receivables]
         print_general_ledger.start.output_format = 'pdf'
         print_general_ledger.start.all_accounts = False
         print_general_ledger.start.final_accounts = False
@@ -471,7 +460,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         _, data = print_general_ledger.do_print_(None)
         records, parameters = GeneralLedgerReport.prepare(data, checker)
         self.assertEqual(parameters['parties'], customer1.rec_name)
-        self.assertEqual(parameters['accounts'], receivable.code)
+        self.assertEqual(parameters['accounts'], ', '.join([r.code for r in receivables]))
         self.assertEqual(len(records), 1)
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
