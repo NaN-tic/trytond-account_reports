@@ -50,7 +50,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
             'company': Eval('company', -1),
             },
         depends=['company'], help="Left empty to select all parties")
-    excluded_parties = fields.Many2Many('party.party', None, None, 
+    excluded_parties = fields.Many2Many('party.party', None, None,
     'Excluded Parties',
     context={
         'company': Eval('company', -1),
@@ -162,7 +162,7 @@ class PrintTaxesByInvoiceAndPeriod(Wizard):
             'start_date': self.start.start_date,
             'end_date': self.start.end_date,
             'periods': [x.id for x in self.start.periods],
-            'parties': [x.id for x in self.start.parties if 
+            'parties': [x.id for x in self.start.parties if
                         x not in self.start.excluded_parties],
             'excluded_parties': [x.id for x in self.start.excluded_parties],
             'output_format': self.start.output_format,
