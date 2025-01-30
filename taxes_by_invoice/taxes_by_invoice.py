@@ -1,7 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 import os
-from datetime import datetime
 from decimal import Decimal
 from trytond.pool import Pool
 from trytond.transaction import Transaction
@@ -11,7 +10,6 @@ from trytond.pyson import Eval, If, Bool
 from trytond.rpc import RPC
 from trytond.modules.html_report.html_report import HTMLReport
 from trytond.modules.html_report.engine import DualRecord
-from babel.dates import format_datetime
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 
 _ZERO = Decimal(0)
@@ -32,7 +30,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
             },
         domain=[
             ('fiscalyear', '=', Eval('fiscalyear')),
-            ])
+            ], help="Left empty to select all periods")
     partner_type = fields.Selection([
             ('customers', 'Customers'),
             ('suppliers', 'Suppliers'),
@@ -51,7 +49,13 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
         context={
             'company': Eval('company', -1),
             },
-        depends=['company'])
+        depends=['company'], help="Left empty to select all parties")
+    excluded_parties = fields.Many2Many('party.party', None, None, 
+    'Excluded Parties',
+    context={
+        'company': Eval('company', -1),
+        },
+    depends=['company'])
     output_format = fields.Selection([
             ('pdf', 'PDF'),
             ('html', 'HTML'),
@@ -88,7 +92,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
                     ('group', '=', None),
                     ('group.kind', 'in', ('both', 'purchase'))
                     )),
-            ])
+            ], help="Left empty to select all taxes")
     timeout = fields.Integer('Timeout', required=True, help='If report '
         'calculation should take more than the specified timeout (in seconds) '
         'the process will be stopped automatically.')
@@ -152,14 +156,15 @@ class PrintTaxesByInvoiceAndPeriod(Wizard):
             else None)
         if self.start.start_date:
             fiscalyear = None
-
         data = {
             'company': self.start.company.id,
             'fiscalyear': fiscalyear,
             'start_date': self.start.start_date,
             'end_date': self.start.end_date,
             'periods': [x.id for x in self.start.periods],
-            'parties': [x.id for x in self.start.parties],
+            'parties': [x.id for x in self.start.parties if 
+                        x not in self.start.excluded_parties],
+            'excluded_parties': [x.id for x in self.start.excluded_parties],
             'output_format': self.start.output_format,
             'partner_type': self.start.partner_type,
             'totals_only': self.start.totals_only,
@@ -248,6 +253,7 @@ class TaxesByInvoiceReport(HTMLReport):
         parameters['end_date'] = (end_date.strftime('%d/%m/%Y')
             if end_date else '')
         parameters['parties'] = parties_subtitle
+        parameters['excluded_parties'] = parties_subtitle
         parameters['periods'] = periods_subtitle
         parameters['totals_only'] = data['totals_only'] and True or False
         parameters['company'] = company.rec_name if company else ''
@@ -281,6 +287,10 @@ class TaxesByInvoiceReport(HTMLReport):
 
         if parties:
             domain += [('invoice.party', 'in', parties)],
+
+        excluded_parties = Party.browse(data.get('excluded_parties', []))
+        if excluded_parties:
+            domain += [('invoice.party', 'not in', excluded_parties)]
 
         if data['tax_type'] == 'invoiced':
             domain += [('base', '>=', 0)]
