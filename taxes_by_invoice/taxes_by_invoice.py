@@ -30,7 +30,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
             },
         domain=[
             ('fiscalyear', '=', Eval('fiscalyear')),
-            ], help="Left empty to select all periods")
+            ], help="Leave empty to select all periods")
     partner_type = fields.Selection([
             ('customers', 'Customers'),
             ('suppliers', 'Suppliers'),
@@ -49,7 +49,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
         context={
             'company': Eval('company', -1),
             },
-        depends=['company'], help="Left empty to select all parties")
+        depends=['company'], help="Leave empty to select all parties")
     excluded_parties = fields.Many2Many('party.party', None, None,
     'Excluded Parties',
     context={
@@ -92,7 +92,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
                     ('group', '=', None),
                     ('group.kind', 'in', ('both', 'purchase'))
                     )),
-            ], help="Left empty to select all taxes")
+            ], help="Leave empty to select all taxes")
     timeout = fields.Integer('Timeout', required=True, help='If report '
         'calculation should take more than the specified timeout (in seconds) '
         'the process will be stopped automatically.')

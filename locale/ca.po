@@ -141,15 +141,15 @@ msgstr ""
 "segons), el procés s'aturarà automàticament."
 
 msgctxt "help:account_reports.print_taxes_by_invoice.start,parties:"
-msgid "Left empty to select all parties"
+msgid "Leave empty to select all parties"
 msgstr "Deixeu-ho en blanc per seleccionar tots els tercers"
 
 msgctxt "help:account_reports.print_taxes_by_invoice.start,periods:"
-msgid "Left empty to select all periods"
+msgid "Leave empty to select all periods"
 msgstr "Deixeu-ho en blanc per seleccionar tots els perídoes"
 
 msgctxt "help:account_reports.print_taxes_by_invoice.start,taxes:"
-msgid "Left empty to select all taxes"
+msgid "Leave empty to select all taxes"
 msgstr "Deixeu-ho en blanc per seleccionar tots els impostos"
 
 msgctxt "help:account_reports.print_taxes_by_invoice.start,timeout:"
@@ -465,11 +465,11 @@ msgid "Report"
 msgstr "Informe"
 
 msgctxt "view:account_reports.print_general_ledger.start:"
-msgid "Left empty to select all accounts"
+msgid "Leave empty to select all accounts"
 msgstr "Deixeu-ho en blanc per seleccionar tots els comptes"
 
 msgctxt "view:account_reports.print_general_ledger.start:"
-msgid "Left empty to select all parties"
+msgid "Leave empty to select all parties"
 msgstr "Deixeu-ho en blanc per seleccionar tots els tercers"
 
 msgctxt "view:account_reports.print_taxes_by_invoice.start:"
