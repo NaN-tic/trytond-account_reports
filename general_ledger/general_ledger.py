@@ -128,6 +128,7 @@ class PrintGeneralLedgerStart(ModelView):
         Config = Pool().get('account.configuration')
         config = Config(1)
         return config.default_timeout or 30
+
     def default_show_description():
         return True
 
