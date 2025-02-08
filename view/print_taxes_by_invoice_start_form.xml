@@ -21,12 +21,10 @@ copyright notices and license terms. -->
     <label name="totals_only"/>
     <field name="totals_only"/>
     <newline/>
-    <label id="select_periods" string="Left empty to select all periods"/>
-    <field name="periods" colspan="4"/>
-    <label id="select_parties" string="Left empty to select all parties"/>
-    <field name="parties" colspan="4"/>
-    <label id="select_taxes" string="Left empty to select all taxes"/>
-    <field name="taxes" colspan="4"/>
+    <field name="periods" colspan="2"/>
+    <field name="taxes" colspan="2"/>
+    <field name="parties" colspan="2"/>
+    <field name="excluded_parties" colspan="2"/>
     <label name="output_format"/>
     <field name="output_format"/>
     <label name="timeout"/>
