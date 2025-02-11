@@ -1,0 +1,9 @@
+{% extends 'account_reports/templates/base.html' %}
+
+{% block title %}
+    {{ _('Trial Balance') }} - {{ data['parameters']['company_rec_name'] }} - {{ time|render }}
+{% endblock %}
+
+{% block main %}
+    {{ show_detail(data['records']) }}
+{% endblock %}

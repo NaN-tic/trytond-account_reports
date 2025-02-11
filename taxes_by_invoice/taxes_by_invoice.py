@@ -1,7 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 import os
-from datetime import datetime
 from decimal import Decimal
 from trytond.pool import Pool
 from trytond.transaction import Transaction
@@ -11,7 +10,6 @@ from trytond.pyson import Eval, If, Bool
 from trytond.rpc import RPC
 from trytond.modules.html_report.html_report import HTMLReport
 from trytond.modules.html_report.engine import DualRecord
-from babel.dates import format_datetime
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 
 _ZERO = Decimal(0)
