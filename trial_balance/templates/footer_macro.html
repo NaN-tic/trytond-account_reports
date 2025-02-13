@@ -1,0 +1,21 @@
+<style>
+    @page {
+        size: A4 landscape;
+    }
+
+    footer {
+      position: fixed;
+      width: 85%;
+      bottom: 0;
+      padding: 0.5cm;
+      text-align: left;
+      font-size: 7px;
+      margin-right: 1cm;
+      margin-left: 1cm;
+      font-family: 'Arial';
+    }
+    </style>
+
+    <footer id="footer" align="left">
+        <p>{{ time|render }}</p>
+    </footer>

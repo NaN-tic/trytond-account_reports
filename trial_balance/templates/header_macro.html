@@ -23,25 +23,25 @@ header {
                 <span style="font-style: italic;font-size: 14px;font-weight: bold;">{{ data['parameters']['company_rec_name'] }}</span><br/>
                 {{ _('VAT') }}: {{ data['parameters']['company_vat'] }}
             </td>
-            <td class="center" style="width:60%;text-align: center;font-size: 15px;">
+            <td class="center" style="width:50%;text-align: center;font-size: 15px;">
                 <h1 style="font-size:20px">{{ _('Trial Balance') }}</h1>
             </td>
-            <td style="text-align: right;">
-                {{ time|render }}
-            </td>
+            <td style="text-align: right;"></td>
         </tr>
         {% if data['parameters']['comparison_fiscalyear'] != '' %}
             <tr>
                 <td colspan="3">
                     {{ _('First Balance')}} {{ data['parameters']['fiscalyear'] }}: {{ _('From: ')}} {{ data['parameters']['start_period'] }} {{ _('To: ') }} {{ data['parameters']['end_period'] }}
                 </td>
+            </tr>
+            <tr>
                 <td colspan="3">
                     {{ _('Second Balance')}} {{ data['parameters']['comparison_fiscalyear'] }}: {{ _('From: ')}} {{ data['parameters']['comparison_start_period'] }} {{ _('To: ') }} {{ data['parameters']['comparison_end_period'] }}
                 </td>
             </tr>
         {% endif %}
         <tr>
-            <td>
+            <td colspan="3">
                 {% if data['parameters']['accounts'] != '' %}
                     {{ _('Accounts') }}: {{ data['parameters']['accounts'] }}
                 {% else %}
@@ -50,7 +50,7 @@ header {
             </td>
         </tr>
         <tr>
-            <td>
+            <td colspan="3">
                 {% if data['parameters']['parties'] != '' %}
                     {{ _('Parties') }}: {{ data['parameters']['parties'] }}
                 {% else %}

@@ -574,7 +574,6 @@ class TrialBalanceReport(HTMLReport):
             parameters['total_debit'] += record['debit']
             parameters['total_credit'] += record['credit']
             parameters['total_balance'] += record['balance']
-        print(f'PARAMETERS \n\n{parameters}\n\n')
         return records, parameters
 
     @classmethod
