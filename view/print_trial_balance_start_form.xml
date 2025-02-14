@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<form >
+    <label name="company"/>
+    <field name="company"/>
+    <label name="show_digits"/>
+    <field name="show_digits"/>
+    <label name="add_initial_balance"/>
+    <field name="add_initial_balance"/>
+    <label name="with_move_or_initial"/>
+    <field name="with_move_or_initial"/>
+    <label name="split_parties"/>
+    <field name="split_parties"/>
+    <label name="with_move_only"/>
+    <field name="with_move_only"/>
+    <label id="all_parties" string="All parties if Empty" colspan="4"/>
+    <field name="parties" colspan="4"/>
+    <label id="all_accounts" string="All accounts if Empty" colspan="4"/>
+    <field name="accounts" colspan="4"/>
+
+    <label name="fiscalyear"/>
+    <field name="fiscalyear"/>
+    <newline/>
+    <label name="start_period"/>
+    <field name="start_period"/>
+    <label name="end_period"/>
+    <field name="end_period"/>
+
+    <group id="second_balance" string="Comparison Period" colspan="4">
+        <label name="comparison_fiscalyear"/>
+        <field name="comparison_fiscalyear"/>
+        <newline/>
+        <label name="comparison_start_period"/>
+        <field name="comparison_start_period"/>
+        <label name="comparison_end_period"/>
+        <field name="comparison_end_period"/>
+    </group>
+
+    <label name="output_format"/>
+    <field name="output_format"/>
+</form>

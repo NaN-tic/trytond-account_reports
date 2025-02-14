@@ -1,0 +1,87 @@
+# Translations template for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-02-11 12:51+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.15.0\n"
+
+#: templates/detail_macro.html:5 templates/header_macro.html:36
+msgid "First Balance"
+msgstr ""
+
+#: templates/detail_macro.html:6 templates/header_macro.html:39
+msgid "Second Balance"
+msgstr ""
+
+#: templates/detail_macro.html:10
+msgid "Account"
+msgstr ""
+
+#: templates/detail_macro.html:11
+msgid "Account Name"
+msgstr ""
+
+#: templates/detail_macro.html:13 templates/detail_macro.html:17
+#: templates/detail_macro.html:22
+msgid "Initial"
+msgstr ""
+
+#: templates/detail_macro.html:14 templates/detail_macro.html:18
+#: templates/detail_macro.html:23
+msgid "Debit"
+msgstr ""
+
+#: templates/detail_macro.html:15 templates/detail_macro.html:19
+#: templates/detail_macro.html:24
+msgid "Credit"
+msgstr ""
+
+#: templates/detail_macro.html:16 templates/detail_macro.html:20
+#: templates/detail_macro.html:25
+msgid "Balance"
+msgstr ""
+
+#: templates/header_macro.html:24
+msgid "VAT"
+msgstr ""
+
+#: templates/header_macro.html:27 templates/trial_balance.html:4
+msgid "Trial Balance"
+msgstr ""
+
+#: templates/header_macro.html:36 templates/header_macro.html:39
+msgid "From: "
+msgstr ""
+
+#: templates/header_macro.html:36 templates/header_macro.html:39
+msgid "To: "
+msgstr ""
+
+#: templates/header_macro.html:46
+msgid "Accounts"
+msgstr ""
+
+#: templates/header_macro.html:48
+msgid "All Accounts"
+msgstr ""
+
+#: templates/header_macro.html:55
+msgid "Parties"
+msgstr ""
+
+#: templates/header_macro.html:57
+msgid "All Parties"
+msgstr ""
+

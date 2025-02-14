@@ -14,7 +14,6 @@ from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.modules.account_reports.common import TimeoutException, TimeoutChecker
 from trytond.modules.html_report.html_report import HTMLReport
-from babel.dates import format_datetime
 from trytond.rpc import RPC
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 
