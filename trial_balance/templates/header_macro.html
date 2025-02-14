@@ -20,13 +20,12 @@ header {
     <table style="width:100%;padding-right: 1cm;">
         <tr>
             <td>
-                <span style="font-style: italic;font-size: 14px;font-weight: bold;">{{ data['parameters']['company_rec_name'] }}</span><br/>
+                <span style="font-style: italic;font-size: 14px;font-weight: bold; width:60%" colspan="2">{{ data['parameters']['company_rec_name'] }}</span><br/>
                 {{ _('VAT') }}: {{ data['parameters']['company_vat'] }}
             </td>
-            <td class="center" style="width:50%;text-align: center;font-size: 15px;">
+            <td class="center" style="text-align: center;font-size: 15px;" >
                 <h1 style="font-size:20px">{{ _('Trial Balance') }}</h1>
             </td>
-            <td style="text-align: right;"></td>
         </tr>
         {% if data['parameters']['comparison_fiscalyear'] != '' %}
             <tr>

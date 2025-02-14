@@ -255,7 +255,7 @@ class TrialBalanceReport(HTMLReport):
         #TODO: add the "checker.check()" function after and before every
         # function where we make some big calculations
 
-        def get_account_values(values):
+        def get_account_values(values, digits):
             def get_parents_account_values(tree, account, credit, debit,
                     balance):
                 while account and account.parent:
@@ -264,14 +264,25 @@ class TrialBalanceReport(HTMLReport):
                     tree[account.id]['debit'] += debit
                     tree[account.id]['balance'] += balance
 
-            tree = defaultdict(lambda: {'credit': Decimal(0),
-                'debit': Decimal(0), 'balance': Decimal(0)}, values)
-            for account_id in values:
-                account = Account(account_id)
-                get_parents_account_values(tree, account,
-                    values[account_id]['credit'],
-                    values[account_id]['debit'],
-                    values[account_id]['balance'])
+            if digits:
+                tree = {}
+                for account_id in values:
+                    account = Account(account_id)
+                    if not account.code[:digits] in tree.keys():
+                        tree[account.code[:digits]] = {'credit': Decimal(0),
+                            'debit': Decimal(0), 'balance': Decimal(0)}
+                    tree[account.code[:digits]]['credit'] += values[account_id]['credit']
+                    tree[account.code[:digits]]['debit'] += values[account_id]['debit']
+                    tree[account.code[:digits]]['balance'] += values[account_id]['balance']
+            else:
+                tree = defaultdict(lambda: {'credit': Decimal(0),
+                    'debit': Decimal(0), 'balance': Decimal(0)}, values)
+                for account_id in values:
+                    account = Account(account_id)
+                    get_parents_account_values(tree, account,
+                        values[account_id]['credit'],
+                        values[account_id]['debit'],
+                        values[account_id]['balance'])
             return tree
 
         # Fiscalyear
@@ -397,27 +408,49 @@ class TrialBalanceReport(HTMLReport):
                         Party.html_get_account_values_by_party(parties,
                             accounts, comparison_fiscalyear.company))
 
-        init_final_tree = get_account_values(init_values)
-        final_tree = get_account_values(values)
-        comp_init_final_tree = get_account_values(comparison_initial_values)
-        comp_final_tree = get_account_values(comparison_values)
+        accounts = []
+        init_final_tree = get_account_values(init_values, digits)
+        final_tree = get_account_values(values, digits)
+        comp_init_final_tree = get_account_values(comparison_initial_values,
+            digits)
+        comp_final_tree = get_account_values(comparison_values, digits)
 
-        def _amounts(account, initial_tree, tree):
+        # Get all the codes
+        if comparison_fiscalyear:
+            accounts_codes = set(list(init_final_tree.keys()) +
+                list(final_tree.keys()) + list(comp_init_final_tree.keys()) +
+                list(comp_final_tree.keys()))
+        else:
+            accounts_codes = set(list(init_final_tree.keys()) +
+                list(final_tree.keys()))
+
+        def _amounts(account, initial_tree, tree, account_code_accounts=None):
             initial = _ZERO
             credit = _ZERO
             debit = _ZERO
             balance = _ZERO
-            if account.id in initial_tree:
-                initial = initial_tree[account.id]['balance']
-            if account.id in tree:
-                credit = tree[account.id]['credit']
-                debit = tree[account.id]['debit']
-                balance = tree[account.id]['balance']
+
+            account_id = account.id
+            if (account_code_accounts and account.id in
+                    account_code_accounts.keys()):
+                account_id = account_code_accounts[account.id]
+
+            if account_id in initial_tree:
+                initial = initial_tree[account_id]['balance']
+            if account_id in tree:
+                credit = tree[account_id]['credit']
+                debit = tree[account_id]['debit']
+                balance = tree[account_id]['balance']
             return initial, credit, debit, balance
 
-        def _party_amounts(account, party_id, init_vals, vals):
-            iac_vals = init_vals.get(account.id, {})
-            ac_vals = vals.get(account.id, {})
+        def _party_amounts(account, party_id, init_vals, vals,
+                account_code_accounts=None):
+            account_id = account.id
+            if (account_code_accounts and account.id in
+                    account_code_accounts.keys()):
+                account_id = account_code_accounts[account.id]
+            iac_vals = init_vals.get(account_id, {})
+            ac_vals = vals.get(account_id, {})
 
             initial = iac_vals.get(party_id, {}).get('balance') or _ZERO
             credit = ac_vals.get(party_id, {}).get('credit') or _ZERO
@@ -425,7 +458,8 @@ class TrialBalanceReport(HTMLReport):
             balance = ac_vals.get(party_id, {}).get('balance') or _ZERO
             return initial, credit, debit, balance
 
-        def _record(account, party, vals, comp, add_initial_balance):
+        def _record(account, party, vals, comp, add_initial_balance,
+                account_code_accounts=None):
             init, credit, debit, balance = vals
             init_comp, credit_comp, debit_comp, balance_comp = comp
             if add_initial_balance:
@@ -436,8 +470,14 @@ class TrialBalanceReport(HTMLReport):
                 account_type = 'receivable'
             elif account.type and account.type.payable:
                 account_type = 'payable'
+
+            code = account.code or ''
+            if (account_code_accounts and account.id in
+                    account_code_accounts.keys()):
+                code = account_code_accounts[account.id]
+
             return {
-                'code': account.code or '',
+                'code': code,
                 'name': party and party.name or account.name,
                 'type': account_type,
                 'period_initial_balance': init,
@@ -452,25 +492,35 @@ class TrialBalanceReport(HTMLReport):
 
         with Transaction().set_context(active_test=False):
             # Prepare the accounts to the report
-            domain = [('parent', '!=', None)]
-            if data.get('accounts'):
-                domain += [('id', 'in', data.get('accounts', []))]
+            accounts = []
+            accounts_account_code = {}
+
+            if digits:
+                for account_code in accounts_codes:
+                    account = None
+                    # We must save the original value we need to save
+                    account_code_org = account_code
+                    while not account:
+                        account = Account.search([('code', '=', account_code)])
+                        account_code = account_code[:-1]
+                    accounts.append(account[0])
+                    accounts_account_code[account[0].id] = account_code_org
+                accounts = sorted(accounts, key=lambda a: a.code)
+            else:
+                domain = [('parent', '!=', None)]
+                if data.get('accounts'):
+                    domain += [('id', 'in', data.get('accounts', []))]
+                accounts = Account.search(domain, order=[('code', 'ASC')])
 
             records = []
             ok_records = []
-            for account in Account.search(domain, order=[('code', 'ASC')]):
-                if digits and account.code:
-                    #if len(account.code.strip()) > digits:
-                    #    continue
-                    if (len(account.code.strip()) > digits or
-                            len(account.code.strip()) < digits):
-                        continue
-
-                vals = _amounts(account, init_final_tree, final_tree)
+            for account in accounts:
+                vals = _amounts(account, init_final_tree, final_tree,
+                    accounts_account_code)
                 initial, credit, debit, balance = vals
 
                 comp_vals = _amounts(account, comp_init_final_tree,
-                    comp_final_tree)
+                    comp_final_tree, accounts_account_code)
                 comp_initial, comp_credit, comp_debit, comp_balance = (
                     comp_vals)
 
@@ -503,10 +553,11 @@ class TrialBalanceReport(HTMLReport):
                     for party in account_parties:
                         party_key = party.id if party else None
                         party_vals = _party_amounts(account, party_key,
-                            init_party_values, party_values)
+                            init_party_values, party_values,
+                            accounts_account_code)
                         party_comp_vals = _party_amounts(account,
                             party_key, init_comparison_party_values,
-                            comparison_party_values)
+                            comparison_party_values, accounts_account_code)
                         init, credit, debit, balance = party_vals
 
                         if with_moves_or_initial:
@@ -517,13 +568,13 @@ class TrialBalanceReport(HTMLReport):
 
                         record = _record(account, party,
                             party_vals, party_comp_vals,
-                            add_initial_balance)
+                            add_initial_balance, accounts_account_code)
 
                         records.append(record)
                         ok_records.append(account.code)
                 else:
                     record = _record(account, None, vals, comp_vals,
-                        add_initial_balance)
+                        add_initial_balance, accounts_account_code)
                     records.append(record)
                     ok_records.append(account.code)
 
