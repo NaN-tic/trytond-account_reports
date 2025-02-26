@@ -114,6 +114,70 @@ msgctxt "field:account_reports.print_taxes_by_invoice.start,totals_only:"
 msgid "Totals Only"
 msgstr "Només totals"
 
+msgctxt "field:account_reports.print_trial_balance.start,accounts:"
+msgid "Accounts"
+msgstr "Comptes"
+
+msgctxt "field:account_reports.print_trial_balance.start,add_initial_balance:"
+msgid "Add Initial Balance"
+msgstr "Afegeix saldo inicial"
+
+msgctxt "field:account_reports.print_trial_balance.start,company:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_end_period:"
+msgid "End Period"
+msgstr "Període final"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Exercici fiscal"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_start_period:"
+msgid "Start Period"
+msgstr "Període inicial"
+
+msgctxt "field:account_reports.print_trial_balance.start,end_period:"
+msgid "End Period"
+msgstr "Període final"
+
+msgctxt "field:account_reports.print_trial_balance.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Exercici fiscal"
+
+msgctxt "field:account_reports.print_trial_balance.start,output_format:"
+msgid "Output Format"
+msgstr "Tipus de fitxer"
+
+msgctxt "field:account_reports.print_trial_balance.start,parties:"
+msgid "Parties"
+msgstr "Tercers"
+
+msgctxt "field:account_reports.print_trial_balance.start,show_digits:"
+msgid "Digits"
+msgstr "Dígits"
+
+msgctxt "field:account_reports.print_trial_balance.start,split_parties:"
+msgid "Split Parties"
+msgstr "Separa tercers"
+
+msgctxt "field:account_reports.print_trial_balance.start,start_period:"
+msgid "Start Period"
+msgstr "Període inicial"
+
+msgctxt "field:account_reports.print_trial_balance.start,with_move_only:"
+msgid "Only Accounts With Move"
+msgstr "Només comptes amb apunts"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,with_move_or_initial:"
+msgid "Only Accounts With Moves or Initial Balance"
+msgstr "Només comptes amb apunts o saldo inicial"
+
 msgctxt "help:account_reports.print_general_ledger.start,all_accounts:"
 msgid ""
 "If unchecked only print accounts with previous balance different from 0 or "
@@ -168,6 +232,10 @@ msgctxt "model:account_reports.print_taxes_by_invoice.start,name:"
 msgid "Print Taxes by Invoice and Period"
 msgstr "Imprimeix impostos per factura i període"
 
+msgctxt "model:account_reports.print_trial_balance.start,name:"
+msgid "Print Trial Balance Start"
+msgstr "Inici imprimeix balanç de sumes i saldos"
+
 msgctxt "model:ir.action,name:report_general_ledger"
 msgid "General Ledger"
 msgstr "Llibre major"
@@ -176,6 +244,10 @@ msgctxt "model:ir.action,name:report_taxes_by_invoice"
 msgid "Taxes by Invoice"
 msgstr "Impostos per factura"
 
+msgctxt "model:ir.action,name:report_trial_balance"
+msgid "Trial Balance"
+msgstr "Balanç de sumes i saldos"
+
 msgctxt "model:ir.action,name:wizard_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimeix llibre major"
@@ -183,6 +255,10 @@ msgstr "Imprimeix llibre major"
 msgctxt "model:ir.action,name:wizard_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
 msgstr "Imprimeix impostos per factura i període"
+
+msgctxt "model:ir.action,name:wizard_print_trial_balance"
+msgid "Print Trial Balance"
+msgstr "Imprimeix balanç de sumes i saldos"
 
 msgctxt "model:ir.action.report,name:"
 msgid "Abreviated Journal"
@@ -236,6 +312,10 @@ msgstr "Imprimeix llibre major"
 msgctxt "model:ir.ui.menu,name:menu_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
 msgstr "Imprimeix impostos per factura i període"
+
+msgctxt "model:ir.ui.menu,name:menu_print_trial_balance"
+msgid "Print Trial Balance"
+msgstr "Imprimeix balanç de sumes i saldos"
 
 msgctxt "report:account_reports.general_ledger:"
 msgid " From"
@@ -460,6 +540,18 @@ msgctxt "selection:account_reports.print_taxes_by_invoice.start,tax_type:"
 msgid "Refunded"
 msgstr "Rectificats"
 
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
 msgctxt "view:account.configuration:"
 msgid "Report"
 msgstr "Informe"
@@ -484,6 +576,18 @@ msgctxt "view:account_reports.print_taxes_by_invoice.start:"
 msgid "Left empty to select all taxes"
 msgstr "Deixa buit per seleccionar tots els impostos"
 
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "All accounts if Empty"
+msgstr "Tots els comptes si es deixa en blanc"
+
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "All parties if Empty"
+msgstr "Tots els tercers si es deixa en blanc"
+
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "Comparison Period"
+msgstr "Període de comparació"
+
 msgctxt "wizard_button:account_reports.print_general_ledger,start,end:"
 msgid "Cancel"
 msgstr "Cancel·la"
@@ -499,3 +603,11 @@ msgstr "Cancel·la"
 msgctxt "wizard_button:account_reports.print_taxes_by_invoice,start,print_:"
 msgid "Print"
 msgstr "Imprimeix"
+
+msgctxt "wizard_button:account_reports.print_trial_balance,start,end:"
+msgid "Cancel"
+msgstr "Cancel·la"
+
+msgctxt "wizard_button:account_reports.print_trial_balance,start,print_:"
+msgid "Print"
+msgstr "Imprimir"
