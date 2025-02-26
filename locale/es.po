@@ -114,6 +114,70 @@ msgctxt "field:account_reports.print_taxes_by_invoice.start,totals_only:"
 msgid "Totals Only"
 msgstr "Solo totales"
 
+msgctxt "field:account_reports.print_trial_balance.start,accounts:"
+msgid "Accounts"
+msgstr "Cuentas"
+
+msgctxt "field:account_reports.print_trial_balance.start,add_initial_balance:"
+msgid "Add Initial Balance"
+msgstr "Añadir saldo inicial"
+
+msgctxt "field:account_reports.print_trial_balance.start,company:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_end_period:"
+msgid "End Period"
+msgstr "Período final"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Ejercicio fiscal"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_start_period:"
+msgid "Start Period"
+msgstr "Período inicial"
+
+msgctxt "field:account_reports.print_trial_balance.start,end_period:"
+msgid "End Period"
+msgstr "Período final"
+
+msgctxt "field:account_reports.print_trial_balance.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Ejercicio fiscal"
+
+msgctxt "field:account_reports.print_trial_balance.start,output_format:"
+msgid "Output Format"
+msgstr "Tipo de fichero"
+
+msgctxt "field:account_reports.print_trial_balance.start,parties:"
+msgid "Parties"
+msgstr "Terceros"
+
+msgctxt "field:account_reports.print_trial_balance.start,show_digits:"
+msgid "Digits"
+msgstr "Dígitos"
+
+msgctxt "field:account_reports.print_trial_balance.start,split_parties:"
+msgid "Split Parties"
+msgstr "Separar terceros"
+
+msgctxt "field:account_reports.print_trial_balance.start,start_period:"
+msgid "Start Period"
+msgstr "Período inicial"
+
+msgctxt "field:account_reports.print_trial_balance.start,with_move_only:"
+msgid "Only Accounts With Move"
+msgstr "Solo cuentas con apuntes"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,with_move_or_initial:"
+msgid "Only Accounts With Moves or Initial Balance"
+msgstr "Solo cuentas con apuntes o saldo inicial"
+
 msgctxt "help:account_reports.print_general_ledger.start,all_accounts:"
 msgid ""
 "If unchecked only print accounts with previous balance different from 0 or "
@@ -168,6 +232,10 @@ msgctxt "model:account_reports.print_taxes_by_invoice.start,name:"
 msgid "Print Taxes by Invoice and Period"
 msgstr "Imprimir impuestos por factura y período"
 
+msgctxt "model:account_reports.print_trial_balance.start,name:"
+msgid "Print Trial Balance Start"
+msgstr "Inicio imprimir balance de sumas y saldos"
+
 msgctxt "model:ir.action,name:report_general_ledger"
 msgid "General Ledger"
 msgstr "Libro mayor"
@@ -176,6 +244,10 @@ msgctxt "model:ir.action,name:report_taxes_by_invoice"
 msgid "Taxes by Invoice"
 msgstr "Impuestos por factura"
 
+msgctxt "model:ir.action,name:report_trial_balance"
+msgid "Trial Balance"
+msgstr "Balance de sumas y saldos"
+
 msgctxt "model:ir.action,name:wizard_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimir libro mayor"
@@ -183,6 +255,10 @@ msgstr "Imprimir libro mayor"
 msgctxt "model:ir.action,name:wizard_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
 msgstr "Imprimir impuestos por factura y período"
+
+msgctxt "model:ir.action,name:wizard_print_trial_balance"
+msgid "Print Trial Balance"
+msgstr "Imprimir balance de sumas y saldos"
 
 msgctxt "model:ir.action.report,name:"
 msgid "Abreviated Journal"
@@ -237,6 +313,10 @@ msgstr "Imprimir libro mayor"
 msgctxt "model:ir.ui.menu,name:menu_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
 msgstr "Imprimir impuestos por factura y período"
+
+msgctxt "model:ir.ui.menu,name:menu_print_trial_balance"
+msgid "Print Trial Balance"
+msgstr "Imprimir balance de sumas y saldos"
 
 msgctxt "report:account_reports.general_ledger:"
 msgid " From"
@@ -461,6 +541,18 @@ msgctxt "selection:account_reports.print_taxes_by_invoice.start,tax_type:"
 msgid "Refunded"
 msgstr "Rectificado"
 
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
 msgctxt "view:account.configuration:"
 msgid "Report"
 msgstr "Informe"
@@ -485,6 +577,18 @@ msgctxt "view:account_reports.print_taxes_by_invoice.start:"
 msgid "Left empty to select all taxes"
 msgstr "Dejar vacío para seleccionar todos los impuestos"
 
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "All accounts if Empty"
+msgstr "Todas las cuentas si se deja en blanco"
+
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "All parties if Empty"
+msgstr "Todos los terceros si se deja en blanco"
+
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "Comparison Period"
+msgstr "Período de comparación"
+
 msgctxt "wizard_button:account_reports.print_general_ledger,start,end:"
 msgid "Cancel"
 msgstr "Cancelar"
@@ -498,5 +602,13 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 msgctxt "wizard_button:account_reports.print_taxes_by_invoice,start,print_:"
+msgid "Print"
+msgstr "Imprimir"
+
+msgctxt "wizard_button:account_reports.print_trial_balance,start,end:"
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgctxt "wizard_button:account_reports.print_trial_balance,start,print_:"
 msgid "Print"
 msgstr "Imprimir"
