@@ -170,10 +170,19 @@ class PrintTrialBalanceStart(ModelView):
     def on_change_show_digits(self):
         pool = Pool()
         Configuration = pool.get('account.configuration')
+        Account = pool.get('account.account')
 
         config = Configuration(1)
-        if (config.default_account_code_digits and self.show_digits and
-                self.show_digits != config.default_account_code_digits):
+
+        accounts_digits = None
+        if hasattr(config, 'default_account_code_digits'):
+            accounts_digits = config.default_account_code_digits
+        else:
+            accounts_digits = len(max([a.code for a in Account.search([])],
+                key=len))
+
+        if (accounts_digits and self.show_digits and
+                self.show_digits != accounts_digits):
             self.hide_split_parties = True
         else:
             self.hide_split_parties = False
