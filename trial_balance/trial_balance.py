@@ -39,7 +39,11 @@ class PrintTrialBalanceStart(ModelView):
             'invisible': ~Bool(Eval('add_initial_balance'))
         })
     accounts = fields.Many2Many('account.account', None, None, 'Accounts')
-    split_parties = fields.Boolean('Split Parties')
+    hide_split_parties = fields.Boolean('Hide Split Parties')
+    split_parties = fields.Boolean('Split Parties',
+        states={
+            'invisible': Bool(Eval('hide_split_parties', False))},
+            depends=['hide_split_parties'])
     add_initial_balance = fields.Boolean('Add Initial Balance')
     parties = fields.Many2Many('party.party', None, None, 'Parties',
         states={
@@ -162,6 +166,18 @@ class PrintTrialBalanceStart(ModelView):
         return [('/form//label[@id="all_parties"]', 'states',
                 {'invisible': ~Bool(Eval('split_parties'))})]
 
+    @fields.depends('show_digits')
+    def on_change_show_digits(self):
+        pool = Pool()
+        Configuration = pool.get('account.configuration')
+
+        config = Configuration(1)
+        if (config.default_account_code_digits and self.show_digits and
+                self.show_digits != config.default_account_code_digits):
+            self.hide_split_parties = True
+        else:
+            self.hide_split_parties = False
+
 
 class PrintTrialBalance(Wizard):
     'Print TrialBalance'
@@ -207,6 +223,7 @@ class PrintTrialBalance(Wizard):
             'add_initial_balance': self.start.add_initial_balance,
             'with_move_only': self.start.with_move_only,
             'with_move_or_initial': self.start.with_move_or_initial,
+            'hide_split_parties': self.start.hide_split_parties,
             'split_parties': self.start.split_parties,
             'accounts': [x.id for x in self.start.accounts],
             'parties': [x.id for x in self.start.parties],
@@ -327,16 +344,19 @@ class TrialBalanceReport(HTMLReport):
 
             parties = Party.browse(data.get('parties', []))
             parties_subtitle = []
-            if parties:
-                split_parties = True
+
+            split_parties = data['split_parties']
+            hide_split_parties = data['split_parties']
+            if hide_split_parties:
+                split_parties = False
+
+            if parties and split_parties:
                 for x in parties:
                     if len(parties_subtitle) > 0:
                         parties_subtitle.append('...')
                         break
                     parties_subtitle.append(x.name)
                 parties_subtitle = ', '.join(parties_subtitle)
-            else:
-                split_parties = data['split_parties']
 
         digits = data['digits']
         add_initial_balance = data['add_initial_balance']
