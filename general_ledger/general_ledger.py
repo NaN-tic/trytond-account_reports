@@ -31,6 +31,7 @@ class PrintGeneralLedgerStart(ModelView):
     start_period = fields.Many2One('account.period', 'Start Period',
         states={
             'invisible': Eval('start_date') | Eval('end_date'),
+            'required': ~Eval('start_date') & ~Eval('end_date'),
             },
         domain=[
             ('fiscalyear', '=', Eval('fiscalyear')),
@@ -42,6 +43,7 @@ class PrintGeneralLedgerStart(ModelView):
     end_period = fields.Many2One('account.period', 'End Period',
         states={
             'invisible': Eval('start_date') | Eval('end_date'),
+            'required': ~Eval('start_date') & ~Eval('end_date'),
             },
         domain=[
             ('fiscalyear', '=', Eval('fiscalyear')),
