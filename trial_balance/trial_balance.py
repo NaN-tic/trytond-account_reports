@@ -357,7 +357,7 @@ class TrialBalanceReport(HTMLReport):
             parties_subtitle = []
 
             split_parties = data['split_parties']
-            hide_split_parties = data['split_parties']
+            hide_split_parties = data['hide_split_parties']
             if hide_split_parties:
                 split_parties = False
 
