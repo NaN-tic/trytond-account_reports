@@ -477,9 +477,6 @@ class TrialBalanceReport(HTMLReport):
         def _party_amounts(account, party_id, init_vals, vals,
                 account_code_accounts=None):
             account_id = account.id
-            if (account_code_accounts and account.id in
-                    account_code_accounts.keys()):
-                account_id = account_code_accounts[account.id]
             iac_vals = init_vals.get(account_id, {})
             ac_vals = vals.get(account_id, {})
 
