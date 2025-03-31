@@ -379,12 +379,13 @@ class GeneralLedgerReport(HTMLReport):
             init_party_values = Party.html_get_account_values_by_party(
                 parties, accounts, company)
             init_parties = set([p for a, av in init_party_values.items()
-                    for p, pv in av.items()])
+                    for p, pv in av.items() if p is not None])
         records = {}
         parties_general_ledger = set()
         lastKey = None
         sequence = 0
         accounts_w_moves = []
+
         # Add the asked period/date lines in records
         for group_lines in grouped_slice(line_ids):
             checker.check()
@@ -508,6 +509,7 @@ class GeneralLedgerReport(HTMLReport):
                             'total_credit': credit,
                             }
             checker.check()
+
         if data.get('all_accounts', True):
             init_values_account_wo_moves = {
                 k: init_values[k] for k in init_values
