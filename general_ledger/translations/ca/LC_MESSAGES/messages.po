@@ -1,37 +1,24 @@
-# Spanish translations for PROJECT.
-# Copyright (C) 2020 ORGANIZATION
+# Catalan translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-05-17 16:32+0200\n"
-"PO-Revision-Date: 2023-05-17 16:33+0200\n"
-"Last-Translator: \n"
-"Language: es\n"
-"Language-Team: es <LL@li.org>\n"
+"POT-Creation-Date: 2025-04-03 15:51+0200\n"
+"PO-Revision-Date: 2025-04-03 15:51+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ca\n"
+"Language-Team: ca <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
-"X-Generator: Poedit 2.4.2\n"
+"Generated-By: Babel 2.15.0\n"
 
-#: templates/detail_lines_macro.html:7 templates/detail_macro.html:15
-msgid "Previous balance..."
-msgstr "Balanç anterior..."
-
-#: templates/detail_lines_macro.html:20 templates/detail_macro.html:23
-msgid "Total Fiscal Year"
-msgstr "Total exercisi fiscal"
-
-#: templates/detail_lines_macro.html:28 templates/detail_macro.html:32
-msgid "Total"
-msgstr "Total"
-
-#: templates/detail_lines_macro.html:47
+#: templates/detail_lines_macro.html:17 templates/detail_lines_macro.html:28
 msgid "Previous balance"
 msgstr "Balanç anterior"
 
@@ -45,7 +32,7 @@ msgstr "Número"
 
 #: templates/detail_macro.html:5
 msgid "Reference"
-msgstr "Referencia"
+msgstr "Referència"
 
 #: templates/detail_macro.html:5
 msgid "Description"
@@ -61,23 +48,35 @@ msgstr "Haver"
 
 #: templates/detail_macro.html:8
 msgid "Balance"
-msgstr "Saldo"
+msgstr "Balanç"
+
+#: templates/detail_macro.html:14
+msgid "Previous balance..."
+msgstr "Balanç anterior..."
+
+#: templates/detail_macro.html:21
+msgid "Total Fiscal Year"
+msgstr "Total exercisi fiscal"
+
+#: templates/detail_macro.html:30
+msgid "Total"
+msgstr "Total"
 
 #: templates/general_ledger.html:4 templates/header_macro.html:28
 msgid "General Ledger"
-msgstr "Llibre major"
+msgstr "Llibre Major"
 
 #: templates/header_macro.html:25
 msgid "VAT"
-msgstr "NIF"
+msgstr "CIF/NIF"
 
 #: templates/header_macro.html:42
 msgid "Start Date"
-msgstr "Data de comptabilització inicial"
+msgstr "Data inic"
 
 #: templates/header_macro.html:42
 msgid "End Date"
-msgstr "Data de comptabilització final"
+msgstr "Data fi"
 
 #: templates/header_macro.html:44
 msgid "Fiscal Year"
@@ -89,7 +88,7 @@ msgstr "Període inicial"
 
 #: templates/header_macro.html:46
 msgid "End Period"
-msgstr "Període final"
+msgstr "Periode final"
 
 #: templates/header_macro.html:48
 msgid "Parties"
@@ -109,14 +108,9 @@ msgstr "Tots els comptes"
 
 #: templates/header_macro.html:54
 msgid ""
-"When the Move number is between '()' means it hasn't Post Number and the "
-"shown number is the provisional one."
+"When move number is between parentheses it means that it has no post "
+"number and the number shown is the provisional one."
 msgstr ""
-"Si el número d'assentament es troba amb parèntesis indica que no té un "
-"número confirmat i el número el que es mostra es provisional."
+"Quan el número de l'assentament està entre parèntesis vol dir que no té "
+"cap número de comptabilització i el número que es mostra és el provisional."
 
-#~ msgid "Traceability"
-#~ msgstr "Prova"
-
-#~ msgid "PREVIOUS BALANCE"
-#~ msgstr "Balance anterior"
