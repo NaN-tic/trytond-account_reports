@@ -72,11 +72,11 @@ msgstr "CIF/NIF"
 
 #: templates/header_macro.html:42
 msgid "Start Date"
-msgstr "Data inic"
+msgstr "Data inicial"
 
 #: templates/header_macro.html:42
 msgid "End Date"
-msgstr "Data fi"
+msgstr "Data final"
 
 #: templates/header_macro.html:44
 msgid "Fiscal Year"
