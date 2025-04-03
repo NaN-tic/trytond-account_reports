@@ -236,9 +236,23 @@ class GeneralLedgerReport(HTMLReport):
         return ref
 
     @classmethod
+    def _ref_origin_statement_origin(cls, line):
+        if line.origin.description and not line.description:
+            ref = '%s' % line.origin.description
+        else:
+            ref = (line.origin.rec_name if line.origin
+                and hasattr(line.origin, 'rec_name') else None)
+        return ref
+
+    @classmethod
     def _ref_origin(cls, line):
         return (line.origin.rec_name if line.origin
             and hasattr(line.origin, 'rec_name') else None)
+
+    @classmethod
+    def _ref_move_origin(cls, line):
+        return (line.move_origin.rec_name if line.move_origin
+            and hasattr(line.move_origin, 'rec_name') else None)
 
     @classmethod
     def prepare(cls, data, checker):
@@ -251,6 +265,10 @@ class GeneralLedgerReport(HTMLReport):
         Line = pool.get('account.move.line')
         Invoice = pool.get('account.invoice')
         InvoiceLine = pool.get('account.invoice.line')
+        try:
+            Origin = pool.get('account.bank.statement.line')
+        except:
+            Origin = None
         try:
             BankLine = pool.get('account.bank.statement.line')
         except:
@@ -425,11 +443,16 @@ class GeneralLedgerReport(HTMLReport):
                     # get from the invoice
                     if line.account.party_required:
                         party = line.move_origin.party
+                elif (line.origin and Origin
+                        and isinstance(line.origin, Origin)):
+                    ref = cls._ref_origin_bank_line(line)
                 elif (line.origin and BankLine
                         and isinstance(line.origin, BankLine)):
                     ref = cls._ref_origin_bank_line(line)
-                else:
+                elif line.origin:
                     ref = cls._ref_origin(line)
+                else:
+                    ref = cls._ref_move_origin(line)
 
                 # If we don't fill the party in a party_required account, try
                 # get the party field in the line
