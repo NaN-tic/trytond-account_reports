@@ -18,11 +18,11 @@ msgstr ""
 "Generated-By: Babel 2.15.0\n"
 
 #: templates/detail_macro.html:5 templates/header_macro.html:36
-msgid "First Balance"
+msgid "Main Balance"
 msgstr ""
 
 #: templates/detail_macro.html:6 templates/header_macro.html:39
-msgid "Second Balance"
+msgid "Comparision Balance"
 msgstr ""
 
 #: templates/detail_macro.html:10

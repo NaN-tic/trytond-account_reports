@@ -20,12 +20,12 @@ msgstr ""
 "X-Generator: Poedit 3.5\n"
 
 #: templates/detail_macro.html:5 templates/header_macro.html:36
-msgid "First Balance"
-msgstr "Primer balance"
+msgid "Main Balance"
+msgstr "Balance principal"
 
 #: templates/detail_macro.html:6 templates/header_macro.html:39
-msgid "Second Balance"
-msgstr "Segundo balance"
+msgid "Comparision Balance"
+msgstr "Balance comparación"
 
 #: templates/detail_macro.html:10
 msgid "Account"
