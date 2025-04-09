@@ -540,40 +540,39 @@ class GeneralLedgerReport(HTMLReport):
                         }
             checker.check()
 
-            if parties:
-                account_ids = [k for k, _ in init_party_values.items()]
-                accounts = dict((a.id, a) for a in Account.browse(account_ids))
-                parties = dict((p.id, p) for p in parties)
+            account_ids = [k for k, _ in init_party_values.items()]
+            accounts = dict((a.id, a) for a in Account.browse(account_ids))
+            parties = dict((p.id, p) for p in parties)
 
-                for k, v in init_party_values.items():
-                    account = accounts[k]
-                    for p, z in v.items():
-                        # check if (account, party) is in current general ledger
-                        if (account, p) in parties_general_ledger:
-                            continue
-                        party = parties[p]
-                        currentKey = (account, party)
-                        sequence += 1
-                        credit = z.get('credit', Decimal(0))
-                        debit = z.get('debit', Decimal(0))
-                        balance = z.get('balance', Decimal(0))
+            for k, v in init_party_values.items():
+                account = accounts[k]
+                for p, z in v.items():
+                    # check if (account, party) is in current general ledger
+                    if (account, p) in parties_general_ledger:
+                        continue
+                    party = parties.get(p)
+                    currentKey = (account, party)
+                    sequence += 1
+                    credit = z.get('credit', Decimal(0))
+                    debit = z.get('debit', Decimal(0))
+                    balance = z.get('balance', Decimal(0))
 
-                        key = _get_key(currentKey)
-                        if records.get(key):
-                            records[key]['total_debit'] += debit
-                            records[key]['total_credit'] += credit
-                        else:
-                            records[key] = {
-                                'account': account.name,
-                                'code': account.code or str(account.id),
-                                'lines': [],
-                                'party': party.name if party else None,
-                                'party_required': account.party_required,
-                                'previous_balance': (balance + credit - debit),
-                                'total_debit': debit,
-                                'total_credit': credit,
-                                }
-                checker.check()
+                    key = _get_key(currentKey)
+                    if records.get(key):
+                        records[key]['total_debit'] += debit
+                        records[key]['total_credit'] += credit
+                    else:
+                        records[key] = {
+                            'account': account.name,
+                            'code': account.code or str(account.id),
+                            'lines': [],
+                            'party': party.name if party else None,
+                            'party_required': account.party_required,
+                            'previous_balance': (balance + credit - debit),
+                            'total_debit': debit,
+                            'total_credit': credit,
+                            }
+            checker.check()
 
         return dict(sorted(records.items())), parameters
 
