@@ -531,8 +531,9 @@ class TrialBalanceReport(HTMLReport):
                     while not account:
                         account = Account.search([('code', '=', account_code)])
                         account_code = account_code[:-1]
-                    accounts.append(account[0])
-                    accounts_account_code[account[0].id] = account_code_org
+                    if not (account[0] in accounts):
+                        accounts.append(account[0])
+                        accounts_account_code[account[0].id] = account_code_org
                 accounts = sorted(accounts, key=lambda a: a.code)
             else:
                 domain = [('parent', '!=', None)]
