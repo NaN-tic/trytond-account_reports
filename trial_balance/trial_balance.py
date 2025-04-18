@@ -330,15 +330,30 @@ class TrialBalanceReport(HTMLReport):
         comparison_end_period = (Period(data['comparison_end_period'])
             if data.get('comparison_end_period') else None)
 
+        # Company
+        if data.get('company'):
+            company = Company(data['company'])
+        elif fiscalyear:
+            company = fiscalyear.company
+        else:
+            company = Company(Transaction().context.get('company'))
+
         with Transaction().set_context(active_test=False):
-            domain = [('parent', '!=', None)]
+            # Even if are some accounts selected or there are not accounts
+            # selected, only get the final accounts. And, after, calculate
+            # the parents values of the accounts with get_account_values
+            # function.
+            domain = [
+                ('company', '=', company),
+                ('parent', '!=', None)
+            ]
+            all_accounts = Account.search([domain])
+            all_parent_ids = [a.parent.id for a in all_accounts]
+            domain += [('id', 'not in', all_parent_ids)]
             if data.get('accounts'):
-                # If we have accounts, we filter by these accounts
-                domain += [('id', 'in', data.get('accounts', []))]
-            else:
-                # otherwise we start from the farthest accounts to the root of
-                # accounts
-                domain += [('type', '!=', None)]
+                # If we have accounts, we filter by these accounts,
+                # otherwise we get all the final accounts
+                domain += [('id', 'in', data['accounts'])]
 
             accounts = Account.search(domain, order=[('code', 'ASC')])
             accounts_subtitle = ''
@@ -606,14 +621,6 @@ class TrialBalanceReport(HTMLReport):
                         add_initial_balance, accounts_account_code)
                     records.append(record)
                     ok_records.append(account.code)
-
-        # Company
-        if data.get('company'):
-            company = Company(data['company'])
-        elif fiscalyear:
-            company = fiscalyear.company
-        else:
-            company = Company(Transaction().context.get('company'))
 
         parameters = {}
         parameters['second_balance'] = comparison_fiscalyear and True or False
