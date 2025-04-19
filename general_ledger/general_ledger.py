@@ -76,6 +76,9 @@ class PrintGeneralLedgerStart(ModelView):
             })
     accounts = fields.Many2Many('account.account', None, None, 'Accounts')
     all_accounts = fields.Boolean('All accounts with and without balance',
+        states={
+            'readonly': Bool(Eval('accounts')),
+            },
         help='If unchecked only print accounts with previous balance different'
         ' from 0 or with moves')
     final_accounts = fields.Boolean('Only final accounts',
@@ -137,6 +140,11 @@ class PrintGeneralLedgerStart(ModelView):
     def on_change_fiscalyear(self):
         self.start_period = None
         self.end_period = None
+
+    @fields.depends('accounts')
+    def on_change_accounts(self):
+        if self.accounts:
+            self.all_accounts = False
 
 
 class PrintGeneralLedger(Wizard):
@@ -407,6 +415,7 @@ class GeneralLedgerReport(HTMLReport):
         # Add the asked period/date lines in records
         for group_lines in grouped_slice(line_ids):
             checker.check()
+            balance = 0
             for line in Line.browse(group_lines):
                 if line.account not in accounts_w_moves:
                     accounts_w_moves.append(line.account.id)
