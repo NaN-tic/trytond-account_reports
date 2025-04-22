@@ -582,12 +582,14 @@ class GeneralLedgerReport(HTMLReport):
                     # check if (account, party) is in current general ledger
                     if (account, p) in parties_general_ledger:
                         continue
+                    balance = z.get('balance', Decimal(0))
+                    if balance == 0:
+                        continue
                     party = parties.get(p)
                     currentKey = (account, party)
                     sequence += 1
                     credit = z.get('credit', Decimal(0))
                     debit = z.get('debit', Decimal(0))
-                    balance = z.get('balance', Decimal(0))
 
                     key = _get_key(currentKey)
                     if records.get(key):
