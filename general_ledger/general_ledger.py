@@ -580,7 +580,7 @@ class GeneralLedgerReport(HTMLReport):
                 account = accounts[k]
                 for p, z in v.items():
                     # check if (account, party) is in current general ledger
-                    if (account, p) in parties_general_ledger:
+                    if (k, p) in parties_general_ledger:
                         continue
                     balance = z.get('balance', Decimal(0))
                     if balance == 0:
