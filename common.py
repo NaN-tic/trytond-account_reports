@@ -171,6 +171,7 @@ class Party(metaclass=PoolMeta):
         line = MoveLine.__table__()
         account = Account.__table__()
 
+        order_by = (line.account,)
         group_by = (line.party, line.account,)
         columns = (group_by + (Sum(Coalesce(line.debit, 0)).as_('debit'),
                 Sum(Coalesce(line.credit, 0)).as_('credit'),
@@ -180,7 +181,8 @@ class Party(metaclass=PoolMeta):
         if context.get('date'):
             # Cumulate data from previous fiscalyears
             line_query = line.move.in_(move.select(move.id,
-                        where=move.date <= context.get('date')))
+                        where=((move.date <= context.get('date'))
+                            & (move.company == company.id))))
         where = (line_query &
             (account.company == company.id))
         if accounts:
@@ -189,7 +191,8 @@ class Party(metaclass=PoolMeta):
             where = where & line.party.in_([p.id for p in parties])
         cursor.execute(*line.join(account,
                 condition=(line.account == account.id)
-                ).select(*columns, where=where, group_by=group_by))
+                ).select(*columns, where=where, order_by=order_by,
+                    group_by=group_by))
 
         for party, account, debit, credit, balance in cursor.fetchall():
             # SQLite uses float for SUM

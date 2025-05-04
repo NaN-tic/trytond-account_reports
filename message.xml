@@ -12,5 +12,8 @@ this repository contains the full copyright notices and license terms. -->
       <record model="ir.message" id="msg_timeout_exception">
           <field name="text">Report computation timed out. You may consider increasing the timeout of the account reports or export to XLS format.</field>
       </record>
+      <record model="ir.message" id="msg_missing_fiscalyear">
+          <field name="text">The fiscalyear selected it is not valid.</field>
+      </record>
     </data>
 </tryton>
