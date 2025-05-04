@@ -3,6 +3,8 @@
 import os
 from datetime import timedelta, datetime
 from decimal import Decimal
+
+from weasyprint.layout.blocks import collapse_margin
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from trytond.model import ModelView, fields
@@ -28,15 +30,14 @@ class PrintTrialBalanceStart(ModelView):
     comparison_fiscalyear = fields.Many2One('account.fiscalyear',
             'Fiscal Year')
     show_digits = fields.Integer('Digits')
-    with_move_only = fields.Boolean('Only Accounts With Move',
+    only_moves = fields.Boolean('Only Accounts With Move',
         states={
-            'invisible': Bool(Eval('add_initial_balance') &
-                Eval('with_move_or_initial'))
+            'invisible': Bool(Eval('moves_or_initial'))
         })
-    with_move_or_initial = fields.Boolean(
+    moves_or_initial = fields.Boolean(
         'Only Accounts With Moves or Initial Balance',
         states={
-            'invisible': ~Bool(Eval('add_initial_balance'))
+            'invisible': Bool(Eval('only_moves'))
         })
     accounts = fields.Many2Many('account.account', None, None, 'Accounts')
     hide_split_parties = fields.Boolean('Hide Split Parties')
@@ -88,6 +89,10 @@ class PrintTrialBalanceStart(ModelView):
             ('xls', 'Excel'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
+
+    timeout = fields.Integer('Timeout (s)', required=True, help='If report '
+        'calculation should take more than the specified timeout (in seconds) '
+        'the process will be stopped automatically.')
 
     @staticmethod
     def default_fiscalyear():
@@ -151,6 +156,22 @@ class PrintTrialBalanceStart(ModelView):
     def default_output_format():
         return 'pdf'
 
+    @staticmethod
+    def default_timeout():
+        Config = Pool().get('account.configuration')
+        config = Config(1)
+        return config.default_timeout or 30
+
+    @fields.depends('only_moves')
+    def on_change_only_moves(self):
+        if self.only_moves:
+            self.moves_or_initial = False
+
+    @fields.depends('moves_or_initial')
+    def on_change_moves_or_initial(self):
+        if self.moves_or_initial:
+            self.only_moves = False
+
     @fields.depends('fiscalyear')
     def on_change_fiscalyear(self):
         self.start_period = None
@@ -166,7 +187,7 @@ class PrintTrialBalanceStart(ModelView):
         return [('/form//label[@id="all_parties"]', 'states',
                 {'invisible': ~Bool(Eval('split_parties'))})]
 
-    @fields.depends('show_digits')
+    @fields.depends('show_digits', 'parties')
     def on_change_show_digits(self):
         pool = Pool()
         Configuration = pool.get('account.configuration')
@@ -186,6 +207,9 @@ class PrintTrialBalanceStart(ModelView):
         if (accounts_digits and self.show_digits and
                 self.show_digits != accounts_digits):
             self.hide_split_parties = True
+            self.split_parties = False
+            if self.parties:
+                self.parties = set()
         else:
             self.hide_split_parties = False
 
@@ -232,13 +256,13 @@ class PrintTrialBalance(Wizard):
             'comparison_end_period': comparison_end_period,
             'digits': self.start.show_digits or None,
             'add_initial_balance': self.start.add_initial_balance,
-            'with_move_only': self.start.with_move_only,
-            'with_move_or_initial': self.start.with_move_or_initial,
-            'hide_split_parties': self.start.hide_split_parties,
+            'only_moves': self.start.only_moves,
+            'moves_or_initial': self.start.moves_or_initial,
             'split_parties': self.start.split_parties,
             'accounts': [x.id for x in self.start.accounts],
             'parties': [x.id for x in self.start.parties],
             'output_format': self.start.output_format,
+            'timeout': self.start.timeout,
             }
 
         return action, data
@@ -280,55 +304,108 @@ class TrialBalanceReport(HTMLReport):
         Period = pool.get('account.period')
         Account = pool.get('account.account')
         Party = pool.get('party.party')
+        Date = pool.get('ir.date')
         #TODO: add the "checker.check()" function after and before every
         # function where we make some big calculations
+        #
+        def build_tree(codes):
+            tree = {}
+            for code in sorted(codes):
+                current = tree
+                for part in code:
+                    current = current.setdefault(part, {})
+            return tree
+
+        def flatten_tree(tree, prefix=""):
+            result = []
+            for key in sorted(tree.keys()):
+                result.append(prefix + key)
+                result.extend(flatten_tree(tree[key], prefix + key))
+            return result
+
+        def get_account_type(account):
+            account_type = 'other'
+            if account.type and account.type.receivable:
+                account_type = 'receivable'
+            elif account.type and account.type.payable:
+                account_type = 'payable'
+            return account_type
+
+        def get_account_parent_name(account, digits):
+            while account and len(account.code) > digits and account.parent:
+                account = account.parent
+            return account.name
 
         def get_account_values(values, digits):
+            '''
+            Obtain the values of the accounts and their parents
+            and group by digits.
+            '''
             def get_parents_account_values(tree, account, credit, debit,
                     balance):
-                while account and account.parent:
+                while account and account.parent and account.parent.parent:
                     account = account.parent
-                    tree[account.id]['credit'] += credit
-                    tree[account.id]['debit'] += debit
-                    tree[account.id]['balance'] += balance
+                    tree[account.code]['name'] = account.name
+                    tree[account.code]['credit'] += credit
+                    tree[account.code]['debit'] += debit
+                    tree[account.code]['balance'] += balance
+                    tree[account.code]['type'] = get_account_type(account)
 
             if digits:
                 tree = {}
                 for account_id in values:
                     account = Account(account_id)
-                    if not account.code[:digits] in tree.keys():
-                        tree[account.code[:digits]] = {'credit': Decimal(0),
-                            'debit': Decimal(0), 'balance': Decimal(0)}
+                    if account.code[:digits] not in tree.keys():
+                        tree[account.code[:digits]] = {
+                            'name': get_account_parent_name(account, digits),
+                            'credit': _ZERO,
+                            'debit': _ZERO,
+                            'balance': _ZERO,
+                            'type': get_account_type(account)}
                     tree[account.code[:digits]]['credit'] += values[account_id]['credit']
                     tree[account.code[:digits]]['debit'] += values[account_id]['debit']
                     tree[account.code[:digits]]['balance'] += values[account_id]['balance']
             else:
-                tree = defaultdict(lambda: {'credit': Decimal(0),
-                    'debit': Decimal(0), 'balance': Decimal(0)}, values)
-                for account_id in values:
+                tree = defaultdict(lambda: {'credit': _ZERO, 'debit': _ZERO,
+                    'balance': _ZERO})
+                for account_id, account_values in values.items():
                     account = Account(account_id)
+                    tree[account.code] = {
+                        'name': account.name,
+                        'credit': account_values.get('credit', _ZERO),
+                        'debit': account_values.get('debit', _ZERO),
+                        'balance': account_values.get('balance', _ZERO),
+                        'type': get_account_type(account),
+                    }
                     get_parents_account_values(tree, account,
                         values[account_id]['credit'],
                         values[account_id]['debit'],
                         values[account_id]['balance'])
             return tree
 
+        def get_account_party_values(values):
+            tree = {}
+            test = {}
+            for account_id, account_values in values.items():
+                account = Account(account_id)
+                party_tree = {}
+                test[account.code] = _ZERO
+                for party_id, value in account_values.items():
+                    party = Party(party_id)
+                    party_tree[party.name] = value
+                    test[account.code] += value.get('balance', _ZERO)
+                tree[account.code] = party_tree
+            return tree
+
         # Fiscalyear
         fiscalyear = (FiscalYear(data['fiscalyear']) if data.get('fiscalyear')
             else None)
+        if not fiscalyear:
+            raise UserError(gettext(
+                'account_reports.msg_missing_fiscalyear'))
 
         comparison_fiscalyear = (FiscalYear(data['comparison_fiscalyear'])
             if data.get('comparison_fiscalyear') else None)
-
-        # Periods
-        start_period = (Period(data['start_period']) if data.get('start_period')
-            else None)
-        end_period = (Period(data['end_period']) if data.get('end_period')
-            else None)
-        comparison_start_period = (Period(data['comparison_start_period'])
-            if data.get('comparison_start_period') else None)
-        comparison_end_period = (Period(data['comparison_end_period'])
-            if data.get('comparison_end_period') else None)
 
         # Company
         if data.get('company'):
@@ -338,11 +415,50 @@ class TrialBalanceReport(HTMLReport):
         else:
             company = Company(Transaction().context.get('company'))
 
+        # Periods main and possible comparison
+        start_period = (Period(data['start_period'])
+            if data.get('start_period') else None)
+        end_period = (Period(data['end_period']) if data.get('end_period')
+            else None)
+        if not start_period:
+            start_period = Period.find(company, fiscalyear.start_date,
+                test_state=True)
+        if not end_period:
+            end_period = Period.find(company, fiscalyear.end_date,
+                test_state=True)
+        initial_balance_date = start_period.start_date - timedelta(days=1)
+        periods = [x.id for x in fiscalyear.get_periods(start_period,
+            end_period)]
+
+        if comparison_fiscalyear:
+            comparison_start_period = (Period(data['comparison_start_period'])
+                if data.get('comparison_start_period') else None)
+            comparison_end_period = (Period(data['comparison_end_period'])
+                if data.get('comparison_end_period') else None)
+            if not comparison_start_period:
+                comparison_start_period = Period.find(company,
+                    comparison_fiscalyear.start_date, test_state=True)
+            if not comparison_end_period:
+                comparison_end_period = Period.find(company,
+                    comparison_fiscalyear.end_date, test_state=True)
+            init_comparison_date = (comparison_start_period.start_date -
+                timedelta(days=1))
+            comparison_periods = [x.id for x in
+                comparison_fiscalyear.get_periods(
+                    comparison_start_period, comparison_end_period)]
+
+        # Possible parties selected
+        split_parties = data.get('split_parties', False)
+        party_ids = data.get('parties', [])
+
         with Transaction().set_context(active_test=False):
+            # If some party are selected is not necessary to search all
+            # accounts, only those that are related with that parties.
             # Even if are some accounts selected or there are not accounts
             # selected, only get the final accounts. And, after, calculate
             # the parents values of the accounts with get_account_values
             # function.
+            account_ids = data.get('accounts', None)
             domain = [
                 ('company', '=', company),
                 ('parent', '!=', None)
@@ -350,14 +466,13 @@ class TrialBalanceReport(HTMLReport):
             all_accounts = Account.search([domain])
             all_parent_ids = [a.parent.id for a in all_accounts]
             domain += [('id', 'not in', all_parent_ids)]
-            if data.get('accounts'):
+            if account_ids:
                 # If we have accounts, we filter by these accounts,
                 # otherwise we get all the final accounts
-                domain += [('id', 'in', data['accounts'])]
-
+                domain += [('id', 'in', account_ids)]
             accounts = Account.search(domain, order=[('code', 'ASC')])
             accounts_subtitle = ''
-            if data.get('accounts'):
+            if account_ids:
                 accounts_subtitle = []
                 for x in accounts:
                     if len(accounts_subtitle) > 0:
@@ -365,18 +480,19 @@ class TrialBalanceReport(HTMLReport):
                         break
                     accounts_subtitle.append(x.code)
                 accounts_subtitle = ', '.join(accounts_subtitle)
-            else:
-                accounts_subtitle = ''
 
-            parties = Party.browse(data.get('parties', []))
-            parties_subtitle = []
+            parties = []
+            parties_subtitle = ''
+            if split_parties:
+                # Search by party selected or all, as we have ensured, with an
+                # on_change, that not exist partis if the are digits selected and
+                # they are not the last account.
+                domain = []
+                if party_ids:
+                    domain.append(('id', 'in', party_ids))
+                parties = Party.search(domain)
+                parties_subtitle = []
 
-            split_parties = data['split_parties']
-            hide_split_parties = data['hide_split_parties']
-            if hide_split_parties:
-                split_parties = False
-
-            if parties and split_parties:
                 for x in parties:
                     if len(parties_subtitle) > 0:
                         parties_subtitle.append('...')
@@ -384,69 +500,68 @@ class TrialBalanceReport(HTMLReport):
                     parties_subtitle.append(x.name)
                 parties_subtitle = ', '.join(parties_subtitle)
 
-        digits = data['digits']
-        add_initial_balance = data['add_initial_balance']
-        with_moves = data['with_move_only']
-
-        if not add_initial_balance:
-            with_moves_or_initial = False
-        else:
-            with_moves_or_initial = data['with_move_or_initial']
+        digits = data.get('digits', None)
+        max_digits = max(len(a.code) for a in accounts) if accounts else None
+        add_initial_balance = data.get('add_initial_balance', False)
+        with_moves = data.get('only_moves', False)
+        with_moves_or_initial = data.get('moves_or_initial', False)
         if with_moves_or_initial:
             with_moves = True
 
-        periods = [x.id for x in fiscalyear.get_periods(start_period,
-            end_period)]
-        if comparison_fiscalyear:
-            comparison_periods = [x.id for x in comparison_fiscalyear.get_periods(
-                comparison_start_period, comparison_end_period)]
-
+        exclude_party_moves = True if party_ids else False
+        # Obtain main fiscal year values based on accounts and digits.
         with Transaction().set_context(periods=periods):
             values = Account.html_read_account_vals(accounts,
-                fiscalyear.company, with_moves=with_moves)
-        init_values = {}
-        initial_balance_date = start_period.start_date - timedelta(days=1)
+                fiscalyear.company, with_moves=with_moves,
+                exclude_party_moves=exclude_party_moves)
         with Transaction().set_context(date=initial_balance_date):
             init_values = Account.html_read_account_vals(accounts,
-                fiscalyear.company, with_moves=with_moves)
+                fiscalyear.company, with_moves=with_moves,
+                exclude_party_moves=exclude_party_moves)
 
-        comparison_initial_values = {}.fromkeys(accounts, {'credit': Decimal(0),
-            'debit': Decimal(0), 'balance': Decimal(0)})
-        comparison_values = {}.fromkeys(accounts, {'credit': Decimal(0),
-            'debit': Decimal(0), 'balance': Decimal(0)})
+        init_main_tree = get_account_values(init_values, digits)
+        main_tree = get_account_values(values, digits)
 
+        # Obtain comparison fiscal year values based on accounts and
+        # digits.
+        init_comparison_tree = {}
+        comparison_tree = {}
         if comparison_fiscalyear:
             with Transaction().set_context(periods=comparison_periods):
-                comparison_values = Account.html_read_account_vals(accounts,
-                    fiscalyear.company, with_moves=with_moves)
+                comparison_values = Account.html_read_account_vals(
+                    accounts, fiscalyear.company, with_moves=with_moves,
+                    exclude_party_moves=exclude_party_moves)
+            with Transaction().set_context(date=init_comparison_date):
+                init_comparison_values = Account.html_read_account_vals(
+                    accounts, fiscalyear.company, with_moves=with_moves,
+                    exclude_party_moves=exclude_party_moves)
 
-            initial_comparision_date = (comparison_start_period.start_date -
-                timedelta(days=1))
-            with Transaction().set_context(date=initial_comparision_date):
-                comparison_initial_values.update(
-                    Account.html_read_account_vals(accounts,
-                        fiscalyear.company, with_moves=with_moves))
+            init_comparison_tree = get_account_values(
+                init_comparison_values, digits)
+            comparison_tree = get_account_values(comparison_values, digits)
 
+        init_party_tree = {}
+        party_tree = {}
+        init_comparison_party_tree = {}
+        comparison_party_tree = {}
+        party_names = {}
         if split_parties:
-            init_party_values = {}
-            if add_initial_balance:
-                with Transaction().set_context(date=initial_balance_date):
-                    init_party_values = Party.html_get_account_values_by_party(
-                        parties, accounts, fiscalyear.company)
-
+            with Transaction().set_context(date=initial_balance_date):
+                init_party_values = Party.html_get_account_values_by_party(
+                    parties, accounts, fiscalyear.company)
             with Transaction().set_context(fiscalyear=fiscalyear.id,
                     periods=periods):
                 party_values = Party.html_get_account_values_by_party(parties,
                     accounts, fiscalyear.company)
 
-            init_comparison_party_values = {}
-            comparison_party_values = {}
+            init_party_tree = get_account_party_values(init_party_values)
+            party_tree = get_account_party_values(party_values)
+
             if comparison_fiscalyear:
-                with Transaction().set_context(date=initial_comparision_date):
+                with Transaction().set_context(date=init_comparison_date):
                     init_comparison_party_values = (
                         Party.html_get_account_values_by_party(parties,
                             accounts, fiscalyear.company))
-
                 with Transaction().set_context(
                         fiscalyear=comparison_fiscalyear.id,
                         periods=comparison_periods):
@@ -454,174 +569,188 @@ class TrialBalanceReport(HTMLReport):
                         Party.html_get_account_values_by_party(parties,
                             accounts, comparison_fiscalyear.company))
 
-        accounts = []
-        init_final_tree = get_account_values(init_values, digits)
-        final_tree = get_account_values(values, digits)
-        comp_init_final_tree = get_account_values(comparison_initial_values,
-            digits)
-        comp_final_tree = get_account_values(comparison_values, digits)
+                init_comparison_party_tree = get_account_party_values(
+                    init_comparison_party_values)
+                comparison_party_tree = get_account_party_values(
+                    comparison_party_values)
 
-        # Get all the codes
+        def remove_registers(tree, initial=False):
+            if initial:
+                return {
+                    key: value for key, value in tree.items()
+                        if value.get('balance', _ZERO) != _ZERO
+                }
+            return {
+                key: value for key, value in tree.items()
+                    if value.get('debit', _ZERO) != _ZERO
+                    or value.get('credit', _ZERO) != _ZERO
+            }
+
+        # Only need the registers with init balance
+        init_main_tree = remove_registers(init_main_tree, initial=True)
+        for code, value in init_party_tree.items():
+            init_party_tree[code] = remove_registers(value, initial=True)
         if comparison_fiscalyear:
-            accounts_codes = set(list(init_final_tree.keys()) +
-                list(final_tree.keys()) + list(comp_init_final_tree.keys()) +
-                list(comp_final_tree.keys()))
+            init_comparison_tree = (
+                remove_registers(init_comparison_tree, initial=True))
+            for code, value in init_comparison_party_tree.items():
+                init_comparison_party_tree[code] = remove_registers(value,
+                    initial=True)
+        if with_moves:
+            main_tree = remove_registers(main_tree)
+            for code, value in party_tree.items():
+                party_tree[code] = remove_registers(value)
+            if comparison_fiscalyear:
+                comparison_tree = (
+                    remove_registers(comparison_tree))
+                comparison_party_tree = (
+                    remove_registers(comparison_party_tree))
+
+        # Get all the account codes to print in the report.
+        # Sort by keys using zero-padded strings, to ensure the order is
+        # like the General Accounting Plan tree.
+        if account_ids:
+            all_codes = [a.code for a in accounts]
         else:
-            accounts_codes = set(list(init_final_tree.keys()) +
-                list(final_tree.keys()))
+            all_codes = set(init_main_tree.keys()).union(main_tree.keys())
+            if comparison_fiscalyear:
+                # if comaprission fiscalyear is selected, need to add the possible
+                # extra accounts in the comparision.
+                comparison_all_codes = set(init_comparison_tree.keys()).union(
+                    comparison_tree.keys())
+                all_codes = all_codes.union(comparison_all_codes)
 
-        def _amounts(account, initial_tree, tree, account_code_accounts=None):
-            initial = _ZERO
-            credit = _ZERO
-            debit = _ZERO
-            balance = _ZERO
+        account_codes_parties = set(
+            list(init_party_tree.keys()) + list(party_tree.keys()))
+        all_parties = {}
+        for code, value in init_party_tree.items():
+            if code not in all_parties:
+                all_parties[code] = []
+            for party in value.keys():
+                all_parties[code].append(party)
+        for code, value in party_tree.items():
+            if code not in all_parties:
+                all_parties[code] = []
+            for party in value.keys():
+                all_parties[code].append(party)
+        if comparison_fiscalyear:
+            # if comaprission fiscalyear is selected, need to add the possible
+            # extra accounts in the comparision.
+            for code, value in init_comparison_party_tree.items():
+                if code not in all_parties:
+                    all_parties[code] = []
+                for party in value.keys():
+                    all_parties[code].append(party)
+            for code,value in comparison_party_tree.items():
+                if code not in all_parties:
+                    all_parties[code] = []
+                for party in value.keys():
+                    all_parties[code].append(party)
 
-            account_id = account.id
-            if (account_code_accounts and account.id in
-                    account_code_accounts.keys()):
-                account_id = account_code_accounts[account.id]
+        # Order codes and parties.
+        tree = build_tree(all_codes)
+        ordered_codes = flatten_tree(tree)
+        accounts_codes = [code for code in ordered_codes if code in all_codes]
+        party_names = {}
+        for code, value in all_parties.items():
+            party_names[code] = sorted(set(value))
 
-            if account_id in initial_tree:
-                initial = initial_tree[account_id]['balance']
-            if account_id in tree:
-                credit = tree[account_id]['credit']
-                debit = tree[account_id]['debit']
-                balance = tree[account_id]['balance']
-            return initial, credit, debit, balance
-
-        def _party_amounts(account, party_id, init_vals, vals,
-                account_code_accounts=None):
-            account_id = account.id
-            iac_vals = init_vals.get(account_id, {})
-            ac_vals = vals.get(account_id, {})
-
-            initial = iac_vals.get(party_id, {}).get('balance') or _ZERO
-            credit = ac_vals.get(party_id, {}).get('credit') or _ZERO
-            debit = ac_vals.get(party_id, {}).get('debit') or _ZERO
-            balance = ac_vals.get(party_id, {}).get('balance') or _ZERO
-            return initial, credit, debit, balance
-
-        def _record(account, party, vals, comp, add_initial_balance,
-                account_code_accounts=None):
-            init, credit, debit, balance = vals
-            init_comp, credit_comp, debit_comp, balance_comp = comp
-            if add_initial_balance:
-                balance += init
-                balance_comp += init_comp
-            account_type = 'other'
-            if account.type and account.type.receivable:
-                account_type = 'receivable'
-            elif account.type and account.type.payable:
-                account_type = 'payable'
-
-            code = account.code or ''
-            if (account_code_accounts and account.id in
-                    account_code_accounts.keys()):
-                code = account_code_accounts[account.id]
+        def _record(code, name, _type, init_vals, vals, init_comp, comp,
+                add_initial_balance):
+            init_balance = init_vals.get('balance', _ZERO)
+            balance = (vals.get('balance', _ZERO) + init_balance
+                if add_initial_balance else vals.get('balance', _ZERO))
+            init_comp_balance = init_comp.get('balance', _ZERO)
+            comp_balance = (comp.get('balance', _ZERO) + init_balance
+                if add_initial_balance else comp.get('balance', _ZERO))
 
             return {
                 'code': code,
-                'name': party and party.name or account.name,
-                'type': account_type,
-                'period_initial_balance': init,
-                'period_credit': credit,
-                'period_debit': debit,
+                'name': name,
+                'type': _type,
+                'period_initial_balance': init_balance,
+                'period_credit': vals.get('credit', _ZERO),
+                'period_debit': vals.get('debit', _ZERO),
                 'period_balance': balance,
-                'initial_balance': init_comp,
-                'credit': credit_comp,
-                'debit': debit_comp,
-                'balance': balance_comp,
+                'initial_balance': init_comp_balance,
+                'credit': comp.get('credit', _ZERO),
+                'debit': comp.get('debit', _ZERO),
+                'balance': comp_balance,
             }
 
         with Transaction().set_context(active_test=False):
-            # Prepare the accounts to the report
-            accounts = []
-            accounts_account_code = {}
-
-            if digits:
-                for account_code in accounts_codes:
-                    account = None
-                    # We must save the original value we need to save
-                    account_code_org = account_code
-                    while not account:
-                        account = Account.search([('code', '=', account_code)])
-                        account_code = account_code[:-1]
-                    if not (account[0] in accounts):
-                        accounts.append(account[0])
-                        accounts_account_code[account[0].id] = account_code_org
-                accounts = sorted(accounts, key=lambda a: a.code)
-            else:
-                domain = [('parent', '!=', None)]
-                if data.get('accounts'):
-                    domain += [('id', 'in', data.get('accounts', []))]
-                accounts = Account.search(domain, order=[('code', 'ASC')])
-
             records = []
-            ok_records = []
-            for account in accounts:
-                vals = _amounts(account, init_final_tree, final_tree,
-                    accounts_account_code)
-                initial, credit, debit, balance = vals
-
-                comp_vals = _amounts(account, comp_init_final_tree,
-                    comp_final_tree, accounts_account_code)
-                comp_initial, comp_credit, comp_debit, comp_balance = (
-                    comp_vals)
-
-                empty = False
-                comp_empty = False
-                if with_moves_or_initial:
-                    empty = (credit == 0 and debit == 0 and initial == 0)
-                    comp_empty = (comp_credit== 0 and comp_debit == 0 and
-                        comp_initial == 0)
-                elif with_moves:
-                    empty = (credit == 0 and debit == 0)
-                    comp_empty = (comp_credit == 0 and comp_debit == 0)
-
-                if empty and (not comparison_fiscalyear or comp_empty):
+            for code in accounts_codes:
+                if (with_moves and not with_moves_or_initial
+                        and not main_tree.get(code, {})
+                        and not comparison_tree.get(code, {})):
                     continue
-
-                if split_parties and account.party_required:
-                    account_parties = parties
-                    if not account_parties:
-                        pids = set()
-                        if account.id in party_values:
-                            pids |= set(party_values[account.id].keys())
-                        if account.id in init_party_values:
-                            pids |= set(init_party_values[account.id].keys())
-                        account_parties = [None] if None in pids else []
-                        # Using search insted of browse to get ordered records
-                        account_parties += Party.search([
-                            ('id', 'in', [p for p in pids if p])
-                            ])
-                    for party in account_parties:
-                        party_key = party.id if party else None
-                        party_vals = _party_amounts(account, party_key,
-                            init_party_values, party_values,
-                            accounts_account_code)
-                        party_comp_vals = _party_amounts(account,
-                            party_key, init_comparison_party_values,
-                            comparison_party_values, accounts_account_code)
-                        init, credit, debit, balance = party_vals
-
-                        if with_moves_or_initial:
-                            if credit == 0 and debit == 0 and initial == 0:
-                                continue
-                        elif with_moves and credit == 0 and debit == 0:
+                init_main_name = init_main_tree.get(code, {}).get(
+                    'name', None)
+                init_main_type = init_main_tree.get(code, {}).get(
+                    'type', None)
+                main_name = main_tree.get(code, {}).get('name', None)
+                main_type = main_tree.get(code, {}).get('type', None)
+                init_comp_name = init_comparison_tree.get(code, {}).get(
+                    'name', None)
+                init_comp_type = init_comparison_tree.get(code, {}).get(
+                    'type', None)
+                comp_name = comparison_tree.get(code, {}).get('name', None)
+                comp_type = comparison_tree.get(code, {}).get('type', None)
+                _type = (init_main_type or main_type or init_comp_type
+                    or comp_type)
+                if code in init_party_tree.keys() or code in party_tree.keys():
+                    for party_name in party_names[code]:
+                        if (with_moves and not with_moves_or_initial
+                                and not party_tree.get(code, {}).get(
+                                    party_name, {})
+                                and not comparison_party_tree.get(
+                                    code, {}).get(party_name, {})):
                             continue
-
-                        record = _record(account, party,
-                            party_vals, party_comp_vals,
-                            add_initial_balance, accounts_account_code)
-
+                        record = _record(code, party_name, _type,
+                            init_party_tree.get(code, {}).get(party_name, {}),
+                            party_tree.get(code, {}).get(party_name, {}),
+                            init_comparison_party_tree.get(code, {}).get(
+                                party_name, {}),
+                            comparison_party_tree.get(code, {}).get(
+                                party_name, {}),
+                            add_initial_balance)
                         records.append(record)
-                        ok_records.append(account.code)
                 else:
-                    record = _record(account, None, vals, comp_vals,
-                        add_initial_balance, accounts_account_code)
+                    name = (init_main_name or main_name or init_comp_name
+                        or comp_name)
+                    record = _record(code, name, _type,
+                        init_main_tree.get(code, {}), main_tree.get(code, {}),
+                        init_comparison_tree.get(code, {}),
+                        comparison_tree.get(code, {}), add_initial_balance)
                     records.append(record)
-                    ok_records.append(account.code)
-
+            if not accounts_codes and party_ids:
+                for code in account_codes_parties:
+                    main_type = party_tree.get(code, {}).get('type', None)
+                    comp_type = comparison_party_tree.get(code, {}).get(
+                        'type', None)
+                    _type = main_type or comp_type
+                    for party_name in party_names[code]:
+                        credit = party_tree.get(code, {}).get(
+                            party_name, {}).get('credit', _ZERO)
+                        debit = party_tree.get(code, {}).get(
+                            party_name, {}).get('debit', _ZERO)
+                        initial_balance = init_party_tree.get(code, {}).get(
+                            party_name, {}).get('balance', _ZERO)
+                        if with_moves and not credit and not debit:
+                            continue
+                        if (with_moves_or_initial and not credit
+                                and not debit and not initial_balance):
+                            continue
+                        record = _record(code, party_name, _type,
+                            init_party_tree.get(code, {}).get(party_name, {}),
+                            party_tree.get(code, {}).get(party_name, {}),
+                            init_comparison_party_tree.get(code, {}).get(
+                                party_name, {}),
+                            comparison_party_tree.get(code, {}).get(
+                                party_name, {}),
+                            add_initial_balance)
+                        records.append(record)
         parameters = {}
         parameters['second_balance'] = comparison_fiscalyear and True or False
         parameters['fiscalyear'] = fiscalyear.name
@@ -629,10 +758,10 @@ class TrialBalanceReport(HTMLReport):
             comparison_fiscalyear.name or '')
         parameters['start_period'] = start_period and start_period.name or ''
         parameters['end_period'] = end_period and end_period.name or ''
-        parameters['comparison_start_period'] = (comparison_start_period and
-            comparison_start_period.name or '')
-        parameters['comparison_end_period'] = (comparison_end_period and
-            comparison_end_period.name or '')
+        parameters['comparison_start_period'] = (comparison_start_period.name
+            if comparison_fiscalyear else '')
+        parameters['comparison_end_period'] = (comparison_end_period.name
+            if comparison_fiscalyear else '')
         parameters['company_rec_name'] = company and company.rec_name or ''
         parameters['company_vat'] = (company and
             company.party.tax_identifier and
@@ -651,7 +780,24 @@ class TrialBalanceReport(HTMLReport):
         parameters['total_debit'] = 0
         parameters['total_credit'] = 0
         parameters['total_balance'] = 0
+        totals_gropued = {}
         for record in records:
+            if not digits and len(record.get('code', '')) != max_digits:
+                continue
+
+            digit = record.get('code', '')[0]
+            if digit not in totals_gropued:
+                totals_gropued[digit] = {
+                    'initial': 0,
+                    'debit': 0,
+                    'credit': 0,
+                    'balance': 0
+                    }
+            totals_gropued[digit]['initial'] += record.get('period_initial_balance')
+            totals_gropued[digit]['debit'] += record.get('period_debit')
+            totals_gropued[digit]['credit'] += record.get('period_credit')
+            totals_gropued[digit]['balance'] += record.get('period_balance')
+
             parameters['total_period_initial_balance'] += (
                 record['period_initial_balance'])
             parameters['total_period_debit'] += record['period_debit']
