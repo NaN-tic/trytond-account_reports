@@ -189,6 +189,8 @@ class Party(metaclass=PoolMeta):
             where = where & line.account.in_([a.id for a in accounts])
         if parties:
             where = where & line.party.in_([p.id for p in parties])
+        else:
+            where = where & (line.party != None)
         cursor.execute(*line.join(account,
                 condition=(line.account == account.id)
                 ).select(*columns, where=where, order_by=order_by,

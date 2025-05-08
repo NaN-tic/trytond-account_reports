@@ -508,6 +508,8 @@ class GeneralLedgerReport(HTMLReport):
                     if p not in missing_init_parties:
                         continue
                     party = Party(p) if p else None
+                    if not party:
+                        continue
                     currentKey = (account, party)
                     credit = z.get('credit', Decimal(0))
                     debit = z.get('debit', Decimal(0))
@@ -541,8 +543,11 @@ class GeneralLedgerReport(HTMLReport):
                             'total_credit': credit,
                             }
             checker.check()
-
         if data.get('all_accounts', True):
+            # When all accounts is checked True, meaning that all accounts
+            # with and without initla blaance or blaane need to be printed.
+            # Control if there is a missing account move in the init_values
+            # list.
             init_values_account_wo_moves = {
                 k: init_values[k] for k in init_values
                 if k not in accounts_w_moves}
@@ -571,10 +576,12 @@ class GeneralLedgerReport(HTMLReport):
                         'total_credit': credit,
                         }
             checker.check()
-
+            # When all accounts is checked True, meaning that all accounts
+            # with and without initla blaance or blaane need to be printed.
+            # Control if there is a missing account move in the
+            # init_party_values list.
             account_ids = [k for k, _ in init_party_values.items()]
             accounts = dict((a.id, a) for a in Account.browse(account_ids))
-            parties = dict((p.id, p) for p in parties)
 
             for k, v in init_party_values.items():
                 account = accounts[k]
@@ -585,17 +592,14 @@ class GeneralLedgerReport(HTMLReport):
                     balance = z.get('balance', Decimal(0))
                     if balance == 0:
                         continue
-                    party = parties.get(p)
+                    party = Party(p)
                     currentKey = (account, party)
                     sequence += 1
                     credit = z.get('credit', Decimal(0))
                     debit = z.get('debit', Decimal(0))
 
                     key = _get_key(currentKey)
-                    if records.get(key):
-                        records[key]['total_debit'] += debit
-                        records[key]['total_credit'] += credit
-                    else:
+                    if not records.get(key):
                         records[key] = {
                             'account': account.name,
                             'code': account.code or str(account.id),
