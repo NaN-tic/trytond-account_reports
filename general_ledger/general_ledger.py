@@ -490,7 +490,8 @@ class GeneralLedgerReport(HTMLReport):
                         'party': line.party.name if line.party else None,
                         'party_required': line.account.party_required,
                         'lines': [rline],
-                        'previous_balance': (balance + credit - debit),
+                        'previous_balance': init_values.get(
+                            line.account.id, {}).get('balance', _ZERO),
                         'total_debit': debit,
                         'total_credit': credit,
                         }
