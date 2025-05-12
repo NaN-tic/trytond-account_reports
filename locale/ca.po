@@ -12,7 +12,7 @@ msgstr "Comptes"
 
 msgctxt "field:account_reports.print_general_ledger.start,all_accounts:"
 msgid "All accounts with and without balance"
-msgstr "Totes les comptes amb i sense balanç"
+msgstr "Totes els comptes amb i sense balanç"
 
 msgctxt "field:account_reports.print_general_ledger.start,company:"
 msgid "Company"
