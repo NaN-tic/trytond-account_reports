@@ -4,7 +4,6 @@ import os
 from datetime import timedelta, datetime
 from decimal import Decimal
 
-from weasyprint.layout.blocks import collapse_margin
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 from trytond.model import ModelView, fields
@@ -384,16 +383,27 @@ class TrialBalanceReport(HTMLReport):
             return tree
 
         def get_account_party_values(values):
+            """
+            Convert the account ID of the main dict to the account number.
+            Convert the party ID of the sub dict to the combination of the
+            party name and its TAX Identifier. To ensure that if some party
+            is repeated, group them in the same register whenever the TAX
+            Identifier is the same.
+            """
             tree = {}
-            test = {}
             for account_id, account_values in values.items():
                 account = Account(account_id)
                 party_tree = {}
-                test[account.code] = _ZERO
                 for party_id, value in account_values.items():
                     party = Party(party_id)
-                    party_tree[party.name] = value
-                    test[account.code] += value.get('balance', _ZERO)
+                    key = party.name + (" [" + party.tax_identifier.code + "]"
+                        if party.tax_identifier else '')
+                    if key in party_tree:
+                        party_tree[key]['debit'] += value.get('debit')
+                        party_tree[key]['credit'] += value.get('credit')
+                        party_tree[key]['balance'] += value.get('balance')
+                    else:
+                        party_tree[key] = value
                 tree[account.code] = party_tree
             return tree
 
@@ -485,8 +495,10 @@ class TrialBalanceReport(HTMLReport):
             parties_subtitle = ''
             if split_parties:
                 # Search by party selected or all, as we have ensured, with an
-                # on_change, that not exist partis if the are digits selected and
-                # they are not the last account.
+                # on_change, that not exist partis if there are digits selected
+                # and they are not the last account. It's not filtered by
+                # comapny, so it's needed any aprty that could have an account
+                # move.
                 domain = []
                 if party_ids:
                     domain.append(('id', 'in', party_ids))
@@ -535,7 +547,6 @@ class TrialBalanceReport(HTMLReport):
                 init_comparison_values = Account.html_read_account_vals(
                     accounts, fiscalyear.company, with_moves=with_moves,
                     exclude_party_moves=exclude_party_moves)
-
             init_comparison_tree = get_account_values(
                 init_comparison_values, digits)
             comparison_tree = get_account_values(comparison_values, digits)
@@ -568,7 +579,6 @@ class TrialBalanceReport(HTMLReport):
                     comparison_party_values = (
                         Party.html_get_account_values_by_party(parties,
                             accounts, comparison_fiscalyear.company))
-
                 init_comparison_party_tree = get_account_party_values(
                     init_comparison_party_values)
                 comparison_party_tree = get_account_party_values(
@@ -699,7 +709,7 @@ class TrialBalanceReport(HTMLReport):
                 comp_type = comparison_tree.get(code, {}).get('type', None)
                 _type = (init_main_type or main_type or init_comp_type
                     or comp_type)
-                if code in init_party_tree.keys() or code in party_tree.keys():
+                if code in party_names.keys():
                     for party_name in party_names[code]:
                         if (with_moves and not with_moves_or_initial
                                 and not party_tree.get(code, {}).get(
