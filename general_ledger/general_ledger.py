@@ -416,6 +416,7 @@ class GeneralLedgerReport(HTMLReport):
         for group_lines in grouped_slice(line_ids):
             checker.check()
             balance = 0
+            party_balance = 0
             for line in Line.browse(group_lines):
                 if line.account not in accounts_w_moves:
                     accounts_w_moves.append(line.account.id)
@@ -426,12 +427,15 @@ class GeneralLedgerReport(HTMLReport):
                     party_id = (currentKey[1].id if len(currentKey) > 1
                         and currentKey[1] else None)
                     parties_general_ledger.add((account_id, party_id))
-                    balance = init_party_values.get(account_id,
+                    party_balance = init_party_values.get(account_id,
                         {}).get(party_id, {}).get('balance', Decimal(0))
 
                 credit = line.credit
                 debit = line.debit
                 balance += line.debit - line.credit
+                if party_balance:
+                    balance += party_balance
+                    party_balance = 0
                 sequence += 1
 
                 party = None
@@ -484,14 +488,19 @@ class GeneralLedgerReport(HTMLReport):
                     records[key]['total_debit'] += debit
                     records[key]['total_credit'] += credit
                 else:
+                    previous_balance = init_values.get(
+                        line.account.id, {}).get('balance', _ZERO)
+                    if not previous_balance and line.party:
+                        previous_balance = init_party_values.get(
+                            line.account.id, {}).get(line.party.id, {}).get(
+                                'balance', _ZERO)
                     records[key] = {
                         'account': line.account.name,
                         'code': line.account.code or str(line.account.id),
                         'party': line.party.name if line.party else None,
                         'party_required': line.account.party_required,
                         'lines': [rline],
-                        'previous_balance': init_values.get(
-                            line.account.id, {}).get('balance', _ZERO),
+                        'previous_balance': previous_balance,
                         'total_debit': debit,
                         'total_credit': credit,
                         }
