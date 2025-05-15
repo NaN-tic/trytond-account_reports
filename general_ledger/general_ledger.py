@@ -411,25 +411,25 @@ class GeneralLedgerReport(HTMLReport):
         lastKey = None
         sequence = 0
         accounts_w_moves = []
-
         # Add the asked period/date lines in records
         for group_lines in grouped_slice(line_ids):
             checker.check()
-            balance = 0
-            init_balance = 0
-            init_party_balance = 0
+            balance = _ZERO
+            init_balance = _ZERO
+            init_party_balance = _ZERO
             for line in Line.browse(group_lines):
-                init_balance = init_values.get(line.account.id,
-                    {}).get('balance', _ZERO)
                 if line.account not in accounts_w_moves:
                     accounts_w_moves.append(line.account.id)
                 currentKey = (line.account, line.party)
                 if lastKey != currentKey:
+                    balance = _ZERO
                     lastKey = currentKey
                     account_id = currentKey[0].id
                     party_id = (currentKey[1].id if len(currentKey) > 1
                         and currentKey[1] else None)
                     parties_general_ledger.add((account_id, party_id))
+                    init_balance = init_values.get(line.account.id,
+                        {}).get('balance', _ZERO)
                     init_party_balance = init_party_values.get(account_id,
                         {}).get(party_id, {}).get('balance', _ZERO)
 
@@ -438,10 +438,10 @@ class GeneralLedgerReport(HTMLReport):
                 balance += line.debit - line.credit
                 if init_party_balance:
                     balance += init_party_balance
-                    init_party_balance = 0
+                    init_party_balance = _ZERO
                 elif init_balance:
                     balance += init_balance
-                    init_balance = 0
+                    init_balance = _ZERO
                 sequence += 1
 
                 party = None
@@ -561,7 +561,7 @@ class GeneralLedgerReport(HTMLReport):
             checker.check()
         if data.get('all_accounts', True):
             # When all accounts is checked True, meaning that all accounts
-            # with and without initla blaance or blaane need to be printed.
+            # with and without inital blaance or balance need to be printed.
             # Control if there is a missing account move in the init_values
             # list.
             init_values_account_wo_moves = {
