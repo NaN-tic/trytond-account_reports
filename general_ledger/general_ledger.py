@@ -416,8 +416,11 @@ class GeneralLedgerReport(HTMLReport):
         for group_lines in grouped_slice(line_ids):
             checker.check()
             balance = 0
-            party_balance = 0
+            init_balance = 0
+            init_party_balance = 0
             for line in Line.browse(group_lines):
+                init_balance = init_values.get(line.account.id,
+                    {}).get('balance', _ZERO)
                 if line.account not in accounts_w_moves:
                     accounts_w_moves.append(line.account.id)
                 currentKey = (line.account, line.party)
@@ -427,15 +430,18 @@ class GeneralLedgerReport(HTMLReport):
                     party_id = (currentKey[1].id if len(currentKey) > 1
                         and currentKey[1] else None)
                     parties_general_ledger.add((account_id, party_id))
-                    party_balance = init_party_values.get(account_id,
-                        {}).get(party_id, {}).get('balance', Decimal(0))
+                    init_party_balance = init_party_values.get(account_id,
+                        {}).get(party_id, {}).get('balance', _ZERO)
 
                 credit = line.credit
                 debit = line.debit
                 balance += line.debit - line.credit
-                if party_balance:
-                    balance += party_balance
-                    party_balance = 0
+                if init_party_balance:
+                    balance += init_party_balance
+                    init_party_balance = 0
+                elif init_balance:
+                    balance += init_balance
+                    init_balance = 0
                 sequence += 1
 
                 party = None
@@ -521,10 +527,10 @@ class GeneralLedgerReport(HTMLReport):
                     if not party:
                         continue
                     currentKey = (account, party)
-                    credit = z.get('credit', Decimal(0))
-                    debit = z.get('debit', Decimal(0))
-                    balance = z.get('balance', Decimal(0))
-                    if balance == Decimal(0):
+                    credit = z.get('credit', _ZERO)
+                    debit = z.get('debit', _ZERO)
+                    balance = z.get('balance', _ZERO)
+                    if balance == _ZERO:
                         continue
                     sequence += 1
                     rline = {
@@ -563,9 +569,9 @@ class GeneralLedgerReport(HTMLReport):
                 if k not in accounts_w_moves}
             for account_id, values in init_values_account_wo_moves.items():
                 account = Account(account_id)
-                balance = values.get('balance', Decimal(0))
-                credit = values.get('credit', Decimal(0))
-                debit = values.get('debit', Decimal(0))
+                balance = values.get('balance', _ZERO)
+                credit = values.get('credit', _ZERO)
+                debit = values.get('debit', _ZERO)
                 if balance == 0:
                     continue
 
@@ -599,14 +605,14 @@ class GeneralLedgerReport(HTMLReport):
                     # check if (account, party) is in current general ledger
                     if (k, p) in parties_general_ledger:
                         continue
-                    balance = z.get('balance', Decimal(0))
+                    balance = z.get('balance', _ZERO)
                     if balance == 0:
                         continue
                     party = Party(p)
                     currentKey = (account, party)
                     sequence += 1
-                    credit = z.get('credit', Decimal(0))
-                    debit = z.get('debit', Decimal(0))
+                    credit = z.get('credit', _ZERO)
+                    debit = z.get('debit', _ZERO)
 
                     key = _get_key(currentKey)
                     if not records.get(key):
