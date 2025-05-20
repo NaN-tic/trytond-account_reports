@@ -28,7 +28,7 @@ class PrintTrialBalanceStart(ModelView):
             required=True)
     comparison_fiscalyear = fields.Many2One('account.fiscalyear',
             'Fiscal Year')
-    show_digits = fields.Integer('Digits')
+    show_digits = fields.Integer('Digits', required=True)
     only_moves = fields.Boolean('Only Accounts With Move',
         states={
             'invisible': Bool(Eval('moves_or_initial'))
@@ -92,6 +92,18 @@ class PrintTrialBalanceStart(ModelView):
     timeout = fields.Integer('Timeout (s)', required=True, help='If report '
         'calculation should take more than the specified timeout (in seconds) '
         'the process will be stopped automatically.')
+
+    @staticmethod
+    def default_show_digits():
+        pool = Pool()
+        Configuration = pool.get('account.configuration')
+
+        config = Configuration(1)
+
+        accounts_digits = None
+        if hasattr(config, 'default_account_code_digits'):
+            accounts_digits = config.default_account_code_digits
+        return accounts_digits
 
     @staticmethod
     def default_fiscalyear():
@@ -303,7 +315,6 @@ class TrialBalanceReport(HTMLReport):
         Period = pool.get('account.period')
         Account = pool.get('account.account')
         Party = pool.get('party.party')
-        Date = pool.get('ir.date')
         #TODO: add the "checker.check()" function after and before every
         # function where we make some big calculations
         #
@@ -617,18 +628,13 @@ class TrialBalanceReport(HTMLReport):
                     remove_registers(comparison_party_tree))
 
         # Get all the account codes to print in the report.
-        # Sort by keys using zero-padded strings, to ensure the order is
-        # like the General Accounting Plan tree.
-        if account_ids:
-            all_codes = [a.code for a in accounts]
-        else:
-            all_codes = set(init_main_tree.keys()).union(main_tree.keys())
-            if comparison_fiscalyear:
-                # if comaprission fiscalyear is selected, need to add the possible
-                # extra accounts in the comparision.
-                comparison_all_codes = set(init_comparison_tree.keys()).union(
-                    comparison_tree.keys())
-                all_codes = all_codes.union(comparison_all_codes)
+        all_codes = set(init_main_tree.keys()).union(main_tree.keys())
+        if comparison_fiscalyear:
+            # if comaprission fiscalyear is selected, need to add the possible
+            # extra accounts in the comparision.
+            comparison_all_codes = set(init_comparison_tree.keys()).union(
+                comparison_tree.keys())
+            all_codes = all_codes.union(comparison_all_codes)
 
         account_codes_parties = set(
             list(init_party_tree.keys()) + list(party_tree.keys()))
