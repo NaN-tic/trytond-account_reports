@@ -76,7 +76,7 @@ class Account(metaclass=PoolMeta):
 
     @classmethod
     def html_read_account_vals(cls, accounts, company, with_moves=False,
-            exclude_party_moves=False, final_accounts=False):
+            exclude_party_moves=False):
         pool = Pool()
         Account = pool.get('account.account')
         Move = pool.get('account.move')
@@ -95,10 +95,7 @@ class Account(metaclass=PoolMeta):
             accounts = Account.search([
                     ('company', '=', company),
                     ])
-        if final_accounts:
-            account_ids = [a.id for a in accounts if not a.childs]
-        else:
-            account_ids = [a.id for a in accounts]
+        account_ids = [a.id for a in accounts if not a.childs]
         group_by = (table_a.id,)
         columns = (group_by + (Sum(Coalesce(line.debit, 0)).as_('debit'),
                 Sum(Coalesce(line.credit, 0)).as_('credit'),
