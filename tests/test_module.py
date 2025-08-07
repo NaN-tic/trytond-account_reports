@@ -285,7 +285,6 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.accounts = []
         print_general_ledger.start.output_format = 'pdf'
         print_general_ledger.start.all_accounts = False
-        print_general_ledger.start.final_accounts = False
         print_general_ledger.start.show_description = True
         print_general_ledger.start.timeout = 30
         checker = TimeoutChecker(print_general_ledger.start.timeout, GeneralLedgerReport.timeout_exception)
@@ -329,7 +328,6 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.parties = []
         print_general_ledger.start.accounts = []
         print_general_ledger.start.all_accounts = False
-        print_general_ledger.start.final_accounts = False
         print_general_ledger.start.show_description = True
         print_general_ledger.start.output_format = 'pdf'
         print_general_ledger.start.timeout = 30
@@ -357,7 +355,6 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.parties = []
         print_general_ledger.start.accounts = []
         print_general_ledger.start.all_accounts = False
-        print_general_ledger.start.final_accounts = False
         print_general_ledger.start.show_description = True
         print_general_ledger.start.output_format = 'pdf'
         print_general_ledger.start.timeout = 30
@@ -389,7 +386,6 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.parties = []
         print_general_ledger.start.accounts = [e.id for e in expenses]
         print_general_ledger.start.all_accounts = False
-        print_general_ledger.start.final_accounts = False
         print_general_ledger.start.show_description = True
         print_general_ledger.start.output_format = 'pdf'
         print_general_ledger.start.timeout = 30
@@ -416,7 +412,6 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.parties = [customer1.id]
         print_general_ledger.start.accounts = []
         print_general_ledger.start.all_accounts = False
-        print_general_ledger.start.final_accounts = False
         print_general_ledger.start.show_description = True
         print_general_ledger.start.output_format = 'pdf'
         print_general_ledger.start.timeout = 30
@@ -453,7 +448,6 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.accounts = [r.id for r in receivables]
         print_general_ledger.start.output_format = 'pdf'
         print_general_ledger.start.all_accounts = False
-        print_general_ledger.start.final_accounts = False
         print_general_ledger.start.show_description = True
         print_general_ledger.start.timeout = 30
         checker = TimeoutChecker(print_general_ledger.start.timeout, GeneralLedgerReport.timeout_exception)

@@ -81,8 +81,6 @@ class PrintGeneralLedgerStart(ModelView):
             },
         help='If unchecked only print accounts with previous balance different'
         ' from 0 or with moves')
-    final_accounts = fields.Boolean('Only final accounts',
-        help='If unchecked print all tree accounts from 1 to all digits')
     parties = fields.Many2Many('party.party', None, None, 'Parties',
         context={
             'company': Eval('company', -1),
@@ -113,10 +111,6 @@ class PrintGeneralLedgerStart(ModelView):
 
     @staticmethod
     def default_all_accounts():
-        return True
-
-    @staticmethod
-    def default_final_accounts():
         return True
 
     @staticmethod
@@ -173,7 +167,6 @@ class PrintGeneralLedger(Wizard):
             'end_date': self.start.end_date,
             'accounts': [x.id for x in self.start.accounts],
             'all_accounts': self.start.all_accounts,
-            'final_accounts': self.start.final_accounts,
             'parties': [x.id for x in self.start.parties],
             'output_format': self.start.output_format,
             'timeout': self.start.timeout,
@@ -400,8 +393,7 @@ class GeneralLedgerReport(HTMLReport):
             init_values = {}
             if not parties:
                 init_values = Account.html_read_account_vals(accounts, company,
-                    with_moves=False, exclude_party_moves=True,
-                    final_accounts=data.get('final_accounts', False))
+                    with_moves=False, exclude_party_moves=True)
             init_party_values = Party.html_get_account_values_by_party(
                 parties, accounts, company)
             init_parties = set([p for a, av in init_party_values.items()
@@ -411,10 +403,10 @@ class GeneralLedgerReport(HTMLReport):
         lastKey = None
         sequence = 0
         accounts_w_moves = []
+        balance = _ZERO
         # Add the asked period/date lines in records
         for group_lines in grouped_slice(line_ids):
             checker.check()
-            balance = _ZERO
             init_balance = _ZERO
             init_party_balance = _ZERO
             for line in Line.browse(group_lines):
