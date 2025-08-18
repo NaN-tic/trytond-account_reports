@@ -265,11 +265,11 @@ msgctxt "model:ir.action,name:wizard_print_trial_balance"
 msgid "Print Trial Balance"
 msgstr "Imprimeix balanç de sumes i saldos"
 
-msgctxt "model:ir.action.report,name:report_general_ledger"
+msgctxt "model:ir.action,name:report_general_ledger"
 msgid "General Ledger"
 msgstr "Llibre major"
 
-msgctxt "model:ir.action.report,name:report_taxes_by_invoice"
+msgctxt "model:ir.action,name:report_taxes_by_invoice"
 msgid "Taxes by Invoice and Period"
 msgstr "Impostos per factura i període"
 
