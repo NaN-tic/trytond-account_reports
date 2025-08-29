@@ -265,14 +265,6 @@ msgctxt "model:ir.action,name:wizard_print_trial_balance"
 msgid "Print Trial Balance"
 msgstr "Imprimeix balanç de sumes i saldos"
 
-msgctxt "model:ir.action,name:report_general_ledger"
-msgid "General Ledger"
-msgstr "Llibre major"
-
-msgctxt "model:ir.action,name:report_taxes_by_invoice"
-msgid "Taxes by Invoice and Period"
-msgstr "Impostos per factura i període"
-
 msgctxt "model:ir.action.wizard,name:"
 msgid "Print Abreviated Journal"
 msgstr "Imprimeix diari abreviat"
@@ -285,12 +277,14 @@ msgctxt "model:ir.action.wizard,name:wizard_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
 msgstr "Imprimeix impostos per factura i període"
 
+#, python-format
 msgctxt "model:ir.message,text:fiscalyear_end_date"
 msgid "The final posting date does not match the fiscal year \"%(fiscalyear)s\"."
 msgstr ""
 "La data de contabilització final no coincideix amb l’exercici fiscal "
 "\"%(fiscalyear)s\"."
 
+#, python-format
 msgctxt "model:ir.message,text:fiscalyear_start_date"
 msgid ""
 "The initial posting date does not match the fiscal year \"%(fiscalyear)s\"."
