@@ -27,19 +27,13 @@ copyright notices and license terms. -->
             <field name="sequence" eval="99"/>
             <field name="filename">account_reports/trial_balance/templates/trial_balance.html</field>
         </record>
-        <record model='html.template' id="trial_balance_html_footer_template">
-            <field name="name">Trial Balance Footer</field>
-            <field name="type">footer</field>
-            <field name="sequence" eval="99"/>
-           <field name="filename">account_reports/trial_balance/templates/footer_macro.html</field>
-       </record>
 
         <record model="ir.action.report" id="report_trial_balance">
             <field name="name">Trial Balance</field>
             <field name="report_name">account_reports.trial_balance</field>
             <field name="html_template" ref="trial_balance_html_template"/>
             <field name="html_header_template" ref="trial_balance_html_header_template"/>
-            <field name="html_footer_template" ref="trial_balance_html_footer_template"/>
+            <field name="html_footer_template" eval="None"/>
             <field name="extension">pdf</field>
             <field name="template_extension">jinja</field>
         </record>

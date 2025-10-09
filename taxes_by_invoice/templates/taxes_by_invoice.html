@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block main %}
+    {% if data.get('output_format', 'pdf') != 'pdf' %}{% include('account_reports/taxes_by_invoice/templates/header_macro.html') %}{% endif %}
   {% if data['parameters']['records_found'] %}
     {{ show_detail(data['records']) }}
   {% else %}

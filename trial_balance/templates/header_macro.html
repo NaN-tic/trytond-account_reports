@@ -34,6 +34,10 @@ header {
     font-size: 15px;
 }
 
+.right {
+    text-align: right;
+}
+
 .header-title {
     font-size: 20px;
 }
@@ -42,23 +46,31 @@ header {
 
 {% if format == 'pdf' %}<header id="header">{% endif %}
     <table class="header-table">
-        <tr>
-            <td><span class="company-name" colspan="2">{{ data['parameters']['company_rec_name'] }}</span> <br/>{{ _('VAT') }}: {{ data['parameters']['company_vat'] }}</td>
-            <td class="center"><span class="header-title">{{ _('Trial Balance') }}</span>{% if format != 'pdf' %} <br/>{{ time|render }}{% endif %}</td>
-        </tr>
-        <tr>
-            <td colspan="3">{{ _('Main Balance')}} {{ data['parameters']['fiscalyear'] }}: {{ _('From: ')}} {{ data['parameters']['start_period'] }} {{ _('To: ') }} {{ data['parameters']['end_period'] }}</td>
-        </tr>
-        {% if data['parameters']['comparison_fiscalyear'] != '' %}
-        <tr>
-            <td colspan="3">{{ _('Comparision Balance')}} {{ data['parameters']['comparison_fiscalyear'] }}: {{ _('From: ')}} {{ data['parameters']['comparison_start_period'] }} {{ _('To: ') }} {{ data['parameters']['comparison_end_period'] }}</td>
-        </tr>
-        {% endif %}
-        <tr>
-            <td colspan="3">{% if data['parameters']['accounts'] != '' %}{{ _('Accounts') }}: {{ data['parameters']['accounts'] }}{% else %}{{ _('All Accounts')}}{% endif %}</td>
-        </tr>
-        <tr>
-            <td colspan="3">{% if data['parameters']['parties'] != '' %}{{ _('Parties') }}: {{ data['parameters']['parties'] }}{% else %}{{ _('All Parties')}}{% endif %}</td>
-        </tr>
+        <thead>
+            <tr>
+                <td><span class="company-name">{{ data['parameters']['company_rec_name'] }}</span> <br/>{{ _('VAT') }}: {{ data['parameters']['company_vat'] }}</td>
+                <td class="center"><span class="header-title">{{ _('Trial Balance') }}</span></td>
+                <td style="text-align: right;">{{ time|render }}</td>
+            </tr>
+        </thead>
+    </table>
+
+    <table>
+        <tbody>
+            <tr>
+                <td>{{ _('Main Balance')}} {{ data['parameters']['fiscalyear'] }}: {{ _('From: ')}} {{ data['parameters']['start_period'] }} {{ _('To: ') }} {{ data['parameters']['end_period'] }}</td>
+            </tr>
+            {% if data['parameters']['comparison_fiscalyear'] != '' %}
+            <tr>
+                <td>{{ _('Comparision Balance')}} {{ data['parameters']['comparison_fiscalyear'] }}: {{ _('From: ')}} {{ data['parameters']['comparison_start_period'] }} {{ _('To: ') }} {{ data['parameters']['comparison_end_period'] }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td>{% if data['parameters']['accounts'] != '' %}{{ _('Accounts') }}: {{ data['parameters']['accounts'] }}{% else %}{{ _('All Accounts')}}{% endif %}</td>
+            </tr>
+            <tr>
+                <td>{% if data['parameters']['parties'] != '' %}{{ _('Parties') }}: {{ data['parameters']['parties'] }}{% else %}{{ _('All Parties')}}{% endif %}</td>
+            </tr>
+        </tbody>
     </table>
 {% if format == 'pdf' %}</header>{% endif %}
