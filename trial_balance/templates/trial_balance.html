@@ -5,5 +5,6 @@
 {% endblock %}
 
 {% block main %}
+    {% if data.get('output_format', 'pdf') != 'pdf' %}{% include('account_reports/trial_balance/templates/header_macro.html') %}{% endif %}
     {{ show_detail(data['records']) }}
 {% endblock %}
