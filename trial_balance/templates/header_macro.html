@@ -1,3 +1,5 @@
+{% set format = data.get('output_format', 'pdf') %}
+{% if format in ('pdf', 'html') %}
 <style>
 @page {
     size: A4 landscape;
@@ -7,55 +9,68 @@ header {
     position: fixed;
     top: 0;
     left: 0;
-    padding-top: 0,5cm;
+    padding-top: 0.5cm;
     padding-left: 0.5cm;
     text-align: left;
     font-size: 9px;
     width: 100%;
     font-family: 'Arial';
 }
-</style>
 
-<header id="header">
-    <table style="width:100%;padding-right: 1cm;">
-        <tr>
-            <td>
-                <span style="font-style: italic;font-size: 14px;font-weight: bold; width:60%" colspan="2">{{ data['parameters']['company_rec_name'] }}</span><br/>
-                {{ _('VAT') }}: {{ data['parameters']['company_vat'] }}
-            </td>
-            <td class="center" style="text-align: center;font-size: 15px;" >
-                <h1 style="font-size:20px">{{ _('Trial Balance') }}</h1>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3">
-                {{ _('Main Balance')}} {{ data['parameters']['fiscalyear'] }}: {{ _('From: ')}} {{ data['parameters']['start_period'] }} {{ _('To: ') }} {{ data['parameters']['end_period'] }}
-            </td>
-        </tr>
-        {% if data['parameters']['comparison_fiscalyear'] != '' %}
+.header-table {
+    width: 100%;
+    padding-right: 1cm;
+}
+
+.company-name {
+    font-style: italic;
+    font-size: 14px;
+    font-weight: bold;
+    width: 60%;
+}
+
+.center {
+    text-align: center;
+    font-size: 15px;
+}
+
+.right {
+    text-align: right;
+}
+
+.header-title {
+    font-size: 20px;
+}
+</style>
+{% endif %}
+
+{% if format == 'pdf' %}<header id="header">{% endif %}
+    <table class="header-table">
+        <thead>
             <tr>
-                <td colspan="3">
-                    {{ _('Comparision Balance')}} {{ data['parameters']['comparison_fiscalyear'] }}: {{ _('From: ')}} {{ data['parameters']['comparison_start_period'] }} {{ _('To: ') }} {{ data['parameters']['comparison_end_period'] }}
-                </td>
+                <td><span class="company-name">{{ data['parameters']['company_rec_name'] }}</span> <br/>{{ _('VAT') }}: {{ data['parameters']['company_vat'] }}</td>
+                <td class="center"><span class="header-title">{{ _('Trial Balance') }}</span></td>
+                <td style="text-align: right;">{{ time|render }}</td>
             </tr>
-        {% endif %}
-        <tr>
-            <td colspan="3">
-                {% if data['parameters']['accounts'] != '' %}
-                    {{ _('Accounts') }}: {{ data['parameters']['accounts'] }}
-                {% else %}
-                    {{ _('All Accounts')}}
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3">
-                {% if data['parameters']['parties'] != '' %}
-                    {{ _('Parties') }}: {{ data['parameters']['parties'] }}
-                {% else %}
-                    {{ _('All Parties')}}
-                {% endif %}
-            </td>
-        </tr>
+        </thead>
     </table>
-</header>
+
+    <table>
+        <tbody>
+            <tr>
+                <td>{{ _('Main Balance')}} {{ data['parameters']['fiscalyear'] }}: {{ _('From: ')}} {{ data['parameters']['start_period'] }} {{ _('To: ') }} {{ data['parameters']['end_period'] }}</td>
+            </tr>
+            {% if data['parameters']['comparison_fiscalyear'] != '' %}
+            <tr>
+                <td>{{ _('Comparision Balance')}} {{ data['parameters']['comparison_fiscalyear'] }}: {{ _('From: ')}} {{ data['parameters']['comparison_start_period'] }} {{ _('To: ') }} {{ data['parameters']['comparison_end_period'] }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td>{% if data['parameters']['accounts'] != '' %}{{ _('Accounts') }}: {{ data['parameters']['accounts'] }}{% else %}{{ _('All Accounts')}}{% endif %}</td>
+            </tr>
+            <tr>
+                <td>{% if data['parameters']['parties'] != '' %}{{ _('Parties') }}: {{ data['parameters']['parties'] }}{% else %}{{ _('All Parties')}}{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+{% if format == 'pdf' %}</header>{% endif %}
