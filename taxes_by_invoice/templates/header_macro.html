@@ -1,36 +1,57 @@
+{% set format = data.get('output_format', 'pdf') %}
+{% if format in ('pdf', 'html') %}
 <style>
 @page {
-  size: A4 landscape;
+    size: A4 landscape;
 }
 
 header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  padding-top: 1cm;
-  padding-left: 0.5cm;
-  text-align: left;
-  font-size: 9px;
-  width: 100%;
-  font-family: 'Arial';
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 0.5cm;
+    padding-left: 0.5cm;
+    text-align: left;
+    font-size: 9px;
+    width: 100%;
+    font-family: 'Arial';
+}
+
+.header-table {
+    width: 100%;
+    padding-right: 1cm;
+}
+
+.company-name {
+    font-style: italic;
+    font-size: 14px;
+    font-weight: bold;
+    width: 60%;
+}
+
+.center {
+    text-align: center;
+    font-size: 15px;
+}
+
+.right {
+    text-align: right;
+}
+
+.header-title {
+    font-size: 20px;
 }
 </style>
+{% endif %}
 
-<header id="header">
-    <table style="width:100%;padding-right: 1cm;">
+{% if format == 'pdf' %}<header id="header">{% endif %}
+    <table class="header-table">
         <thead>
-        <tr>
-            <td>
-                <span style="font-style: italic;font-size: 14px;font-weight: bold;">{{ data['parameters']['company'] }}</span><br/>
-                {{ _('VAT') }}: {{ data['parameters']['company_vat'] }}
-            </td>
-            <td class="center" style="width:60%;text-align: center;font-size: 15px;">
-                <h1 style="font-size:20px">{% if data['parameters']['jump_page'] %}{{ _('Taxes By Invoice and Period') }}{% else %}{{ _('Taxes By Invoice') }}{% endif %}</h1>
-            </td>
-            <td style="text-align: right;">
-                {{ time|render }}
-            </td>
-        </tr>
+            <tr>
+                <td><span class="company-name" >{{ data['parameters']['company'] }}</span> <br/>{{ _('VAT') }}: {{ data['parameters']['company_vat'] }}</td>
+                <td class="center"><span class="header-title">{% if data['parameters']['jump_page'] %}{{ _('Taxes By Invoice and Period') }}{% else %}{{ _('Taxes By Invoice') }}{% endif %}</span></td>
+                <td class="right">{{ time|render }}</td>
+            </tr>
         </thead>
     </table>
 
@@ -38,11 +59,11 @@ header {
         <tbody>
         {% if data['parameters']['start_date'] %}
             <tr>
-                <td colspan="2" style="text-align: right;">{{ _('Initial posting date: ')}} {{ data['parameters']['start_date'] }}</td>
+                <td colspan="2" class="right">{{ _('Initial posting date: ')}} {{ data['parameters']['start_date'] }}</td>
             </tr>
             <tr>
                 <td>{{ _('Fiscal Year') }}: {{ data['parameters']['fiscal_year']}} {% if data['parameters']['periods'] %}{{ _('Periods:') }} {{data['parameters']['periods']}} {% else %}{{ _('All Periods') }}{% endif %}</td>
-                <td style="text-align: right;">{{ _('Final posting date: ') }} {{ data['parameters']['end_date'] }}</td>
+                <td class="right">{{ _('Final posting date: ') }} {{ data['parameters']['end_date'] }}</td>
             </tr>
         {% else %}
             <tr>
@@ -57,4 +78,4 @@ header {
         </tr>
         </tbody>
     </table>
-</header>
+{% if format == 'pdf' %}</header>{% endif %}
