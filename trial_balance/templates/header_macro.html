@@ -48,7 +48,7 @@ header {
     <table class="header-table">
         <thead>
             <tr>
-                <td><span class="company-name">{{ data['parameters']['company_rec_name'] }}</span> <br/>{{ _('VAT') }}: {{ data['parameters']['company_vat'] }}</td>
+                <td><span class="company-name">{{ data['parameters']['company_rec_name'] }}</span><br/>{{ data['parameters']['company_vat'] }}</td>
                 <td class="center"><span class="header-title">{{ _('Trial Balance') }}</span></td>
                 <td style="text-align: right;">{{ time|render }}</td>
             </tr>

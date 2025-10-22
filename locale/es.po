@@ -405,7 +405,7 @@ msgstr "Total Ejercicio fiscal"
 
 msgctxt "report:account_reports.general_ledger:"
 msgid "VAT"
-msgstr "Número de identificación fiscal"
+msgstr "NIF"
 
 msgctxt "report:account_reports.general_ledger:"
 msgid ""
@@ -485,7 +485,7 @@ msgstr "Total"
 
 msgctxt "report:account_reports.taxes_by_invoice:"
 msgid "VAT"
-msgstr "Número de identificación fiscal"
+msgstr "NIF"
 
 msgctxt "report:account_reports.taxes_by_invoice:"
 msgid "Without taxes"
