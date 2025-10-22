@@ -37,7 +37,7 @@ copyright notices and license terms. -->
         </record>
 
         <record model='html.template.signature' id="general_ledger_show_detail_macro_signature">
-            <field name="name">show_detail(records)</field>
+            <field name="name">show_detail(records, format)</field>
         </record>
         <record model='html.template' id="general_ledger_show_detail_macro_html">
             <field name="name">General Ledger Detail</field>
