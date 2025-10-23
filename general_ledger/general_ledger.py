@@ -13,6 +13,7 @@ from trytond.tools import grouped_slice
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.modules.account_reports.common import TimeoutException, TimeoutChecker
+from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.html_report.html_report import HTMLReport
 from trytond.rpc import RPC
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
@@ -326,6 +327,8 @@ class GeneralLedgerReport(HTMLReport):
         parameters['company'] = company.rec_name
         parameters['company_vat'] = (company.party.tax_identifier
             and company.party.tax_identifier.code) or ''
+        parameters['company_vat_label'] = (company.party.tax_identifier
+            and vat_label(company.party.tax_identifier) or '')
         parameters['start_period'] = start_period and start_period or ''
         parameters['end_period'] = end_period and end_period or ''
         parameters['start_date'] = (start_date.strftime('%d/%m/%Y')

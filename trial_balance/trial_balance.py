@@ -14,6 +14,7 @@ from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from trytond.modules.account_reports.common import TimeoutException, TimeoutChecker
+from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.html_report.html_report import HTMLReport
 from collections import defaultdict
 
@@ -784,6 +785,8 @@ class TrialBalanceReport(HTMLReport):
         parameters['company_vat'] = (company and
             company.party.tax_identifier and
             company.party.tax_identifier.code) or ''
+        parameters['company_vat_label'] = (company and company.party.tax_identifier
+            and vat_label(company.party.tax_identifier) or '')
         parameters['with_moves_only'] = with_moves or ''
         parameters['split_parties'] = split_parties or ''
         parameters['digits'] = digits or ''

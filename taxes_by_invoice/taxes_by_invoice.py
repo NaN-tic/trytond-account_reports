@@ -11,6 +11,7 @@ from trytond.rpc import RPC
 from trytond.modules.html_report.html_report import HTMLReport
 from trytond.modules.html_report.engine import DualRecord
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
+from trytond.modules.account_reports.tools import vat_label
 
 _ZERO = Decimal(0)
 
@@ -260,6 +261,8 @@ class TaxesByInvoiceReport(HTMLReport):
         parameters['company_vat'] = (company
             and company.party.tax_identifier and
             company.party.tax_identifier.code) or ''
+        parameters['company_vat_label'] = (company and company.party.tax_identifier
+            and vat_label(company.party.tax_identifier) or '')
         parameters['jump_page'] = (True if data['grouping'] == 'invoice'
             else False)
         parameters['records_found'] = True
