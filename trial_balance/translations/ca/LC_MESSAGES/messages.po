@@ -28,11 +28,11 @@ msgid "Comparision Balance"
 msgstr "Balanç comparació"
 
 #: templates/detail_macro.html:10
-msgid "Account"
-msgstr "Compte"
+msgid "Code"
+msgstr "Codi"
 
 #: templates/detail_macro.html:11
-msgid "Account Name"
+msgid "Account"
 msgstr "Compte"
 
 #: templates/detail_macro.html:13 templates/detail_macro.html:17
