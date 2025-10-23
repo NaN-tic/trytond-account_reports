@@ -1,55 +1,55 @@
 # Translations template for PROJECT.
-# Copyright (C) 2023 ORGANIZATION
+# Copyright (C) 2025 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-05-15 15:49+0200\n"
+"POT-Creation-Date: 2025-10-23 12:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.10.3\n"
+"Generated-By: Babel 2.17.0\n"
 
-#: templates/detail_macro.html:6 templates/detail_macro.html:20
+#: templates/detail_macro.html:18
 msgid "Move Date"
 msgstr ""
 
-#: templates/detail_macro.html:7 templates/detail_macro.html:21
+#: templates/detail_macro.html:19
 msgid "Account"
 msgstr ""
 
-#: templates/detail_macro.html:8 templates/detail_macro.html:22
+#: templates/detail_macro.html:21
 msgid "NIF"
 msgstr ""
 
-#: templates/detail_macro.html:9 templates/detail_macro.html:23
+#: templates/detail_macro.html:22
 msgid "Invoice"
 msgstr ""
 
-#: templates/detail_macro.html:10 templates/detail_macro.html:24
+#: templates/detail_macro.html:23
 msgid "Date"
 msgstr ""
 
-#: templates/detail_macro.html:11 templates/detail_macro.html:25
+#: templates/detail_macro.html:24
 msgid "Base"
 msgstr ""
 
-#: templates/detail_macro.html:12 templates/detail_macro.html:26
+#: templates/detail_macro.html:26
 msgid "Tax"
 msgstr ""
 
-#: templates/detail_macro.html:13 templates/detail_macro.html:27
+#: templates/detail_macro.html:27
 msgid "Base + Tax"
 msgstr ""
 
-#: templates/detail_macro.html:14 templates/detail_macro.html:28
+#: templates/detail_macro.html:28
 msgid "Total Invoice"
 msgstr ""
 
@@ -61,49 +61,58 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
-#: templates/header_macro.html:17 templates/taxes_by_invoice.html:15
+#: templates/header_macro.html:52 templates/taxes_by_invoice.html:5
 msgid "Taxes By Invoice and Period"
 msgstr ""
 
-#: templates/header_macro.html:17 templates/taxes_by_invoice.html:17
+#: templates/header_macro.html:52 templates/taxes_by_invoice.html:7
 msgid "Taxes By Invoice"
 msgstr ""
 
-#: templates/header_macro.html:30
+#: templates/header_macro.html:62
 msgid "Initial posting date: "
 msgstr ""
 
-#: templates/header_macro.html:33 templates/header_macro.html:38
+#: templates/header_macro.html:65 templates/header_macro.html:70
 msgid "Fiscal Year"
 msgstr ""
 
-#: templates/header_macro.html:33 templates/header_macro.html:38
+#: templates/header_macro.html:65 templates/header_macro.html:70
 msgid "Periods:"
 msgstr ""
 
-#: templates/header_macro.html:33 templates/header_macro.html:38
+#: templates/header_macro.html:65 templates/header_macro.html:70
 msgid "All Periods"
 msgstr ""
 
-#: templates/header_macro.html:34
+#: templates/header_macro.html:66
 msgid "Final posting date: "
 msgstr ""
 
-#: templates/header_macro.html:42
+#: templates/header_macro.html:74
 msgid "Parties: "
 msgstr ""
 
-#: templates/header_macro.html:42
+#: templates/header_macro.html:74
 msgid "All Parties"
 msgstr ""
 
-#: templates/header_macro.html:45
-msgid ""
-"Cancelled invoices are shown in gray and those without a cancel move or a"
-" cancel move not related to an invoice are not added to the total."
+#: templates/header_macro.html:77
+msgid "grey"
 msgstr ""
 
-#: templates/taxes_by_invoice.html:28
+#: templates/header_macro.html:77
+#, python-format
+msgid "Cancelled invoices are shown in %s."
+msgstr ""
+
+#: templates/header_macro.html:77
+msgid ""
+"Invoices without a cancelled move or a cancelled move not related to an "
+"invoice are not added to the total."
+msgstr ""
+
+#: templates/taxes_by_invoice.html:16
 msgid "No records found"
 msgstr ""
 
