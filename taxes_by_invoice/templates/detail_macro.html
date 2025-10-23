@@ -1,6 +1,18 @@
+{% macro cell(value='', cls='', style='', colspan=1, format='pdf') %}
+  <td
+    {% if cls %}class="{{ cls }}"{% endif %}
+    {% if style %}style="{{ style }}"{% endif %}
+    {% if colspan != 1 %}colspan="{{ colspan }}"{% endif %}
+  >{{ value }}</td>
+  {% if format == 'xlsx' and colspan|int > 1 %}
+    {% for _ in range(colspan - 1) %}
+      <td></td>
+    {% endfor %}
+  {% endif %}
+{% endmacro %}
+
 {% for k in data['records'] %}
     <table>
-        {%if data['parameters']['jump_page'] %}
         <thead>
         <tr>
             <th>{{ _('Move Date')}}</th>
@@ -10,27 +22,12 @@
             <th>{{ _('Invoice')}}</th>
             <th>{{ _('Date')}}</th>
             <th style="text-align: right;">{{ _('Base')}}</th>
-            <th colspan="2" style="text-align: right;">{{ _('Tax')}}</th>
-            <th style="text-align: right;">{{ _('Base + Tax')}}</th>
-            <th style="text-align: right;">{{ _('Total Invoice')}}</th>
-        </tr>
-        </thead>
-        {% else %}
-        <thead>
-        <tr>
-            <th>{{ _('Move Date')}}</th>
-            <th>{{ _('Account')}}</th>
             <th></th>
-            <th>{{ _('NIF')}}</th>
-            <th>{{ _('Invoice')}}</th>
-            <th>{{ _('Date')}}</th>
-            <th style="text-align: right;">{{ _('Base')}}</th>
-            <th colspan="2" style="text-align: right;">{{ _('Tax')}}</th>
+            <th style="text-align: right;">{{ _('Tax')}}</th>
             <th style="text-align: right;">{{ _('Base + Tax')}}</th>
             <th style="text-align: right;">{{ _('Total Invoice')}}</th>
         </tr>
         </thead>
-        {% endif %}
         <tr>
             <td colspan="11" style="text-align: left !important;padding-left: 35px !important;" class="bold">{{ k.name }}</td>
         </tr>
@@ -40,7 +37,7 @@
             {{ show_detail_lines(record) }}
         {% endif %}
         {% if data['parameters']['tax_totals'].get(k) %}<tr class="bold">
-            <td colspan="6" class="right">{% if data['parameters']['jump_page'] %} {{ _('Total Period') }} {% else %} {{ _('Total') }} {% endif %} {{k.name}}</td>
+            {{ cell(value=_('Total Period') if data['parameters']['jump_page'] else _('Total'), style='text-align: right;', colspan=6, format=format) }}
             <td style="text-align: right;">{{data['parameters']['tax_totals'][k]['total_untaxed'] | render(digits=currency_digits)}}</td>
             <td></td>
             <td style="text-align: right;">{{data['parameters']['tax_totals'][k]['total_tax'] | render(digits=currency_digits)}}</td>
@@ -50,7 +47,7 @@
         {% if data['parameters']['jump_page'] %}
             {% if loop.nextitem is not defined %}
                 <tr class="bold">
-                    <td colspan="6" class="right"> {{ _('Total') }}</td>
+                    {{ cell(value=_('Total'), style='text-align: right;', colspan=6, format=format) }}
                     <td style="text-align: right;">{{ data['parameters']['totals']['total_untaxed'] | render(digits=currency_digits)}}</td>
                     <td></td>
                     <td style="text-align: right;">{{ data['parameters']['totals']['total_tax'] | render(digits=currency_digits)}}</td>

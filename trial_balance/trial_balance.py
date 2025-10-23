@@ -780,7 +780,7 @@ class TrialBalanceReport(HTMLReport):
             if comparison_fiscalyear else '')
         parameters['comparison_end_period'] = (comparison_end_period.name
             if comparison_fiscalyear else '')
-        parameters['company_rec_name'] = company and company.rec_name or ''
+        parameters['company'] = company and company.rec_name or ''
         parameters['company_vat'] = (company and
             company.party.tax_identifier and
             company.party.tax_identifier.code) or ''

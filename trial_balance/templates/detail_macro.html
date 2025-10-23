@@ -1,17 +1,18 @@
 <table>
     {% if data['parameters']['comparison_fiscalyear'] != '' %}
         <tr>
-            <th colspan="2"></th>
+            <th></th>
+            <th></th>
             <th colspan="4" style="text-align: center;">{{ _('Main Balance') }} {{ data['parameters']['fiscalyear'] }}</th>
             <th colspan="4" style="text-align: center;">{{ _('Comparision Balance') }} {{ data['parameters']['comparison_fiscalyear'] }}</th>
         </tr>
         <tr>
-            <th colspan="10"><br></th>
+            <th colspan="10"></th>
         </tr>
     {% endif %}
     <tr>
-        <th>{{ _('Account')}}</th>
-        <th>{{ _('Account Name') }}</th>
+        <th>{{ _('Code')}}</th>
+        <th>{{ _('Account') }}</th>
         {% if data['parameters']['comparison_fiscalyear'] != '' %}
             <th style="text-align: right;">{{ _('Initial') }}</th>
             <th style="text-align: right;">{{ _('Debit') }}</th>
@@ -52,7 +53,8 @@
     {% endfor %}
 
     <tr>
-        <td colspan="2"></td>
+        <td></td>
+        <td></td>
         {% if data['parameters']['comparison_fiscalyear'] != '' %}
             <td style="text-align: right;">{{ data['parameters']['total_period_initial_balance']|render}}</td>
             <td style="text-align: right;">{{ data['parameters']['total_period_debit']|render }}</td>
