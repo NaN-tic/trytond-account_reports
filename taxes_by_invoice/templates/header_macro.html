@@ -48,7 +48,7 @@ header {
     <table class="header-table">
         <thead>
             <tr>{%- set p = data['parameters'] -%}
-                <td><span class="company-name">{{ p['company'] }}</span><br/>{{ p['company_vat'] }}</td>
+                <td><span class="company-name">{{ p['company'] }}</span> <br/>{{ p['company_vat_label']}}: {{ p['company_vat'] }}</td>
                 <td class="center"><span class="header-title">{% if p['jump_page'] %}{{ _('Taxes By Invoice and Period') }}{% else %}{{ _('Taxes By Invoice') }}{% endif %}</span></td>
                 <td class="right">{{ time|render }}</td>
             </tr>
