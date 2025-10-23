@@ -6,7 +6,7 @@
             <td>{{ l.account.render.code}}</td>
             <td style="text-align: left;">{{ l.invoice.party.render.rec_name}}</td>
             <td>{{ l.invoice.party_tax_identifier and l.invoice.party_tax_identifier.render.code or l.invoice.party.tax_identifier and l.invoice.party.tax_identifier.render.code or '' }}</td>
-            <td class="no-wrap">{% if l.invoice.raw.state == 'cancel' %}*{% endif %}{{ l.invoice.render.number }}</td>
+            <td class="no-wrap">{% if l.invoice.raw.state == 'cancelled' %}*{% endif %}{{ l.invoice.render.number }}</td>
             <td class="no-wrap">{{ l.invoice.render.invoice_date }}</td>
             <td style="text-align: right;">{% if l.render.base %}{{l.raw.company_base | render(digits=l.invoice.company.currency.raw.digits)}}{% else %}0.0{% endif %}</td>
             <td>{% if l.tax %}{{ l.tax.raw.name }}{% else %} --- {% endif %}</td>
