@@ -279,7 +279,7 @@ class GeneralLedgerReport(HTMLReport):
         def _get_key(currentKey):
             party = (currentKey[1].name if len(currentKey) > 1
                 and currentKey[1] else 'None')
-            return (currentKey[0].code, party)
+            return (currentKey[0].code, party or 'None')
 
         fiscalyear = (FiscalYear(data['fiscalyear']) if data.get('fiscalyear')
             else None)
