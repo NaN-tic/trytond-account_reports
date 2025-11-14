@@ -207,14 +207,7 @@ class PrintTrialBalanceStart(ModelView):
 
         config = Configuration(1)
 
-        accounts_digits = None
-        if hasattr(config, 'default_account_code_digits'):
-            accounts_digits = config.default_account_code_digits
-        else:
-            accounts = [a.code for a in Account.search([])]
-            if accounts:
-                accounts_digits = len(max(accounts,
-                    key=len))
+        accounts_digits = getattr(config, 'default_account_code_digits', None)
 
         if (accounts_digits and self.show_digits and
                 self.show_digits != accounts_digits):
