@@ -265,10 +265,6 @@ msgctxt "model:ir.action,name:wizard_print_trial_balance"
 msgid "Print Trial Balance"
 msgstr "Imprimir balance de sumas y saldos"
 
-msgctxt "model:ir.action,name:report_general_ledger"
-msgid "General Ledger"
-msgstr "Libro mayor"
-
 msgctxt "model:ir.action,name:report_taxes_by_invoice"
 msgid "Taxes by Invoice and Period"
 msgstr "Impuestos por factura y período"
