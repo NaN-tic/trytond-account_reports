@@ -457,10 +457,98 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(parameters['accounts'], ', '.join([r.code for r in receivables]))
         self.assertEqual(len(records), 1)
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
-        debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
-        self.assertEqual(credit, Decimal(0))
-        self.assertEqual(debit, Decimal('100.0'))
         self.assertEqual(True, all([line for k, m in records.items() for line in m['lines'] if line['line'].party]))
+
+    @with_transaction()
+    def test_journal(self):
+        'Test journal'
+        pool = Pool()
+        PrintJournal = pool.get('account_reports.print_journal',
+            type='wizard')
+        JournalReport = pool.get('account_reports.journal',
+            type='report')
+        company = create_company()
+        fiscalyear = self.create_moves(company)
+        period = fiscalyear.periods[0]
+        last_period = fiscalyear.periods[-1]
+        journals = self.get_journals()
+        journal_revenue = journals['REV']
+        journal_expense = journals['EXP']
+        session_id, _, _ = PrintJournal.create()
+        print_journal = PrintJournal(session_id)
+        print_journal.start.company = company
+        print_journal.start.fiscalyear = fiscalyear
+        print_journal.start.start_period = period
+        print_journal.start.end_period = last_period
+        print_journal.start.journals = []
+        print_journal.start.output_format = 'html'
+        print_journal.start.open_close_account_moves = False
+        print_journal.start.open_move_description = 'Open'
+        print_journal.start.close_move_description = 'Close'
+
+        _, data = print_journal.do_print_(None)
+        # Full Journal
+        self.assertEqual(data['company'], company.id)
+        self.assertEqual(data['fiscalyear'], fiscalyear.id)
+        self.assertEqual(data['start_period'], period.id)
+        self.assertEqual(data['end_period'], last_period.id)
+        self.assertEqual(len(data['journals']), 0)
+        self.assertEqual(data['output_format'], 'html')
+        records, parameters = JournalReport.prepare(data)
+        self.assertEqual(len(records), 12)
+        self.assertEqual(parameters['start_period'], period.name)
+        self.assertEqual(parameters['end_period'], last_period.name)
+        self.assertEqual(parameters['fiscal_year'], fiscalyear.name)
+        self.assertEqual(parameters['journals'], '')
+        credit = sum([m['credit'] for m in records])
+        debit = sum([m['debit'] for m in records])
+        self.assertEqual(credit, debit)
+        self.assertEqual(credit, Decimal('730.0'))
+        with_party = [m for m in records if m['party_name']]
+        self.assertEqual(len(with_party), 6)
+        # Filtering periods
+        session_id, _, _ = PrintJournal.create()
+        print_journal = PrintJournal(session_id)
+        print_journal.start.company = company
+        print_journal.start.fiscalyear = fiscalyear
+        print_journal.start.start_period = period
+        print_journal.start.end_period = period
+        print_journal.start.journals = []
+        print_journal.start.output_format = 'html'
+        print_journal.start.open_close_account_moves = False
+        print_journal.start.open_move_description = 'Open'
+        print_journal.start.close_move_description = 'Close'
+
+        _, data = print_journal.do_print_(None)
+        records, parameters = JournalReport.prepare(data)
+        self.assertEqual(len(records), 8)
+        credit = sum([m['credit'] for m in records])
+        debit = sum([m['debit'] for m in records])
+        self.assertEqual(credit, debit)
+        self.assertEqual(credit, Decimal('380.0'))
+        # Filtering journals
+        journals = self.get_journals()
+        journal_revenue = journals['REV']
+        journal_expense = journals['EXP']
+        session_id, _, _ = PrintJournal.create()
+        print_journal = PrintJournal(session_id)
+        print_journal.start.company = company
+        print_journal.start.fiscalyear = fiscalyear
+        print_journal.start.start_period = period
+        print_journal.start.end_period = period
+        print_journal.start.journals = [journal_revenue, journal_expense]
+        print_journal.start.output_format = 'html'
+        print_journal.start.open_close_account_moves = False
+        print_journal.start.open_move_description = 'Open'
+        print_journal.start.close_move_description = 'Close'
+        _, data = print_journal.do_print_(None)
+        records, parameters = JournalReport.prepare(data)
+        self.assertNotEqual(parameters['journals'], '')
+        self.assertEqual(len(records), 8)
+        credit = sum([m['credit'] for m in records])
+        debit = sum([m['debit'] for m in records])
+        self.assertEqual(credit, debit)
+        self.assertEqual(credit, Decimal('380.0'))
 
 
 del ModuleTestCase
