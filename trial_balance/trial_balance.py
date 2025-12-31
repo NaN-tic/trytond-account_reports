@@ -203,10 +203,8 @@ class PrintTrialBalanceStart(ModelView):
     def on_change_show_digits(self):
         pool = Pool()
         Configuration = pool.get('account.configuration')
-        Account = pool.get('account.account')
 
         config = Configuration(1)
-
         accounts_digits = getattr(config, 'default_account_code_digits', None)
 
         if (accounts_digits and self.show_digits and
