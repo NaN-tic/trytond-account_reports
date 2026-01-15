@@ -9,9 +9,9 @@ from trytond.wizard import Wizard, StateView, StateReport, Button
 from trytond.pyson import Eval, If, Bool
 from trytond.rpc import RPC
 from trytond.modules.html_report.html_report import HTMLReport
-from trytond.modules.html_report.engine import DualRecord
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from trytond.modules.account_reports.tools import vat_label
+from trytond.i18n import gettext
 
 _ZERO = Decimal(0)
 
@@ -208,7 +208,8 @@ class TaxesByInvoiceReport(HTMLReport):
         Period = pool.get('account.period')
         Party = pool.get('party.party')
         Invoice = pool.get('account.invoice')
-        AccountInvoiceTax = pool.get('account.invoice.tax')
+        InvoiceTax = pool.get('account.invoice.tax')
+        InvoiceLine = pool.get('account.invoice.line')
 
         fiscalyear = (FiscalYear(data['fiscalyear']) if data.get('fiscalyear')
             else None)
@@ -267,9 +268,7 @@ class TaxesByInvoiceReport(HTMLReport):
             else False)
         parameters['records_found'] = True
 
-        domain = [
-            ('invoice.move', '!=', None),
-            ]
+        domain = [('invoice.move', '!=', None)]
 
         if data['partner_type'] == 'customers':
             domain += [('invoice.type', '=', 'out')]
@@ -277,31 +276,40 @@ class TaxesByInvoiceReport(HTMLReport):
             domain += [('invoice.type', '=', 'in')]
 
         if start_date:
-            domain += [
-                ('invoice.move.date', '>=', start_date),
-                ]
+            domain += [('invoice.move.date', '>=', start_date)]
         if end_date:
-            domain += [
-                ('invoice.move.date', '<=', end_date),
-                ]
+            domain += [('invoice.move.date', '<=', end_date)]
 
         if not start_date and not end_date and periods:
             domain += [('invoice.move.period', 'in', periods)]
 
         if parties:
-            domain += [('invoice.party', 'in', parties)],
+            domain += [('invoice.party', 'in', parties)]
 
         excluded_parties = Party.browse(data.get('excluded_parties', []))
         if excluded_parties:
             domain += [('invoice.party', 'not in', excluded_parties)]
 
+        invoice_tax_domain = domain.copy()
         if data['tax_type'] == 'invoiced':
-            domain += [('base', '>=', 0)]
+            invoice_tax_domain += [('base', '>=', 0)]
         elif data['tax_type'] == 'refunded':
-            domain += [('base', '<', 0)]
+            invoice_tax_domain += [('base', '<', 0)]
 
         if data['taxes']:
-            domain += [('tax', 'in', data.get('taxes', []))]
+            invoice_tax_domain += [('tax', 'in', data.get('taxes', []))]
+
+        # Search all the invoices that have taxes_deductible_rate != 1
+        invoice_line_domain = domain.copy()
+        invoice_line_domain += [('taxes_deductible_rate', '!=', 1)]
+
+        if data['tax_type'] == 'invoiced':
+            invoice_line_domain += [('amount', '>=', 0)]
+        elif data['tax_type'] == 'refunded':
+            invoice_line_domain += [('amount', '<', 0)]
+
+        if data['taxes']:
+            invoice_line_domain += [('id', 'in', data.get('taxes', []))]
 
         records = {}
         totals = {
@@ -310,80 +318,119 @@ class TaxesByInvoiceReport(HTMLReport):
             'total': _ZERO,
             }
         tax_totals = {}
+
+        def _get_invoice_tax_key():
+            if data['grouping'] == 'invoice':
+                return (tax.invoice.move.period, tax.invoice.company, None)
+            else:
+                return (tax.tax, tax.tax.company, None)
+
+        def _get_invoice_line_key():
+            if data['grouping'] == 'invoice':
+                return (line.invoice.move.period, line.invoice.company, None)
+            else:
+                return (tax.rate, tax.company,
+                    gettext('account_reports.msg_not_deductible_tax'))
+
         if data['grouping'] == 'invoice':
-            taxes = AccountInvoiceTax.search(domain,
-                order=[
-                    ('invoice.move.period', 'ASC'),
-                    ('invoice.invoice_date', 'ASC'),
-                    ('invoice', 'ASC'),
-                    ])
-
-            for tax in taxes:
-                records.setdefault(tax.invoice.move.period, []).append(
-                    DualRecord(tax))
-
-                # If the invoice is cancelled, do not add its values to the
-                # totals
-                if (tax.invoice.state == 'cancelled' and (
-                        (tax.invoice.cancel_move
-                            and tax.invoice.cancel_move.origin
-                            and not isinstance(tax.invoice.cancel_move.origin, Invoice))
-                        or not tax.invoice.cancel_move
-                        or not tax.invoice.cancel_move.origin)):
-                    continue
-
-                # With this we have the total for each tax (total base, total
-                # amount and total)
-                tax_totals.setdefault(tax.invoice.move.period, {
-                        'total_untaxed': 0,
-                        'total_tax': 0,
-                        'total': 0})
-                tax_totals[tax.invoice.move.period]['total_untaxed'] += (
-                    tax.company_base)
-                tax_totals[tax.invoice.move.period]['total_tax'] += (
-                    tax.company_amount)
-                tax_totals[tax.invoice.move.period]['total'] += (
-                    tax.company_base + tax.company_amount)
-
-                # We need this fields in the report
-                totals['total_untaxed'] += tax.company_base
-                totals['total_tax'] += tax.company_amount
-                totals['total'] += tax.company_base + tax.company_amount
-            parameters['totals'] = totals
-
+            order = [
+                ('invoice.move.period', 'ASC'),
+                ('invoice.invoice_date', 'ASC'),
+                ('invoice', 'ASC'),
+                ]
         else:
-            taxes = AccountInvoiceTax.search(domain,
-                order=[
-                    ('account', 'ASC'),
-                    ('invoice.move.date', 'ASC'),
-                    ('invoice', 'ASC'),
-                    ])
+            order = [
+                ('account', 'ASC'),
+                ('invoice.move.date', 'ASC'),
+                ('invoice', 'ASC'),
+                ]
 
-            for tax in taxes:
-                records.setdefault(tax.tax, []).append(DualRecord(tax))
+        taxes = InvoiceTax.search(invoice_tax_domain, order=order)
+        # Tax not deductible
+        lines = InvoiceLine.search(invoice_line_domain, order=order)
+
+        for tax in taxes:
+            key = _get_invoice_tax_key()
+            if not records.get(key, None):
+                records[key] = []
+            records[key].append({
+                    'tax_name': tax.tax.name,
+                    'invoice': tax.invoice,
+                    'account': tax.account,
+                    'tax': tax.tax,
+                    'base': tax.base,
+                    'amount': tax.amount,
+                    'company_base': tax.company_base,
+                    'company_amount': tax.company_amount,
+                    })
+
+            # If the invoice is cancelled, do not add its values to the
+            # totals
+            if (tax.invoice.state == 'cancelled' and (
+                    (tax.invoice.cancel_move
+                        and tax.invoice.cancel_move.origin
+                        and not isinstance(tax.invoice.cancel_move.origin, Invoice))
+                    or not tax.invoice.cancel_move
+                    or not tax.invoice.cancel_move.origin)):
+                continue
+
+            # With this we have the total for each tax (total base, total
+            # amount and total)
+            tax_totals.setdefault(key, {
+                    'total_untaxed': 0,
+                    'total_tax': 0,
+                    'total': 0})
+            tax_totals[key]['total_untaxed'] += tax.company_base
+            tax_totals[key]['total_tax'] += tax.company_amount
+            tax_totals[key]['total'] += tax.company_base + tax.company_amount
+
+            # We need this fields in the report
+            totals['total_untaxed'] += tax.company_base
+            totals['total_tax'] += tax.company_amount
+            totals['total'] += tax.company_base + tax.company_amount
+
+        # Tax not deductible
+        for line in lines:
+            for tax in line.taxes:
+                key = _get_invoice_line_key()
+                if not records.get(key, None):
+                    records[key] = []
+                records[key].append({
+                        'tax_name': '%s (%s%%)' % (gettext(
+                                'account_reports.msg_not_deductible_tax'),
+                                round(tax.rate * 100, 0)),
+                        'invoice': line.invoice,
+                        'account': (tax.invoice_account
+                            if line.amount >= 0 else tax.credit_note_account),
+                        'tax': tax,
+                        'base': line.amount,
+                        'amount': Decimal('0'),
+                        'company_base': line.company_amount,
+                        'company_amount': Decimal('0'),
+                        })
 
                 # If the invoice is cancelled, do not add its values to the
                 # totals
-                if (tax.invoice.state == 'cancelled' and (
-                        (tax.invoice.cancel_move
-                            and tax.invoice.cancel_move.origin
-                            and not isinstance(tax.invoice.cancel_move.origin, Invoice))
-                        or not tax.invoice.cancel_move
-                        or not tax.invoice.cancel_move.origin)):
+                if (line.invoice.state == 'cancelled' and (
+                        (line.invoice.cancel_move
+                            and line.invoice.cancel_move.origin
+                            and not isinstance(line.invoice.cancel_move.origin, Invoice))
+                        or not line.invoice.cancel_move
+                        or not line.invoice.cancel_move.origin)):
                     continue
 
                 # With this we have the total for each tax (total base, total
                 # amount and total)
-                tax_totals.setdefault(tax.tax, {
+                tax_totals.setdefault(key, {
                         'total_untaxed': 0,
                         'total_tax': 0,
                         'total': 0})
-                tax_totals[tax.tax]['total_untaxed'] += tax.company_base
-                tax_totals[tax.tax]['total_tax'] += tax.company_amount
-                tax_totals[tax.tax]['total'] += (tax.company_base +
-                    tax.company_amount)
+                tax_totals[key]['total_untaxed'] += line.company_amount
+                tax_totals[key]['total'] += line.company_amount
 
+        parameters['totals'] = totals
         parameters['tax_totals'] = tax_totals
+
         return records, parameters
 
     @classmethod
