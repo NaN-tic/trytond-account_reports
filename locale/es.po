@@ -265,10 +265,6 @@ msgctxt "model:ir.action,name:wizard_print_trial_balance"
 msgid "Print Trial Balance"
 msgstr "Imprimir balance de sumas y saldos"
 
-msgctxt "model:ir.action,name:report_taxes_by_invoice"
-msgid "Taxes by Invoice and Period"
-msgstr "Impuestos por factura y período"
-
 msgctxt "model:ir.action.wizard,name:"
 msgid "Print Abreviated Journal"
 msgstr "Imprimir diario abreviado"
@@ -297,6 +293,10 @@ msgstr ""
 msgctxt "model:ir.message,text:msg_missing_fiscalyear"
 msgid "The fiscalyear selected it is not valid."
 msgstr "El año fiscal seleccionado no es válido."
+
+msgctxt "model:ir.message,text:msg_not_deductible_tax"
+msgid "Not Deductible VAT"
+msgstr "IVA No deducible"
 
 msgctxt "model:ir.message,text:msg_timeout_exception"
 msgid ""
