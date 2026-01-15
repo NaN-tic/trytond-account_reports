@@ -1,10 +1,12 @@
+
+{%- set p = data['parameters'] -%}
 <table>
-    {% if data['parameters']['comparison_fiscalyear'] != '' %}
+    {% if p['comparison_fiscalyear'] != '' %}
         <tr>
             <th></th>
             <th></th>
-            <th colspan="4" style="text-align: center;">{{ _('Main Balance') }} {{ data['parameters']['fiscalyear'] }}</th>
-            <th colspan="4" style="text-align: center;">{{ _('Comparision Balance') }} {{ data['parameters']['comparison_fiscalyear'] }}</th>
+            <th colspan="4" style="text-align: center;">{{ _('Main Balance') }} {{ p['fiscalyear'] }}</th>
+            <th colspan="4" style="text-align: center;">{{ _('Comparision Balance') }} {{ p['comparison_fiscalyear'] }}</th>
         </tr>
         <tr>
             <th colspan="10"></th>
@@ -13,7 +15,7 @@
     <tr>
         <th>{{ _('Code')}}</th>
         <th>{{ _('Account') }}</th>
-        {% if data['parameters']['comparison_fiscalyear'] != '' %}
+        {% if p['comparison_fiscalyear'] != '' %}
             <th style="text-align: right;">{{ _('Initial') }}</th>
             <th style="text-align: right;">{{ _('Debit') }}</th>
             <th style="text-align: right;">{{ _('Credit') }}</th>
@@ -34,7 +36,7 @@
         <tr>
             <td>{{ record['code'] }}</td>
             <td>{{ record['name'] }}</td>
-            {% if data['parameters']['comparison_fiscalyear'] != '' %}
+            {% if p['comparison_fiscalyear'] != '' %}
                 <td style="text-align: right;">{{ record['period_initial_balance']|render }}</td>
                 <td style="text-align: right;">{{ record['period_debit']|render }}</td>
                 <td style="text-align: right;">{{ record['period_credit']|render }}</td>
@@ -55,20 +57,20 @@
     <tr>
         <td></td>
         <td></td>
-        {% if data['parameters']['comparison_fiscalyear'] != '' %}
-            <td style="text-align: right;">{{ data['parameters']['total_period_initial_balance']|render}}</td>
-            <td style="text-align: right;">{{ data['parameters']['total_period_debit']|render }}</td>
-            <td style="text-align: right;">{{ data['parameters']['total_period_credit']|render }}</td>
-            <td style="text-align: right;">{{ data['parameters']['total_period_balance']|render }}</td>
-            <td style="text-align: right;">{{ data['parameters']['total_initial_balance']|render }}</td>
-            <td style="text-align: right;">{{ data['parameters']['total_debit']|render }}</td>
-            <td style="text-align: right;">{{ data['parameters']['total_credit']|render }}</td>
-            <td style="text-align: right;">{{ data['parameters']['total_balance']|render }}</td>
+        {% if p['comparison_fiscalyear'] != '' %}
+            <td style="text-align: right;">{{ p['total_period_initial_balance']|render}}</td>
+            <td style="text-align: right;">{{ p['total_period_debit']|render }}</td>
+            <td style="text-align: right;">{{ p['total_period_credit']|render }}</td>
+            <td style="text-align: right;">{{ p['total_period_balance']|render }}</td>
+            <td style="text-align: right;">{{ p['total_initial_balance']|render }}</td>
+            <td style="text-align: right;">{{ p['total_debit']|render }}</td>
+            <td style="text-align: right;">{{ p['total_credit']|render }}</td>
+            <td style="text-align: right;">{{ p['total_balance']|render }}</td>
         {% else %}
-            <td style="text-align: right;">{{ data['parameters']['total_period_initial_balance']|render}}</td>
-            <td style="text-align: right;">{{ data['parameters']['total_period_debit']|render }}</td>
-            <td style="text-align: right;">{{ data['parameters']['total_period_credit']|render }}</td>
-            <td style="text-align: right;">{{ data['parameters']['total_period_balance']|render }}</td>
+            <td style="text-align: right;">{{ p['total_period_initial_balance']|render}}</td>
+            <td style="text-align: right;">{{ p['total_period_debit']|render }}</td>
+            <td style="text-align: right;">{{ p['total_period_credit']|render }}</td>
+            <td style="text-align: right;">{{ p['total_period_balance']|render }}</td>
         {% endif %}
     </tr>
 </table>
