@@ -301,12 +301,24 @@ class TaxesByInvoiceReport(HTMLReport):
 
         # Search all the invoices that have taxes_deductible_rate != 1
         invoice_line_domain = domain.copy()
-        invoice_line_domain += [('taxes_deductible_rate', '!=', 1)]
+        invoice_line_domain += [
+            ('type', '=', 'line'),
+            ('taxes_deductible_rate', '!=', 1)]
 
+        # As the amount field in invoice line has not searcher, but the
+        # amount = quantity x unit_price, check this both fields.
         if data['tax_type'] == 'invoiced':
-            invoice_line_domain += [('amount', '>=', 0)]
+            invoice_line_domain += ['OR',
+                [
+                    [('quantity', '>=', 0), ('unit_price', '>=', 0)],
+                    [('quantity', '<=', 0), ('unit_price', '<=', 0)],
+                ]]
         elif data['tax_type'] == 'refunded':
-            invoice_line_domain += [('amount', '<', 0)]
+            invoice_line_domain += ['OR',
+                [
+                    [('quantity', '>', 0), ('unit_price', '<', 0)],
+                    [('quantity', '<', 0), ('unit_price', '>', 0)],
+                ]]
 
         if data['taxes']:
             invoice_line_domain += [('id', 'in', data.get('taxes', []))]
