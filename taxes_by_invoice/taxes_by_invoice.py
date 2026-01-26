@@ -291,13 +291,6 @@ class TaxesByInvoiceReport(HTMLReport):
             domain += [('invoice.party', 'not in', excluded_parties)]
 
         invoice_tax_domain = domain.copy()
-        if data['tax_type'] == 'invoiced':
-            invoice_tax_domain += [('base', '>=', 0)]
-        elif data['tax_type'] == 'refunded':
-            invoice_tax_domain += [('base', '<', 0)]
-
-        if data['taxes']:
-            invoice_tax_domain += [('tax', 'in', data.get('taxes', []))]
 
         # Search all the invoices that have taxes_deductible_rate != 1
         invoice_line_domain = domain.copy()
@@ -305,22 +298,23 @@ class TaxesByInvoiceReport(HTMLReport):
             ('type', '=', 'line'),
             ('taxes_deductible_rate', '!=', 1)]
 
-        # As the amount field in invoice line has not searcher, but the
-        # amount = quantity x unit_price, check this both fields.
         if data['tax_type'] == 'invoiced':
-            invoice_line_domain += ['OR',
-                [
-                    [('quantity', '>=', 0), ('unit_price', '>=', 0)],
-                    [('quantity', '<=', 0), ('unit_price', '<=', 0)],
-                ]]
+            invoice_tax_domain += [('base', '>=', 0)]
+            # As the amount field in invoice line has not searcher, but the
+            # amount = quantity x unit_price, check this both fields.
+            invoice_line_domain += [['OR', [
+                        [('quantity', '>=', 0), ('unit_price', '>=', 0)],
+                        [('quantity', '<=', 0), ('unit_price', '<=', 0)],
+                        ]]]
         elif data['tax_type'] == 'refunded':
-            invoice_line_domain += ['OR',
-                [
-                    [('quantity', '>', 0), ('unit_price', '<', 0)],
-                    [('quantity', '<', 0), ('unit_price', '>', 0)],
-                ]]
+            invoice_tax_domain += [('base', '<', 0)]
+            invoice_line_domain += [['OR', [
+                        [('quantity', '>', 0), ('unit_price', '<', 0)],
+                        [('quantity', '<', 0), ('unit_price', '>', 0)],
+                        ]]]
 
         if data['taxes']:
+            invoice_tax_domain += [('tax', 'in', data.get('taxes', []))]
             invoice_line_domain += [('id', 'in', data.get('taxes', []))]
 
         records = {}
