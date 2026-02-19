@@ -28,6 +28,7 @@ def register():
         module=module, type_='wizard')
     Pool.register(
         journal.JournalReport,
+        journal.JournalXlsxReport,
         general_ledger.GeneralLedgerReport,
         general_ledger.GeneralLedgerXlsxReport,
         taxes_by_invoice.TaxesByInvoiceReport,

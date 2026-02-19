@@ -14,6 +14,12 @@ copyright notices and license terms. -->
             <field name="extension">pdf</field>
             <field name="template_extension">html</field>
         </record>
+        <record model="ir.action.report" id="report_journal_xlsx">
+            <field name="name">Journal</field>
+            <field name="model">account.move.line</field>
+            <field name="report_name">account_reports.journal_xlsx</field>
+            <field name="extension">xlsx</field>
+        </record>
 
         <!-- Create a new menu so translations are rendered correctly -->
         <menuitem id="menu_print_general_journal" action="wizard_print_journal"

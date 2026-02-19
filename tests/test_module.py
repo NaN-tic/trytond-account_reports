@@ -568,6 +568,8 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
             type='wizard')
         JournalReport = pool.get('account_reports.journal',
             type='report')
+        JournalXlsxReport = pool.get('account_reports.journal_xlsx',
+            type='report')
         company = create_company()
         fiscalyear = self.create_moves(company)
         period = fiscalyear.periods[0]
@@ -588,9 +590,13 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_journal.start.close_move_description = 'Close'
 
         _, data = print_journal.do_print_(None)
+        self.assert_report_rendered(JournalReport, data, 'html')
         print_journal.start.output_format = 'pdf'
         _, data_pdf = print_journal.do_print_(None)
         self.assert_report_rendered(JournalReport, data_pdf, 'pdf')
+        data_xlsx = data.copy()
+        data_xlsx['output_format'] = 'xlsx'
+        self.assert_xlsx_report_rendered(JournalXlsxReport, data_xlsx)
         # Full Journal
         self.assertEqual(data['company'], company.id)
         self.assertEqual(data['fiscalyear'], fiscalyear.id)

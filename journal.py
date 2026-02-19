@@ -1,17 +1,19 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from trytond.pool import Pool
+from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 from trytond.model import ModelView, fields
 from trytond.wizard import Wizard, StateView, StateReport, Button
 from trytond.pyson import Eval, If, Bool
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
-from trytond.modules.html_report.html_report import DominateReport
+from trytond.modules.account_reports.xlsx import (
+    XlsxReport, save_workbook, convert_str_to_float)
+from trytond.modules.html_report.dominate_report import DominateReportMixin
 from datetime import timedelta
 from sql import Null
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
-from dominate import document
+from openpyxl import Workbook
 from dominate.tags import div, h1, p, table, thead, tbody, tr, td, th
 
 
@@ -61,6 +63,7 @@ class PrintJournalStart(ModelView):
     output_format = fields.Selection([
             ('pdf', 'PDF'),
             ('html', 'HTML'),
+            ('xlsx', 'Excel'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
 
@@ -117,13 +120,18 @@ class PrintJournal(Wizard):
             'journals': [x.id for x in self.start.journals],
             'output_format': self.start.output_format,
             }
+        if self.start.output_format == 'xlsx':
+            ActionReport = Pool().get('ir.action.report')
+            action, = ActionReport.search([
+                    ('report_name', '=', 'account_reports.journal_xlsx'),
+                    ])
         return action, data
 
     def transition_print_(self):
         return 'end'
 
 
-class JournalReport(DominateReport):
+class JournalReport(DominateReportMixin, metaclass=PoolMeta):
     __name__ = 'account_reports.journal'
 
     @classmethod
@@ -380,22 +388,41 @@ class JournalReport(DominateReport):
         return records, parameters
 
     @classmethod
-    def html(cls, report, records, header, data):
+    def execute(cls, ids, data):
+        with Transaction().set_context(active_test=False):
+            records, parameters = cls.prepare(data)
+        return super().execute(ids, {
+            'name': 'account_reports.journal',
+            'model': 'account.move.line',
+            'records': records,
+            'parameters': parameters,
+            'output_format': data.get('output_format', 'pdf'),
+            })
+
+    @classmethod
+    def title(cls, action, record=None, records=None, data=None):
+        return "Journal"
+
+    @classmethod
+    def body(cls, action, record=None, records=None, data=None):
         parameters = data.get('parameters', {})
-        doc = document(title="Journal")
-        with doc:
+        records = data.get('records', [])
+        container = div()
+        with container:
             with div(cls="header"):
                 h1("Journal")
                 p("Company: " + parameters.get('company_rec_name', ''))
                 if parameters.get('company_vat'):
                     p("VAT: " + parameters['company_vat'])
                 p("Fiscal Year: " + parameters.get('fiscal_year', ''))
-                p("From " + parameters.get('start_period', '') + " To " + parameters.get('end_period', ''))
+                p("From " + parameters.get('start_period', '') + " To "
+                    + parameters.get('end_period', ''))
                 if parameters.get('journals'):
                     p("Journals: " + parameters['journals'])
             with table(cls="journal-table"):
                 with thead():
-                    tr(th("Date"), th("Move"), th("Account / Party"), th("Description"), th("Debit"), th("Credit"))
+                    tr(th("Date"), th("Move"), th("Account / Party"),
+                        th("Description"), th("Debit"), th("Credit"))
                 with tbody():
                     current_month = None
                     month_debit = 0
@@ -403,24 +430,103 @@ class JournalReport(DominateReport):
                     for record in records:
                         if record['month'] != current_month:
                             if current_month is not None:
-                                # Add month total
-                                tr(td("", colspan="3"), td("Total month {}".format(current_month)), td("{:.2f}".format(month_debit)), td("{:.2f}".format(month_credit)), cls="month-total")
+                                tr(td("", colspan="3"),
+                                    td("Total month {}".format(current_month)),
+                                    td("{:.2f}".format(month_debit)),
+                                    td("{:.2f}".format(month_credit)),
+                                    cls="month-total")
                             current_month = record['month']
                             month_debit = 0
                             month_credit = 0
                         account_party = record['account_name']
                         if record['party_name']:
                             account_party += " / " + record['party_name']
-                        tr(td(str(record['date'])), td(record['move_number']), td(account_party), td(record['move_line_description']), td("{:.2f}".format(float(record['debit']))), td("{:.2f}".format(float(record['credit']))))
+                        tr(td(str(record['date'])),
+                            td(record['move_number']),
+                            td(account_party),
+                            td(record.get('move_line_description') or ''),
+                            td("{:.2f}".format(float(record['debit']))),
+                            td("{:.2f}".format(float(record['credit']))))
                         month_debit += record['debit']
                         month_credit += record['credit']
                     if current_month is not None:
-                        # Add last month total
-                        tr(td("", colspan="3"), td("Total month {}".format(current_month)), td("{:.2f}".format(month_debit)), td("{:.2f}".format(month_credit)), cls="month-total")
-                    # Add summary
+                        tr(td("", colspan="3"),
+                            td("Total month {}".format(current_month)),
+                            td("{:.2f}".format(month_debit)),
+                            td("{:.2f}".format(month_credit)),
+                            cls="month-total")
                     total_debit = sum(r['debit'] for r in records)
                     total_credit = sum(r['credit'] for r in records)
-                    tr(td("", colspan="3"), td("Total"), td("{:.2f}".format(float(total_debit))), td("{:.2f}".format(float(total_credit))), cls="summary")
+                    tr(td("", colspan="3"), td("Total"),
+                        td("{:.2f}".format(float(total_debit))),
+                        td("{:.2f}".format(float(total_credit))),
+                        cls="summary")
             with div(cls="footer"):
-                p("When the Move number is between '()' means it hasn't Post Number and the shown number is the provisional one.")
-        return doc
+                p("When the Move number is between '()' means it hasn't Post "
+                    "Number and the shown number is the provisional one.")
+        return container
+
+
+class JournalXlsxReport(XlsxReport, metaclass=PoolMeta):
+    __name__ = 'account_reports.journal_xlsx'
+
+    @classmethod
+    def get_content(cls, ids, data):
+        with Transaction().set_context(active_test=False):
+            records, parameters = JournalReport.prepare(data)
+        return cls._build_workbook(records, parameters)
+
+    @classmethod
+    def _build_workbook(cls, records, parameters):
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Journal"[:31]
+
+        ws.append(["Journal"])
+        ws.append(["Company:", parameters.get('company_rec_name', '')])
+        if parameters.get('company_vat'):
+            ws.append(["VAT:", parameters['company_vat']])
+        ws.append(["Fiscal Year:", parameters.get('fiscal_year', '')])
+        ws.append(["From", parameters.get('start_period', ''),
+            "To", parameters.get('end_period', '')])
+        if parameters.get('journals'):
+            ws.append(["Journals:", parameters['journals']])
+        ws.append([])
+
+        ws.append(["Date", "Move", "Account / Party", "Description",
+            "Debit", "Credit"])
+        current_month = None
+        month_debit = 0
+        month_credit = 0
+        for record in records:
+            if record['month'] != current_month:
+                if current_month is not None:
+                    ws.append(["", "", "", "Total month {}".format(current_month),
+                        convert_str_to_float("{:.2f}".format(month_debit)),
+                        convert_str_to_float("{:.2f}".format(month_credit))])
+                current_month = record['month']
+                month_debit = 0
+                month_credit = 0
+            account_party = record['account_name']
+            if record['party_name']:
+                account_party += " / " + record['party_name']
+            ws.append([
+                str(record['date']),
+                record['move_number'],
+                account_party,
+                record['move_line_description'],
+                convert_str_to_float("{:.2f}".format(float(record['debit']))),
+                convert_str_to_float("{:.2f}".format(float(record['credit']))),
+                ])
+            month_debit += record['debit']
+            month_credit += record['credit']
+        if current_month is not None:
+            ws.append(["", "", "", "Total month {}".format(current_month),
+                convert_str_to_float("{:.2f}".format(month_debit)),
+                convert_str_to_float("{:.2f}".format(month_credit))])
+        total_debit = sum(r['debit'] for r in records)
+        total_credit = sum(r['credit'] for r in records)
+        ws.append(["", "", "", "Total",
+            convert_str_to_float("{:.2f}".format(float(total_debit))),
+            convert_str_to_float("{:.2f}".format(float(total_credit)))])
+        return save_workbook(wb)
