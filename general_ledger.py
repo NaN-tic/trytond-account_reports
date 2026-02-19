@@ -1,22 +1,27 @@
 # This file is part of account_reports for tryton.  The COPYRIGHT file
 # at the top level of this repository contains the full copyright notices and
 # license terms.
-import os
 from datetime import timedelta, datetime
 from decimal import Decimal
-from trytond.pool import Pool
+from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 from trytond.model import ModelView, fields
 from trytond.wizard import Wizard, StateView, StateReport, Button
 from trytond.pyson import Eval, Bool, If
-from trytond.tools import grouped_slice
+from trytond.tools import file_open, grouped_slice
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.modules.account_reports.common import TimeoutException, TimeoutChecker
 from trytond.modules.account_reports.tools import vat_label
-from trytond.modules.html_report.html_report import HTMLReport
+from trytond.modules.account_reports.xlsx import (
+    XlsxReport, save_workbook, convert_str_to_float)
+from trytond.modules.html_report.dominate_report import DominateReportMixin
+from trytond.modules.html_report.i18n import _
 from trytond.rpc import RPC
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
+from openpyxl import Workbook
+from dominate.util import raw
+from dominate.tags import div, header as header_tag, style, table, thead, tbody, tr, td, th
 
 _ZERO = Decimal(0)
 
@@ -173,6 +178,11 @@ class PrintGeneralLedger(Wizard):
             'timeout': self.start.timeout,
             'show_description': self.start.show_description,
             }
+        if self.start.output_format == 'xlsx':
+            ActionReport = Pool().get('ir.action.report')
+            action, = ActionReport.search([
+                    ('report_name', '=', 'account_reports.general_ledger_xlsx'),
+                    ])
         return action, data
 
     def transition_print_(self):
@@ -195,7 +205,7 @@ class PrintGeneralLedger(Wizard):
             }
 
 
-class GeneralLedgerReport(HTMLReport):
+class GeneralLedgerReport(DominateReportMixin, metaclass=PoolMeta):
     __name__ = 'account_reports.general_ledger'
 
     @classmethod
@@ -203,6 +213,11 @@ class GeneralLedgerReport(HTMLReport):
         super(GeneralLedgerReport, cls).__setup__()
         cls.__rpc__['execute'] = RPC(False)
         cls.side_margin = 0.3
+
+    @classmethod
+    def css(cls, action, record=None, records=None, data=None):
+        with file_open('account_reports/base.css') as f:
+            return f.read()
 
     @classmethod
     def _ref_origin_invoice_line(cls, line):
@@ -646,17 +661,433 @@ class GeneralLedgerReport(HTMLReport):
         end_prepare = datetime.now()
 
         context = Transaction().context.copy()
-        context['report_lang'] = Transaction().language
-        context['report_translations'] = os.path.join(
-                os.path.dirname(__file__), 'translations')
         if timeout:
-            context['timeout_report'] = timeout - int((end_prepare - start_prepare).total_seconds())
+            context['timeout_report'] = (
+                timeout - int((end_prepare - start_prepare).total_seconds()))
 
         with Transaction().set_context(**context):
             return super(GeneralLedgerReport, cls).execute(ids, {
-                    'name': 'account_reports.general_ledger',
-                    'model': 'account.account',
-                    'records': records,
-                    'parameters': parameters,
-                    'output_format': data.get('output_format', 'pdf'),
-                    })
+                'name': 'account_reports.general_ledger',
+                'model': 'account.account',
+                'records': records,
+                'parameters': parameters,
+                'output_format': data.get('output_format', 'pdf'),
+                })
+
+    @classmethod
+    def _header_style(cls):
+        return style(raw("""
+@page {
+    size: A4 landscape;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 0.5cm;
+    padding-left: 0.5cm;
+    text-align: left;
+    font-size: 9px;
+    width: 100%;
+    font-family: 'Arial';
+}
+
+.header-table {
+    width: 100%;
+    padding-right: 1cm;
+}
+
+.company-name {
+    font-style: italic;
+    font-size: 14px;
+    font-weight: bold;
+    width: 60%;
+}
+
+.center {
+    text-align: center;
+    font-size: 15px;
+}
+
+.right {
+    text-align: right;
+}
+
+.header-title {
+    font-size: 20px;
+}
+"""))
+
+    @classmethod
+    def _build_header(cls, data, wrap_header):
+        render = cls.render
+        p = data['parameters']
+        container = header_tag(id='header') if wrap_header else div()
+        with container:
+            with table(cls='header-table'):
+                with thead():
+                    with tr():
+                        with td():
+                            with div():
+                                raw('<span class="company-name">%s</span><br/>' % p['company'])
+                                raw('%s: %s' % (p['company_vat_label'], p['company_vat']))
+                        with td(cls='center'):
+                            raw('<span class="header-title">%s</span>'
+                                % _('General Ledger'))
+                        with td(cls='right'):
+                            raw(render(datetime.now()))
+            with table():
+                with tbody():
+                    with tr():
+                        if p['start_date']:
+                            td(_('Start Date: %s End Date: %s') % (
+                                p['start_date'], p['end_date']))
+                        else:
+                            start_period = (p['start_period'].name
+                                if p['start_period'] else '')
+                            end_period = (p['end_period'].name
+                                if p['end_period'] else '')
+                            td(_('Fiscal Year: %s Start Period: %s End Period: %s')
+                                % (p['fiscal_year'], start_period, end_period))
+                    with tr():
+                        if p['parties']:
+                            td(_('Parties: %s') % p['parties'])
+                        else:
+                            td(_('All Parties'))
+                    with tr():
+                        if p['accounts']:
+                            td(_('Accounts: %s') % p['accounts'])
+                        else:
+                            td(_('All Accounts'))
+                    with tr():
+                        td(_(
+                            "When move number is between parentheses it means that "
+                            "it has no post number and the number shown is the "
+                            "provisional one."))
+        return container
+
+    @classmethod
+    def header(cls, action, record=None, records=None, data=None):
+        if data.get('output_format', 'pdf') not in ('pdf', 'html'):
+            return None
+        with div() as container:
+            container.add(cls._header_style())
+            container.add(cls._build_header(data, True))
+        return container
+
+    @classmethod
+    def _add_cell(cls, row, value='', cls_name='', style_value='',
+            colspan=1, fmt='pdf'):
+        cell = td(value)
+        if cls_name:
+            cell['class'] = cls_name
+        if style_value:
+            cell['style'] = style_value
+        if colspan != 1:
+            cell['colspan'] = str(colspan)
+        row.add(cell)
+        if fmt == 'xlsx' and int(colspan) > 1:
+            for _idx in range(int(colspan) - 1):
+                row.add(td(''))
+
+    @classmethod
+    def show_detail_lines(cls, record, show_description, fmt):
+        render = cls.render
+        rows = []
+        if record['lines']:
+            for line_info in record['lines']:
+                row = tr()
+                if line_info['line']:
+                    line = line_info['line']
+                    number = ''
+                    if line.move and line.move.number:
+                        number = line.move.number
+                    else:
+                        number = (line.move and line.move.move_number or '')
+                        number += (line.party and line.party.name or '')
+                    description = ''
+                    if line_info['ref']:
+                        description += line_info['ref']
+                    if (line_info['ref'] and show_description
+                            and line and (line.description or line.move_description_used)):
+                        description += ' // '
+                    if show_description and line and line.description:
+                        description += ' %s ' % line.description
+                    elif show_description and line and line.move_description_used:
+                        description += ' %s ' % line.move_description_used
+
+                    cls._add_cell(row, render(line.date), fmt=fmt)
+                    cls._add_cell(row, number, fmt=fmt)
+                    cls._add_cell(row, description, fmt=fmt)
+                    cls._add_cell(row, render(line_info['debit']),
+                        style_value='text-align: right;',
+                        cls_name='no-wrap', fmt=fmt)
+                    cls._add_cell(row, render(line_info['credit']),
+                        style_value='text-align: right;',
+                        cls_name='no-wrap', fmt=fmt)
+                    cls._add_cell(row, render(line_info['balance']),
+                        style_value='text-align: right;',
+                        cls_name='no-wrap', fmt=fmt)
+                else:
+                    cls._add_cell(row, '', fmt=fmt)
+                    cls._add_cell(row, '-', fmt=fmt)
+                    cls._add_cell(row, _('Previous balance'), fmt=fmt)
+                    cls._add_cell(row, render(line_info['debit']),
+                        style_value='text-align: right;',
+                        cls_name='no-wrap', fmt=fmt)
+                    cls._add_cell(row, render(line_info['credit']),
+                        style_value='text-align: right;',
+                        cls_name='no-wrap', fmt=fmt)
+                    cls._add_cell(row, render(line_info['balance']),
+                        style_value='text-align: right;',
+                        cls_name='no-wrap', fmt=fmt)
+                rows.append(row)
+        else:
+            row = tr()
+            cls._add_cell(row, '', fmt=fmt)
+            cls._add_cell(row, '-', fmt=fmt)
+            cls._add_cell(row, _('Previous balance'), fmt=fmt)
+            cls._add_cell(row, render(record['total_debit']),
+                style_value='text-align: right;',
+                cls_name='no-wrap', fmt=fmt)
+            cls._add_cell(row, render(record['total_credit']),
+                style_value='text-align: right;',
+                cls_name='no-wrap', fmt=fmt)
+            cls._add_cell(row, render(record['total_debit'] - record['total_credit']),
+                style_value='text-align: right;',
+                cls_name='no-wrap', fmt=fmt)
+            rows.append(row)
+        return rows
+
+    @classmethod
+    def show_detail(cls, records, fmt, show_description):
+        render = cls.render
+        detail_table = table()
+        with detail_table:
+            with tr():
+                th(_('Date'))
+                th(_('Number'))
+                th(_('Reference // Description'))
+                th(_('Debit'), style='text-align: right;')
+                th(_('Credit'), style='text-align: right;')
+                th(_('Balance'), style='text-align: right;')
+            for _key, record in records.items():
+                with tr() as row:
+                    cls._add_cell(row, record['code'], cls_name='bold',
+                        colspan=2, fmt=fmt)
+                    cls._add_cell(row, record['party'] or record['account'],
+                        cls_name='bold', fmt=fmt)
+                    cls._add_cell(row,
+                        _('Previous balance...') if record['lines'] else '',
+                        style_value='text-align: right;', colspan=2, fmt=fmt)
+                    cls._add_cell(row,
+                        render(record['previous_balance']) if record['lines'] else '',
+                        style_value='text-align: right;', fmt=fmt)
+
+                for line_row in cls.show_detail_lines(record, show_description, fmt):
+                    detail_table.add(line_row)
+
+                with tr(cls='bold') as total_row:
+                    cls._add_cell(total_row, _('Total Fiscal Year'),
+                        style_value='text-align: right;', colspan=3, fmt=fmt)
+                    cls._add_cell(total_row, render(record['total_debit']),
+                        style_value='text-align: right;',
+                        cls_name='no-wrap', fmt=fmt)
+                    cls._add_cell(total_row, render(record['total_credit']),
+                        style_value='text-align: right;',
+                        cls_name='no-wrap', fmt=fmt)
+                    cls._add_cell(total_row,
+                        render(record['total_debit'] - record['total_credit']),
+                        style_value='text-align: right;',
+                        cls_name='no-wrap', fmt=fmt)
+
+                with tr(cls='bold bottom') as total_row:
+                    cls._add_cell(total_row, record['code'], cls_name='bold',
+                        colspan=2, fmt=fmt)
+                    cls._add_cell(total_row,
+                        record['party'] if record['party'] else record['account'],
+                        cls_name='bold', fmt=fmt)
+                    cls._add_cell(total_row, _('Total'), cls_name='left bold',
+                        colspan=2, fmt=fmt)
+                    cls._add_cell(total_row,
+                        render(record['previous_balance']
+                            + record['total_debit']
+                            - record['total_credit']),
+                        style_value='text-align: right;',
+                        cls_name='no-wrap', fmt=fmt)
+        return detail_table
+
+    @classmethod
+    def title(cls, action, record=None, records=None, data=None):
+        render = cls.render
+        return '%s - %s - %s' % (
+            _('General Ledger'), data['parameters']['company'],
+            render(datetime.now()))
+
+    @classmethod
+    def body(cls, action, record=None, records=None, data=None):
+        fmt = data.get('output_format', 'pdf')
+        container = div()
+        if fmt != 'pdf':
+            container.add(cls._header_style())
+            container.add(cls._build_header(data, False))
+        container.add(cls.show_detail(
+            data['records'], fmt,
+            data['parameters'].get('show_description', True)))
+        return container
+
+class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
+    __name__ = 'account_reports.general_ledger_xlsx'
+
+    @classmethod
+    def get_content(cls, ids, data):
+        Config = Pool().get('account.configuration')
+        config = Config(1)
+        timeout = data.get('timeout') or config.default_timeout or 300
+        checker = TimeoutChecker(timeout, GeneralLedgerReport.timeout_exception)
+
+        start_prepare = datetime.now()
+        with Transaction().set_context(active_test=False):
+            try:
+                records, parameters = GeneralLedgerReport.prepare(data, checker)
+            except TimeoutException:
+                raise UserError(gettext('account_reports.msg_timeout_exception'))
+        end_prepare = datetime.now()
+
+        context = Transaction().context.copy()
+        if timeout:
+            context['timeout_report'] = (
+                timeout - int((end_prepare - start_prepare).total_seconds()))
+
+        with Transaction().set_context(**context):
+            return cls._build_workbook(records, parameters)
+
+    @classmethod
+    def _build_workbook(cls, records, parameters):
+        render = GeneralLedgerReport.render
+        wb = Workbook()
+        ws = wb.active
+        ws.title = _('General Ledger')[:31]
+
+        def xls(value, **kwargs):
+            return convert_str_to_float(render(value, **kwargs))
+
+        ws.append([parameters['company'], _('General Ledger'),
+            render(datetime.now())])
+        ws.append(['%s: %s' % (
+            parameters['company_vat_label'], parameters['company_vat'])])
+        if parameters['start_date']:
+            ws.append([_('Start Date: %s End Date: %s') % (
+                parameters['start_date'], parameters['end_date'])])
+        else:
+            start_period = (parameters['start_period'].name
+                if parameters['start_period'] else '')
+            end_period = (parameters['end_period'].name
+                if parameters['end_period'] else '')
+            ws.append([_('Fiscal Year: %s Start Period: %s End Period: %s')
+                % (parameters['fiscal_year'], start_period, end_period)])
+        if parameters['parties']:
+            ws.append([_('Parties: %s') % parameters['parties']])
+        else:
+            ws.append([_('All Parties')])
+        if parameters['accounts']:
+            ws.append([_('Accounts: %s') % parameters['accounts']])
+        else:
+            ws.append([_('All Accounts')])
+        ws.append([_(
+            "When move number is between parentheses it means that "
+            "it has no post number and the number shown is the "
+            "provisional one.")])
+        ws.append([])
+
+        ws.append([
+            _('Date'),
+            _('Number'),
+            _('Reference // Description'),
+            _('Debit'),
+            _('Credit'),
+            _('Balance'),
+            ])
+
+        show_description = parameters.get('show_description', True)
+        for record in records.values():
+            ws.append([
+                record['code'],
+                '',
+                record['party'] or record['account'],
+                _('Previous balance...') if record['lines'] else '',
+                '',
+                xls(record['previous_balance']) if record['lines'] else '',
+                ])
+
+            if record['lines']:
+                for line_info in record['lines']:
+                    if line_info['line']:
+                        line = line_info['line']
+                        if line.move and line.move.number:
+                            number = line.move.number
+                        else:
+                            number = (line.move and line.move.move_number or '')
+                            number += (line.party and line.party.name or '')
+                        description = ''
+                        if line_info['ref']:
+                            description += line_info['ref']
+                        if (line_info['ref'] and show_description
+                                and line and (line.description
+                                    or line.move_description_used)):
+                            description += ' // '
+                        if show_description and line and line.description:
+                            description += ' %s ' % line.description
+                        elif (show_description and line
+                                and line.move_description_used):
+                            description += ' %s ' % line.move_description_used
+                        ws.append([
+                            render(line.date),
+                            number,
+                            description,
+                            xls(line_info['debit']),
+                            xls(line_info['credit']),
+                            xls(line_info['balance']),
+                            ])
+                    else:
+                        ws.append([
+                            '',
+                            '-',
+                            _('Previous balance'),
+                            xls(line_info['debit']),
+                            xls(line_info['credit']),
+                            xls(line_info['balance']),
+                            ])
+            else:
+                ws.append([
+                    '',
+                    '-',
+                    _('Previous balance'),
+                    xls(record['total_debit']),
+                    xls(record['total_credit']),
+                    xls(record['total_debit'] - record['total_credit']),
+                    ])
+
+            ws.append([
+                '',
+                '',
+                _('Total Fiscal Year'),
+                xls(record['total_debit']),
+                xls(record['total_credit']),
+                xls(record['total_debit'] - record['total_credit']),
+                ])
+            ws.append([
+                record['code'],
+                '',
+                record['party'] if record['party'] else record['account'],
+                _('Total'),
+                '',
+                xls(record['previous_balance']
+                    + record['total_debit']
+                    - record['total_credit']),
+                ])
+            ws.append([])
+
+        return save_workbook(wb)
+

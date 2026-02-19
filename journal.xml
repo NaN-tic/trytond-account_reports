@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<tryton>
+    <data>
+        <record model="ir.action.wizard" id="wizard_print_journal">
+            <field name="name">Print Journal</field>
+            <field name="wiz_name">account_reports.print_journal</field>
+        </record>
+        <record model="ir.action.report" id="report_journal">
+            <field name="name">Journal</field>
+            <field name="model">account.move.line</field>
+            <field name="report_name">account_reports.journal</field>
+            <field name="extension">pdf</field>
+            <field name="template_extension">html</field>
+        </record>
+
+        <!-- Create a new menu so translations are rendered correctly -->
+        <menuitem id="menu_print_general_journal" action="wizard_print_journal"
+            parent="account.menu_reporting" icon="tryton-print" sequence="110"
+            name="Print Journal"/>
+
+    </data>
+</tryton>

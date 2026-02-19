@@ -377,7 +377,8 @@ class JournalReport(DominateReport):
                     'party_name': line.party and line.party.name or '',
                     'account_kind': account_type,
                     })
-    @classmethod
+        return records, parameters
+
     @classmethod
     def html(cls, report, records, header, data):
         parameters = data.get('parameters', {})
