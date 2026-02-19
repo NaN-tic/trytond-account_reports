@@ -20,6 +20,15 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
     def setUp(self):
         super(AccountReportsTestCase, self).setUp()
 
+    def assert_report_rendered(self, Report, data, expected_ext):
+        result = Report.execute([], data)
+        self.assertEqual(result[0], expected_ext)
+        self.assertTrue(result[1])
+
+    def assert_xlsx_report_rendered(self, Report, data):
+        content = Report.get_content([], data)
+        self.assertTrue(content)
+
     def create_fiscalyear_and_chart(self, company=None, fiscalyear=None,
             chart=True):
         'Test fiscalyear'
@@ -269,6 +278,8 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
             'account_reports.print_general_ledger', type='wizard')
         GeneralLedgerReport = pool.get(
             'account_reports.general_ledger', type='report')
+        GeneralLedgerXlsxReport = pool.get(
+            'account_reports.general_ledger_xlsx', type='report')
         company = create_company()
         fiscalyear = self.create_moves(company)
         period = fiscalyear.periods[0]
@@ -289,6 +300,13 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.timeout = 30
         checker = TimeoutChecker(print_general_ledger.start.timeout, GeneralLedgerReport.timeout_exception)
         _, data = print_general_ledger.do_print_(None)
+        self.assert_report_rendered(GeneralLedgerReport, data, 'pdf')
+        data_html = data.copy()
+        data_html['output_format'] = 'html'
+        self.assert_report_rendered(GeneralLedgerReport, data_html, 'html')
+        data_xlsx = data.copy()
+        data_xlsx['output_format'] = 'xlsx'
+        self.assert_xlsx_report_rendered(GeneralLedgerXlsxReport, data_xlsx)
 
         # Full general_ledger
         self.assertEqual(data['company'], company.id)
@@ -460,6 +478,89 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(True, all([line for k, m in records.items() for line in m['lines'] if line['line'].party]))
 
     @with_transaction()
+    def test_trial_balance_render(self):
+        'Test Trial Balance rendering'
+        pool = Pool()
+        PrintTrialBalance = pool.get(
+            'account_reports.print_trial_balance', type='wizard')
+        TrialBalanceReport = pool.get(
+            'account_reports.trial_balance', type='report')
+        TrialBalanceXlsxReport = pool.get(
+            'account_reports.trial_balance_xlsx', type='report')
+        company = create_company()
+        fiscalyear = self.create_moves(company)
+        period = fiscalyear.periods[0]
+        last_period = fiscalyear.periods[-1]
+
+        session_id, _, _ = PrintTrialBalance.create()
+        print_trial_balance = PrintTrialBalance(session_id)
+        print_trial_balance.start.company = company
+        print_trial_balance.start.fiscalyear = fiscalyear
+        print_trial_balance.start.start_period = period
+        print_trial_balance.start.end_period = last_period
+        print_trial_balance.start.comparison_fiscalyear = None
+        print_trial_balance.start.comparison_start_period = None
+        print_trial_balance.start.comparison_end_period = None
+        print_trial_balance.start.show_digits = 0
+        print_trial_balance.start.only_moves = False
+        print_trial_balance.start.moves_or_initial = False
+        print_trial_balance.start.hide_split_parties = False
+        print_trial_balance.start.split_parties = False
+        print_trial_balance.start.add_initial_balance = False
+        print_trial_balance.start.accounts = []
+        print_trial_balance.start.parties = []
+        print_trial_balance.start.output_format = 'pdf'
+        print_trial_balance.start.timeout = 30
+
+        _, data = print_trial_balance.do_print_(None)
+        self.assert_report_rendered(TrialBalanceReport, data, 'pdf')
+        data_html = data.copy()
+        data_html['output_format'] = 'html'
+        self.assert_report_rendered(TrialBalanceReport, data_html, 'html')
+        data_xlsx = data.copy()
+        data_xlsx['output_format'] = 'xlsx'
+        self.assert_xlsx_report_rendered(TrialBalanceXlsxReport, data_xlsx)
+
+    @with_transaction()
+    def test_taxes_by_invoice_render(self):
+        'Test Taxes by Invoice rendering'
+        pool = Pool()
+        PrintTaxesByInvoice = pool.get(
+            'account_reports.print_taxes_by_invoice', type='wizard')
+        TaxesByInvoiceReport = pool.get(
+            'account_reports.taxes_by_invoice', type='report')
+        TaxesByInvoiceXlsxReport = pool.get(
+            'account_reports.taxes_by_invoice_xlsx', type='report')
+        company = create_company()
+        fiscalyear = self.create_moves(company)
+
+        session_id, _, _ = PrintTaxesByInvoice.create()
+        print_taxes = PrintTaxesByInvoice(session_id)
+        print_taxes.start.company = company
+        print_taxes.start.fiscalyear = fiscalyear
+        print_taxes.start.start_date = None
+        print_taxes.start.end_date = None
+        print_taxes.start.periods = []
+        print_taxes.start.parties = []
+        print_taxes.start.excluded_parties = []
+        print_taxes.start.partner_type = 'customers'
+        print_taxes.start.grouping = 'base_tax_code'
+        print_taxes.start.tax_type = 'all'
+        print_taxes.start.totals_only = False
+        print_taxes.start.taxes = []
+        print_taxes.start.output_format = 'pdf'
+        print_taxes.start.timeout = 30
+
+        _, data = print_taxes.do_print_(None)
+        self.assert_report_rendered(TaxesByInvoiceReport, data, 'pdf')
+        data_html = data.copy()
+        data_html['output_format'] = 'html'
+        self.assert_report_rendered(TaxesByInvoiceReport, data_html, 'html')
+        data_xlsx = data.copy()
+        data_xlsx['output_format'] = 'xlsx'
+        self.assert_xlsx_report_rendered(TaxesByInvoiceXlsxReport, data_xlsx)
+
+    @with_transaction()
     def test_journal(self):
         'Test journal'
         pool = Pool()
@@ -487,6 +588,9 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_journal.start.close_move_description = 'Close'
 
         _, data = print_journal.do_print_(None)
+        print_journal.start.output_format = 'pdf'
+        _, data_pdf = print_journal.do_print_(None)
+        self.assert_report_rendered(JournalReport, data_pdf, 'pdf')
         # Full Journal
         self.assertEqual(data['company'], company.id)
         self.assertEqual(data['fiscalyear'], fiscalyear.id)

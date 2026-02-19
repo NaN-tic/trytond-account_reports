@@ -787,6 +787,7 @@ class TrialBalanceReport(DominateReportMixin, metaclass=PoolMeta):
         parameters['comparison_end_period'] = (comparison_end_period.name
             if comparison_fiscalyear else '')
         parameters['company'] = company and company.rec_name or ''
+        parameters['company_rec_name'] = parameters['company']
         parameters['company_vat'] = (company and
             company.party.tax_identifier and
             company.party.tax_identifier.code) or ''
@@ -1159,4 +1160,3 @@ class TrialBalanceXlsxReport(XlsxReport, metaclass=PoolMeta):
         ws.append(total_row)
 
         return save_workbook(wb)
-
