@@ -724,7 +724,7 @@ class GeneralLedgerReport(DominateReportMixin, metaclass=PoolMeta):
 
     @classmethod
     def _add_cell(cls, row, value='', cls_name='', style_value='',
-            colspan=1, fmt='pdf'):
+            colspan=1):
         cell = td(value)
         if cls_name:
             cell['class'] = cls_name
@@ -733,12 +733,9 @@ class GeneralLedgerReport(DominateReportMixin, metaclass=PoolMeta):
         if colspan != 1:
             cell['colspan'] = str(colspan)
         row.add(cell)
-        if fmt == 'xlsx' and int(colspan) > 1:
-            for _idx in range(int(colspan) - 1):
-                row.add(td(''))
 
     @classmethod
-    def show_detail_lines(cls, record, show_description, fmt):
+    def show_detail_lines(cls, record, show_description):
         render = cls.render
         rows = []
         if record['lines']:
@@ -763,51 +760,51 @@ class GeneralLedgerReport(DominateReportMixin, metaclass=PoolMeta):
                     elif show_description and line and line.move_description_used:
                         description += ' %s ' % line.move_description_used
 
-                    cls._add_cell(row, render(line.date), fmt=fmt)
-                    cls._add_cell(row, number, fmt=fmt)
-                    cls._add_cell(row, description, fmt=fmt)
+                    cls._add_cell(row, render(line.date))
+                    cls._add_cell(row, number)
+                    cls._add_cell(row, description)
                     cls._add_cell(row, render(line_info['debit']),
                         style_value='text-align: right;',
-                        cls_name='no-wrap', fmt=fmt)
+                        cls_name='no-wrap')
                     cls._add_cell(row, render(line_info['credit']),
                         style_value='text-align: right;',
-                        cls_name='no-wrap', fmt=fmt)
+                        cls_name='no-wrap')
                     cls._add_cell(row, render(line_info['balance']),
                         style_value='text-align: right;',
-                        cls_name='no-wrap', fmt=fmt)
+                        cls_name='no-wrap')
                 else:
-                    cls._add_cell(row, '', fmt=fmt)
-                    cls._add_cell(row, '-', fmt=fmt)
-                    cls._add_cell(row, _('Previous balance'), fmt=fmt)
+                    cls._add_cell(row, '')
+                    cls._add_cell(row, '-')
+                    cls._add_cell(row, _('Previous balance'))
                     cls._add_cell(row, render(line_info['debit']),
                         style_value='text-align: right;',
-                        cls_name='no-wrap', fmt=fmt)
+                        cls_name='no-wrap')
                     cls._add_cell(row, render(line_info['credit']),
                         style_value='text-align: right;',
-                        cls_name='no-wrap', fmt=fmt)
+                        cls_name='no-wrap')
                     cls._add_cell(row, render(line_info['balance']),
                         style_value='text-align: right;',
-                        cls_name='no-wrap', fmt=fmt)
+                        cls_name='no-wrap')
                 rows.append(row)
         else:
             row = tr()
-            cls._add_cell(row, '', fmt=fmt)
-            cls._add_cell(row, '-', fmt=fmt)
-            cls._add_cell(row, _('Previous balance'), fmt=fmt)
+            cls._add_cell(row, '')
+            cls._add_cell(row, '-')
+            cls._add_cell(row, _('Previous balance'))
             cls._add_cell(row, render(record['total_debit']),
                 style_value='text-align: right;',
-                cls_name='no-wrap', fmt=fmt)
+                cls_name='no-wrap')
             cls._add_cell(row, render(record['total_credit']),
                 style_value='text-align: right;',
-                cls_name='no-wrap', fmt=fmt)
+                cls_name='no-wrap')
             cls._add_cell(row, render(record['total_debit'] - record['total_credit']),
                 style_value='text-align: right;',
-                cls_name='no-wrap', fmt=fmt)
+                cls_name='no-wrap')
             rows.append(row)
         return rows
 
     @classmethod
-    def show_detail(cls, records, fmt, show_description):
+    def show_detail(cls, records, show_description):
         render = cls.render
         detail_table = table()
         with detail_table:
@@ -821,47 +818,47 @@ class GeneralLedgerReport(DominateReportMixin, metaclass=PoolMeta):
             for _key, record in records.items():
                 with tr() as row:
                     cls._add_cell(row, record['code'], cls_name='bold',
-                        colspan=2, fmt=fmt)
+                        colspan=2)
                     cls._add_cell(row, record['party'] or record['account'],
-                        cls_name='bold', fmt=fmt)
+                        cls_name='bold')
                     cls._add_cell(row,
                         _('Previous balance...') if record['lines'] else '',
-                        style_value='text-align: right;', colspan=2, fmt=fmt)
+                        style_value='text-align: right;', colspan=2)
                     cls._add_cell(row,
                         render(record['previous_balance']) if record['lines'] else '',
-                        style_value='text-align: right;', fmt=fmt)
+                        style_value='text-align: right;')
 
-                for line_row in cls.show_detail_lines(record, show_description, fmt):
+                for line_row in cls.show_detail_lines(record, show_description):
                     detail_table.add(line_row)
 
                 with tr(cls='bold') as total_row:
                     cls._add_cell(total_row, _('Total Fiscal Year'),
-                        style_value='text-align: right;', colspan=3, fmt=fmt)
+                        style_value='text-align: right;', colspan=3)
                     cls._add_cell(total_row, render(record['total_debit']),
                         style_value='text-align: right;',
-                        cls_name='no-wrap', fmt=fmt)
+                        cls_name='no-wrap')
                     cls._add_cell(total_row, render(record['total_credit']),
                         style_value='text-align: right;',
-                        cls_name='no-wrap', fmt=fmt)
+                        cls_name='no-wrap')
                     cls._add_cell(total_row,
                         render(record['total_debit'] - record['total_credit']),
                         style_value='text-align: right;',
-                        cls_name='no-wrap', fmt=fmt)
+                        cls_name='no-wrap')
 
                 with tr(cls='bold bottom') as total_row:
                     cls._add_cell(total_row, record['code'], cls_name='bold',
-                        colspan=2, fmt=fmt)
+                        colspan=2)
                     cls._add_cell(total_row,
                         record['party'] if record['party'] else record['account'],
-                        cls_name='bold', fmt=fmt)
+                        cls_name='bold')
                     cls._add_cell(total_row, _('Total'), cls_name='left bold',
-                        colspan=2, fmt=fmt)
+                        colspan=2)
                     cls._add_cell(total_row,
                         render(record['previous_balance']
                             + record['total_debit']
                             - record['total_credit']),
                         style_value='text-align: right;',
-                        cls_name='no-wrap', fmt=fmt)
+                        cls_name='no-wrap')
         return detail_table
 
     @classmethod
@@ -873,10 +870,9 @@ class GeneralLedgerReport(DominateReportMixin, metaclass=PoolMeta):
 
     @classmethod
     def body(cls, action, record=None, records=None, data=None):
-        fmt = data.get('output_format', 'pdf')
         container = div()
         container.add(cls.show_detail(
-            data['records'], fmt,
+            data['records'],
             data['parameters'].get('show_description', True)))
         return container
 

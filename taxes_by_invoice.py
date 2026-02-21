@@ -508,13 +508,12 @@ class TaxesByInvoiceReport(DominateReportMixin, metaclass=PoolMeta):
                         else:
                             td('All Parties', colspan='2')
                     with tr():
-                        marker = '*' if data.get('output_format') == 'xlsx' else 'grey'
-                        td('Cancelled invoices are shown in %s. Invoices without a cancelled move or a cancelled move not related to an invoice are not added to the total.' % marker,
+                        td('Cancelled invoices are shown in grey. Invoices without a cancelled move or a cancelled move not related to an invoice are not added to the total.',
                             colspan='2')
         return container
 
     @classmethod
-    def _cell(cls, row, value='', cls_name='', style_value='', colspan=1, fmt='pdf'):
+    def _cell(cls, row, value='', cls_name='', style_value='', colspan=1):
         cell = td(value)
         if cls_name:
             cell['class'] = cls_name
@@ -523,12 +522,9 @@ class TaxesByInvoiceReport(DominateReportMixin, metaclass=PoolMeta):
         if colspan != 1:
             cell['colspan'] = str(colspan)
         row.add(cell)
-        if fmt == 'xlsx' and int(colspan) > 1:
-            for _idx in range(int(colspan) - 1):
-                row.add(td(''))
 
     @classmethod
-    def show_detail_lines(cls, record_lines, fmt):
+    def show_detail_lines(cls, record_lines):
         render = cls.render
         rows = []
         before_invoice_id = None
@@ -537,56 +533,55 @@ class TaxesByInvoiceReport(DominateReportMixin, metaclass=PoolMeta):
             total = line.raw.company_base + line.raw.company_amount
             if before_invoice_id != line.invoice.raw.id:
                 row = tr(cls='grey' if line.invoice.raw.state == 'cancelled' else '')
-                cls._cell(row, line.invoice.move.render.date, fmt=fmt)
-                cls._cell(row, line.account.render.code, fmt=fmt)
+                cls._cell(row, line.invoice.move.render.date)
+                cls._cell(row, line.account.render.code)
                 cls._cell(row, line.invoice.party.render.rec_name,
-                    style_value='text-align: left;', fmt=fmt)
+                    style_value='text-align: left;')
                 tax_id = (line.invoice.party_tax_identifier
                     and line.invoice.party_tax_identifier.render.code) or (
                     line.invoice.party.tax_identifier
                     and line.invoice.party.tax_identifier.render.code) or ''
-                cls._cell(row, tax_id, fmt=fmt)
+                cls._cell(row, tax_id)
                 number = '%s%s' % (
                     '*' if line.invoice.raw.state == 'cancelled' else '',
                     line.invoice.render.number)
-                cls._cell(row, number, cls_name='no-wrap', fmt=fmt)
+                cls._cell(row, number, cls_name='no-wrap')
                 cls._cell(row, line.invoice.render.invoice_date,
-                    cls_name='no-wrap', fmt=fmt)
+                    cls_name='no-wrap')
                 base = (line.raw.company_base
                     if line.render.base else 0.0)
                 cls._cell(row, render(base, digits=currency_digits),
-                    style_value='text-align: right;', fmt=fmt)
-                cls._cell(row, line.tax.raw.name if line.tax else ' --- ',
-                    fmt=fmt)
+                    style_value='text-align: right;')
+                cls._cell(row, line.tax.raw.name if line.tax else ' --- ')
                 amount = (line.raw.company_amount
                     if line.render.amount else 0.0)
                 cls._cell(row, render(amount, digits=currency_digits),
                     style_value='text-align: right;',
-                    cls_name='no-wrap', fmt=fmt)
+                    cls_name='no-wrap')
                 cls._cell(row, render(total, digits=currency_digits),
                     style_value='text-align: right;',
-                    cls_name='no-wrap', fmt=fmt)
+                    cls_name='no-wrap')
                 cls._cell(row,
                     render(line.invoice.raw.company_total_amount,
                         digits=currency_digits),
                     style_value='text-align: right;',
-                    cls_name='bold no-wrap', fmt=fmt)
+                    cls_name='bold no-wrap')
             else:
                 row = tr()
                 for _idx in range(6):
-                    cls._cell(row, '', fmt=fmt)
+                    cls._cell(row, '')
                 base = (line.raw.company_base
                     if line.render.base else 0.0)
-                cls._cell(row, render(base, digits=currency_digits), fmt=fmt)
-                cls._cell(row, line.tax.raw.name if line.tax else ' --- ', fmt=fmt)
+                cls._cell(row, render(base, digits=currency_digits))
+                cls._cell(row, line.tax.raw.name if line.tax else ' --- ')
                 amount = (line.raw.company_amount
                     if line.render.amount else 0.0)
                 cls._cell(row, render(amount, digits=currency_digits),
                     style_value='text-align: right;',
-                    cls_name='no-wrap', fmt=fmt)
+                    cls_name='no-wrap')
                 cls._cell(row, render(total, digits=currency_digits),
                     style_value='text-align: right;',
-                    cls_name='no-wrap', fmt=fmt)
+                    cls_name='no-wrap')
             before_invoice_id = line.invoice.raw.id
             rows.append(row)
         return rows
@@ -594,7 +589,6 @@ class TaxesByInvoiceReport(DominateReportMixin, metaclass=PoolMeta):
     @classmethod
     def show_detail(cls, data):
         render = cls.render
-        fmt = data.get('output_format', 'pdf')
         nodes = []
         items = list(data['records'].items())
         for index, (key, record_lines) in enumerate(items):
@@ -617,51 +611,51 @@ class TaxesByInvoiceReport(DominateReportMixin, metaclass=PoolMeta):
                     cls._cell(key_row, key.name if hasattr(key, 'name') else key.rec_name,
                         cls_name='bold',
                         style_value='text-align: left !important;padding-left: 35px !important;',
-                        colspan=11, fmt=fmt)
+                        colspan=11)
                 currency_digits = key.company.currency.digits
                 if not data['parameters']['totals_only']:
-                    for row in cls.show_detail_lines(record_lines, fmt):
+                    for row in cls.show_detail_lines(record_lines):
                         table_node.add(row)
                 if data['parameters']['tax_totals'].get(key):
                     total_row = tr(cls='bold')
                     cls._cell(total_row,
                         'Total Period' if data['parameters']['jump_page'] else 'Total',
                         style_value='text-align: right;',
-                        colspan=6, fmt=fmt)
+                        colspan=6)
                     cls._cell(total_row, render(
                         data['parameters']['tax_totals'][key]['total_untaxed'],
                         digits=currency_digits),
-                        style_value='text-align: right;', fmt=fmt)
-                    cls._cell(total_row, '', fmt=fmt)
+                        style_value='text-align: right;')
+                    cls._cell(total_row, '')
                     cls._cell(total_row, render(
                         data['parameters']['tax_totals'][key]['total_tax'],
                         digits=currency_digits),
-                        style_value='text-align: right;', fmt=fmt)
+                        style_value='text-align: right;')
                     cls._cell(total_row, render(
                         data['parameters']['tax_totals'][key]['total'],
                         digits=currency_digits),
-                        style_value='text-align: right;', fmt=fmt)
-                    cls._cell(total_row, '', fmt=fmt)
+                        style_value='text-align: right;')
+                    cls._cell(total_row, '')
                     table_node.add(total_row)
                 if data['parameters']['jump_page'] and index == len(items) - 1:
                     total_row = tr(cls='bold')
                     cls._cell(total_row, 'Total',
                         style_value='text-align: right;',
-                        colspan=6, fmt=fmt)
+                        colspan=6)
                     cls._cell(total_row, render(
                         data['parameters']['totals']['total_untaxed'],
                         digits=currency_digits),
-                        style_value='text-align: right;', fmt=fmt)
-                    cls._cell(total_row, '', fmt=fmt)
+                        style_value='text-align: right;')
+                    cls._cell(total_row, '')
                     cls._cell(total_row, render(
                         data['parameters']['totals']['total_tax'],
                         digits=currency_digits),
-                        style_value='text-align: right;', fmt=fmt)
+                        style_value='text-align: right;')
                     cls._cell(total_row, render(
                         data['parameters']['totals']['total'],
                         digits=currency_digits),
-                        style_value='text-align: right;', fmt=fmt)
-                    cls._cell(total_row, '', fmt=fmt)
+                        style_value='text-align: right;')
+                    cls._cell(total_row, '')
                     table_node.add(total_row)
             nodes.append(table_node)
             if data['parameters']['jump_page'] and index < len(items) - 1:
