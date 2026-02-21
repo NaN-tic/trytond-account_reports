@@ -628,12 +628,36 @@ msgid "Fiscal Year: %s Start Period: %s End Period: %s"
 msgstr "Exercici: %s Període inici: %s Període fi: %s"
 
 msgctxt "html_report:h:"
-msgid "Parties: %s"
-msgstr "Tercers: %s"
+msgid "Initial posting date: %(start_date)s"
+msgstr "Data de comptabilització inicial: %(start_date)s"
+
+msgctxt "html_report:h:"
+msgid "Final posting date: %(end_date)s"
+msgstr "Data de comptabilització final: %(end_date)s"
+
+msgctxt "html_report:h:"
+msgid "Fiscal Year: %(fiscal_year)s %(periods)s"
+msgstr "Exercici: %(fiscal_year)s %(periods)s"
+
+msgctxt "html_report:h:"
+msgid "Periods: %(periods)s"
+msgstr "Períodes: %(periods)s"
+
+msgctxt "html_report:h:"
+msgid "All Periods"
+msgstr "Tots els períodes"
+
+msgctxt "html_report:h:"
+msgid "Parties: %(parties)s"
+msgstr "Tercers: %(parties)s"
 
 msgctxt "html_report:h:"
 msgid "All Parties"
 msgstr "Tots els tercers"
+
+msgctxt "html_report:h:"
+msgid "Cancelled invoices are shown in %(marker)s. Invoices without a cancelled move or a cancelled move not related to an invoice are not added to the total."
+msgstr "Les factures anul·lades es mostren en %(marker)s. Les factures sense assentament d'anul·lació o amb un assentament d'anul·lació no relacionat amb una factura no s'afegeixen al total."
 
 msgctxt "html_report:h:"
 msgid "Accounts: %s"

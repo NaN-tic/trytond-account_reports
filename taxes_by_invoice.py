@@ -488,23 +488,37 @@ class TaxesByInvoiceReport(DominateReportMixin, metaclass=PoolMeta):
                 with tbody():
                     if p['start_date']:
                         with tr():
-                            td(_('Initial posting date: %s') % p['start_date'],
+                            td(_('Initial posting date: %(start_date)s') % {
+                                    'start_date': p['start_date'],
+                                    },
                                 colspan='2', cls='right')
                         with tr():
-                            td(_('Fiscal Year: %s %s') % (
-                                p['fiscal_year'],
-                                ('Periods: %s' % p['periods']) if p['periods'] else 'All Periods'))
-                            td(_('Final posting date: %s') % p['end_date'],
+                            periods_label = (_('Periods: %(periods)s') % {
+                                    'periods': p['periods'],
+                                    } if p['periods'] else _('All Periods'))
+                            td(_('Fiscal Year: %(fiscal_year)s %(periods)s') % {
+                                    'fiscal_year': p['fiscal_year'],
+                                    'periods': periods_label,
+                                    })
+                            td(_('Final posting date: %(end_date)s') % {
+                                    'end_date': p['end_date'],
+                                    },
                                 cls='right')
                     else:
                         with tr():
-                            td(_('Fiscal Year: %s %s') % (
-                                p['fiscal_year'],
-                                ('Periods: %s' % p['periods']) if p['periods'] else 'All Periods'),
+                            periods_label = (_('Periods: %(periods)s') % {
+                                    'periods': p['periods'],
+                                    } if p['periods'] else _('All Periods'))
+                            td(_('Fiscal Year: %(fiscal_year)s %(periods)s') % {
+                                    'fiscal_year': p['fiscal_year'],
+                                    'periods': periods_label,
+                                    },
                                 colspan='2')
                     with tr():
                         if p['parties']:
-                            td(_('Parties: %s') % p['parties'], colspan='2')
+                            td(_('Parties: %(parties)s') % {
+                                    'parties': p['parties'],
+                                    }, colspan='2')
                         else:
                             td(_('All Parties'), colspan='2')
                     with tr():
@@ -720,27 +734,39 @@ class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
             parameters['company_vat_label'], parameters['company_vat'])])
         if parameters['start_date']:
             ws.append([
-                _('Initial posting date: %s') % parameters['start_date'],
-                _('Final posting date: %s') % parameters['end_date'],
+                _('Initial posting date: %(start_date)s') % {
+                    'start_date': parameters['start_date'],
+                    },
+                _('Final posting date: %(end_date)s') % {
+                    'end_date': parameters['end_date'],
+                    },
                 ])
-            ws.append([_('Fiscal Year: %s %s') % (
-                parameters['fiscal_year'],
-                (_('Periods: %s') % parameters['periods'])
-                if parameters['periods'] else _('All Periods'))])
+            periods_label = (_('Periods: %(periods)s') % {
+                    'periods': parameters['periods'],
+                    } if parameters['periods'] else _('All Periods'))
+            ws.append([_('Fiscal Year: %(fiscal_year)s %(periods)s') % {
+                'fiscal_year': parameters['fiscal_year'],
+                'periods': periods_label,
+                }])
         else:
-            ws.append([_('Fiscal Year: %s %s') % (
-                parameters['fiscal_year'],
-                (_('Periods: %s') % parameters['periods'])
-                if parameters['periods'] else _('All Periods'))])
+            periods_label = (_('Periods: %(periods)s') % {
+                    'periods': parameters['periods'],
+                    } if parameters['periods'] else _('All Periods'))
+            ws.append([_('Fiscal Year: %(fiscal_year)s %(periods)s') % {
+                'fiscal_year': parameters['fiscal_year'],
+                'periods': periods_label,
+                }])
         if parameters['parties']:
-            ws.append([_('Parties: %s') % parameters['parties']])
+            ws.append([_('Parties: %(parties)s') % {
+                'parties': parameters['parties'],
+                }])
         else:
             ws.append([_('All Parties')])
         marker = '*'
         ws.append([
-            _('Cancelled invoices are shown in %s. Invoices without a cancelled '
+            _('Cancelled invoices are shown in %(marker)s. Invoices without a cancelled '
               'move or a cancelled move not related to an invoice are not added '
-              'to the total.') % marker])
+              'to the total.') % {'marker': marker}])
         ws.append([])
 
         if not parameters['records_found']:

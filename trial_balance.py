@@ -907,7 +907,9 @@ class TrialBalanceReport(DominateReportMixin, metaclass=PoolMeta):
                             td(_('All Accounts'))
                     with tr():
                         if p['parties'] != '':
-                            td('Parties: %s' % p['parties'])
+                            td(_('Parties: %(parties)s') % {
+                                'parties': p['parties'],
+                                })
                         else:
                             td(_('All Parties'))
         return container
