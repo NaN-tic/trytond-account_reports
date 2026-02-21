@@ -488,27 +488,27 @@ class TaxesByInvoiceReport(DominateReportMixin, metaclass=PoolMeta):
                 with tbody():
                     if p['start_date']:
                         with tr():
-                            td('Initial posting date: %s' % p['start_date'],
+                            td(_('Initial posting date: %s') % p['start_date'],
                                 colspan='2', cls='right')
                         with tr():
-                            td('Fiscal Year: %s %s' % (
+                            td(_('Fiscal Year: %s %s') % (
                                 p['fiscal_year'],
                                 ('Periods: %s' % p['periods']) if p['periods'] else 'All Periods'))
-                            td('Final posting date: %s' % p['end_date'],
+                            td(_('Final posting date: %s') % p['end_date'],
                                 cls='right')
                     else:
                         with tr():
-                            td('Fiscal Year: %s %s' % (
+                            td(_('Fiscal Year: %s %s') % (
                                 p['fiscal_year'],
                                 ('Periods: %s' % p['periods']) if p['periods'] else 'All Periods'),
                                 colspan='2')
                     with tr():
                         if p['parties']:
-                            td('Parties: %s' % p['parties'], colspan='2')
+                            td(_('Parties: %s') % p['parties'], colspan='2')
                         else:
-                            td('All Parties', colspan='2')
+                            td(_('All Parties'), colspan='2')
                     with tr():
-                        td('Cancelled invoices are shown in grey. Invoices without a cancelled move or a cancelled move not related to an invoice are not added to the total.',
+                        td(_('Cancelled invoices are shown in grey. Invoices without a cancelled move or a cancelled move not related to an invoice are not added to the total.'),
                             colspan='2')
         return container
 
@@ -720,27 +720,27 @@ class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
             parameters['company_vat_label'], parameters['company_vat'])])
         if parameters['start_date']:
             ws.append([
-                'Initial posting date: %s' % parameters['start_date'],
-                'Final posting date: %s' % parameters['end_date'],
+                _('Initial posting date: %s') % parameters['start_date'],
+                _('Final posting date: %s') % parameters['end_date'],
                 ])
-            ws.append(['Fiscal Year: %s %s' % (
+            ws.append([_('Fiscal Year: %s %s') % (
                 parameters['fiscal_year'],
-                ('Periods: %s' % parameters['periods'])
-                if parameters['periods'] else 'All Periods')])
+                (_('Periods: %s') % parameters['periods'])
+                if parameters['periods'] else _('All Periods'))])
         else:
-            ws.append(['Fiscal Year: %s %s' % (
+            ws.append([_('Fiscal Year: %s %s') % (
                 parameters['fiscal_year'],
-                ('Periods: %s' % parameters['periods'])
-                if parameters['periods'] else 'All Periods')])
+                (_('Periods: %s') % parameters['periods'])
+                if parameters['periods'] else _('All Periods'))])
         if parameters['parties']:
-            ws.append(['Parties: %s' % parameters['parties']])
+            ws.append([_('Parties: %s') % parameters['parties']])
         else:
-            ws.append(['All Parties'])
+            ws.append([_('All Parties')])
         marker = '*'
-        ws.append([(
-            'Cancelled invoices are shown in %s. Invoices without a cancelled '
-            'move or a cancelled move not related to an invoice are not added '
-            'to the total.') % marker])
+        ws.append([
+            _('Cancelled invoices are shown in %s. Invoices without a cancelled '
+              'move or a cancelled move not related to an invoice are not added '
+              'to the total.') % marker])
         ws.append([])
 
         if not parameters['records_found']:
