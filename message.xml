@@ -15,5 +15,8 @@ this repository contains the full copyright notices and license terms. -->
       <record model="ir.message" id="msg_missing_fiscalyear">
           <field name="text">The fiscalyear selected it is not valid.</field>
       </record>
+      <record model="ir.message" id="msg_not_deductible_tax">
+          <field name="text">Not Deductible VAT</field>
+      </record>
     </data>
 </tryton>

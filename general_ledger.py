@@ -134,7 +134,7 @@ class PrintGeneralLedgerStart(ModelView):
         return config.default_timeout or 30
 
     def default_show_description():
-        return True
+        return False
 
     @fields.depends('fiscalyear')
     def on_change_fiscalyear(self):
@@ -267,9 +267,10 @@ class GeneralLedgerReport(DominateReportMixin, metaclass=PoolMeta):
             and hasattr(line.origin, 'rec_name') else None)
 
     @classmethod
-    def _ref_move_origin(cls, line):
-        return (line.move_origin.rec_name if line.move_origin
-            and hasattr(line.move_origin, 'rec_name') else None)
+    def _ref(cls, line):
+        ref = line.description_used or line.move_description_used or None
+        return (ref if ref else (line.move_origin.rec_name if line.move_origin
+                and hasattr(line.move_origin, 'rec_name') else None))
 
     @classmethod
     def prepare(cls, data, checker):
@@ -480,8 +481,8 @@ class GeneralLedgerReport(DominateReportMixin, metaclass=PoolMeta):
                     ref = cls._ref_origin_bank_line(line)
                 elif line.origin:
                     ref = cls._ref_origin(line)
-                else:
-                    ref = cls._ref_move_origin(line)
+                if not ref:
+                    ref = cls._ref(line)
 
                 # If we don't fill the party in a party_required account, try
                 # get the party field in the line
@@ -1090,4 +1091,3 @@ class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
             ws.append([])
 
         return save_workbook(wb)
-
