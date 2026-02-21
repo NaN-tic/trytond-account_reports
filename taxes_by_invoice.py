@@ -13,13 +13,13 @@ from trytond.modules.html_report.dominate_report import DominateReportMixin
 from trytond.modules.html_report.engine import DualRecord
 from trytond.modules.html_report.i18n import _
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
+from trytond.modules.account_reports.common import css as common_css
 from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
-from trytond.tools import file_open
 from openpyxl import Workbook
 from dominate.util import raw
-from dominate.tags import div, header as header_tag, style, table, thead, tbody, tr, td, th, p, strong
+from dominate.tags import div, header as header_tag, table, thead, tbody, tr, td, th, p, strong
 
 _ZERO = Decimal(0)
 
@@ -214,8 +214,7 @@ class TaxesByInvoiceReport(DominateReportMixin, metaclass=PoolMeta):
 
     @classmethod
     def css(cls, action, record=None, records=None, data=None):
-        with file_open('account_reports/base.css') as f:
-            return f.read()
+        return common_css()
 
     @classmethod
     def prepare(cls, data):
@@ -468,58 +467,12 @@ class TaxesByInvoiceReport(DominateReportMixin, metaclass=PoolMeta):
             })
 
     @classmethod
-    def _header_style(cls):
-        return style(raw("""
-@page {
-    size: A4 landscape;
-}
-
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    padding-top: 0.5cm;
-    padding-left: 0.5cm;
-    text-align: left;
-    font-size: 9px;
-    width: 100%;
-    font-family: 'Arial';
-}
-
-.header-table {
-    width: 100%;
-    padding-right: 1cm;
-}
-
-.company-name {
-    font-style: italic;
-    font-size: 14px;
-    font-weight: bold;
-    width: 60%;
-}
-
-.center {
-    text-align: center;
-    font-size: 15px;
-}
-
-.right {
-    text-align: right;
-}
-
-.header-title {
-    font-size: 20px;
-}
-"""))
-
-    @classmethod
-    def _build_header(cls, data, wrap_header):
+    def header(cls, action, record=None, records=None, data=None):
         render = cls.render
         p = data['parameters']
-        container = header_tag(id='header') if wrap_header else div()
         title = (_('Taxes By Invoice and Period')
             if p['jump_page'] else _('Taxes By Invoice'))
-        with container:
+        with header_tag(id='header') as container:
             with table(cls='header-table'):
                 with thead():
                     with tr():
@@ -558,15 +511,6 @@ header {
                         marker = '*' if data.get('output_format') == 'xlsx' else 'grey'
                         td('Cancelled invoices are shown in %s. Invoices without a cancelled move or a cancelled move not related to an invoice are not added to the total.' % marker,
                             colspan='2')
-        return container
-
-    @classmethod
-    def header(cls, action, record=None, records=None, data=None):
-        if data.get('output_format', 'pdf') not in ('pdf', 'html'):
-            return None
-        with div() as container:
-            container.add(cls._header_style())
-            container.add(cls._build_header(data, True))
         return container
 
     @classmethod
@@ -740,9 +684,6 @@ header {
     @classmethod
     def body(cls, action, record=None, records=None, data=None):
         container = div()
-        if data.get('output_format', 'pdf') != 'pdf':
-            container.add(cls._header_style())
-            container.add(cls._build_header(data, False))
         if data['parameters']['records_found']:
             for node in cls.show_detail(data):
                 container.add(node)

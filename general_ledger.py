@@ -8,10 +8,11 @@ from trytond.transaction import Transaction
 from trytond.model import ModelView, fields
 from trytond.wizard import Wizard, StateView, StateReport, Button
 from trytond.pyson import Eval, Bool, If
-from trytond.tools import file_open, grouped_slice
+from trytond.tools import grouped_slice
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
-from trytond.modules.account_reports.common import TimeoutException, TimeoutChecker
+from trytond.modules.account_reports.common import (
+    TimeoutException, TimeoutChecker, css as common_css)
 from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
@@ -21,7 +22,7 @@ from trytond.rpc import RPC
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from openpyxl import Workbook
 from dominate.util import raw
-from dominate.tags import div, header as header_tag, style, table, thead, tbody, tr, td, th
+from dominate.tags import div, header as header_tag, table, thead, tbody, tr, td, th
 
 _ZERO = Decimal(0)
 
@@ -216,8 +217,7 @@ class GeneralLedgerReport(DominateReportMixin, metaclass=PoolMeta):
 
     @classmethod
     def css(cls, action, record=None, records=None, data=None):
-        with file_open('account_reports/base.css') as f:
-            return f.read()
+        return common_css()
 
     @classmethod
     def _ref_origin_invoice_line(cls, line):
@@ -676,56 +676,10 @@ class GeneralLedgerReport(DominateReportMixin, metaclass=PoolMeta):
                 })
 
     @classmethod
-    def _header_style(cls):
-        return style(raw("""
-@page {
-    size: A4 landscape;
-}
-
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    padding-top: 0.5cm;
-    padding-left: 0.5cm;
-    text-align: left;
-    font-size: 9px;
-    width: 100%;
-    font-family: 'Arial';
-}
-
-.header-table {
-    width: 100%;
-    padding-right: 1cm;
-}
-
-.company-name {
-    font-style: italic;
-    font-size: 14px;
-    font-weight: bold;
-    width: 60%;
-}
-
-.center {
-    text-align: center;
-    font-size: 15px;
-}
-
-.right {
-    text-align: right;
-}
-
-.header-title {
-    font-size: 20px;
-}
-"""))
-
-    @classmethod
-    def _build_header(cls, data, wrap_header):
+    def header(cls, action, record=None, records=None, data=None):
         render = cls.render
         p = data['parameters']
-        container = header_tag(id='header') if wrap_header else div()
-        with container:
+        with header_tag(id='header') as container:
             with table(cls='header-table'):
                 with thead():
                     with tr():
@@ -766,15 +720,6 @@ header {
                             "When move number is between parentheses it means that "
                             "it has no post number and the number shown is the "
                             "provisional one."))
-        return container
-
-    @classmethod
-    def header(cls, action, record=None, records=None, data=None):
-        if data.get('output_format', 'pdf') not in ('pdf', 'html'):
-            return None
-        with div() as container:
-            container.add(cls._header_style())
-            container.add(cls._build_header(data, True))
         return container
 
     @classmethod
@@ -930,9 +875,6 @@ header {
     def body(cls, action, record=None, records=None, data=None):
         fmt = data.get('output_format', 'pdf')
         container = div()
-        if fmt != 'pdf':
-            container.add(cls._header_style())
-            container.add(cls._build_header(data, False))
         container.add(cls.show_detail(
             data['records'], fmt,
             data['parameters'].get('show_description', True)))
