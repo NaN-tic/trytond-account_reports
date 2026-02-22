@@ -213,7 +213,7 @@ class TaxesByInvoiceReport(DominateReportMixin, metaclass=PoolMeta):
         cls.side_margin = 0.3
 
     @classmethod
-    def css(cls, action, record=None, records=None, data=None):
+    def css(cls, action, data, records):
         return common_css()
 
     @classmethod
@@ -467,7 +467,7 @@ class TaxesByInvoiceReport(DominateReportMixin, metaclass=PoolMeta):
             })
 
     @classmethod
-    def header(cls, action, record=None, records=None, data=None):
+    def header(cls, action, data, records):
         render = cls.render
         p = data['parameters']
         title = (_('Taxes By Invoice and Period')
@@ -677,7 +677,7 @@ class TaxesByInvoiceReport(DominateReportMixin, metaclass=PoolMeta):
         return nodes
 
     @classmethod
-    def title(cls, action, record=None, records=None, data=None):
+    def title(cls, action, data, records):
         render = cls.render
         title_prefix = (_('Taxes By Invoice and Period')
             if data['parameters']['jump_page'] else _('Taxes By Invoice'))
@@ -690,7 +690,7 @@ class TaxesByInvoiceReport(DominateReportMixin, metaclass=PoolMeta):
             render(datetime.now()))
 
     @classmethod
-    def body(cls, action, record=None, records=None, data=None):
+    def body(cls, action, data, records):
         container = div()
         if data['parameters']['records_found']:
             for node in cls.show_detail(data):

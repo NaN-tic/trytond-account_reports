@@ -400,11 +400,11 @@ class JournalReport(DominateReportMixin, metaclass=PoolMeta):
             })
 
     @classmethod
-    def title(cls, action, record=None, records=None, data=None):
+    def title(cls, action, data, records):
         return "Journal"
 
     @classmethod
-    def body(cls, action, record=None, records=None, data=None):
+    def body(cls, action, data, records):
         parameters = data.get('parameters', {})
         records = data.get('records', [])
         container = div()

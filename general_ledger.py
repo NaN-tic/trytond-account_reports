@@ -216,7 +216,7 @@ class GeneralLedgerReport(DominateReportMixin, metaclass=PoolMeta):
         cls.side_margin = 0.3
 
     @classmethod
-    def css(cls, action, record=None, records=None, data=None):
+    def css(cls, action, data, records):
         return common_css()
 
     @classmethod
@@ -676,7 +676,7 @@ class GeneralLedgerReport(DominateReportMixin, metaclass=PoolMeta):
                 })
 
     @classmethod
-    def header(cls, action, record=None, records=None, data=None):
+    def header(cls, action, data, records):
         render = cls.render
         p = data['parameters']
         with header_tag(id='header') as container:
@@ -862,14 +862,14 @@ class GeneralLedgerReport(DominateReportMixin, metaclass=PoolMeta):
         return detail_table
 
     @classmethod
-    def title(cls, action, record=None, records=None, data=None):
+    def title(cls, action, data, records):
         render = cls.render
         return '%s - %s - %s' % (
             _('General Ledger'), data['parameters']['company'],
             render(datetime.now()))
 
     @classmethod
-    def body(cls, action, record=None, records=None, data=None):
+    def body(cls, action, data, records):
         container = div()
         container.add(cls.show_detail(
             data['records'],

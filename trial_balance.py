@@ -310,7 +310,7 @@ class TrialBalanceReport(DominateReportMixin, metaclass=PoolMeta):
         cls.__rpc__['execute'] = RPC(False)
 
     @classmethod
-    def css(cls, action, record=None, records=None, data=None):
+    def css(cls, action, data, records):
         return common_css()
         cls.side_margin = 0.3
 
@@ -872,7 +872,7 @@ class TrialBalanceReport(DominateReportMixin, metaclass=PoolMeta):
                 })
 
     @classmethod
-    def header(cls, action, record=None, records=None, data=None):
+    def header(cls, action, data, records):
         render = cls.render
         p = data['parameters']
         with header_tag(id='header') as container:
@@ -987,14 +987,14 @@ class TrialBalanceReport(DominateReportMixin, metaclass=PoolMeta):
         return detail_table
 
     @classmethod
-    def title(cls, action, record=None, records=None, data=None):
+    def title(cls, action, data, records):
         render = cls.render
         return '%s - %s - %s' % (
             _('Trial Balance'), data['parameters']['company_rec_name'],
             render(datetime.now()))
 
     @classmethod
-    def body(cls, action, record=None, records=None, data=None):
+    def body(cls, action, data, records):
         container = div()
         container.add(cls.show_detail(data['records'], data['parameters']))
         return container
