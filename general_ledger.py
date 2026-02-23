@@ -16,7 +16,7 @@ from trytond.modules.account_reports.common import (
 from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
-from trytond.modules.html_report.dominate_report import DominateReportMixin
+from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.html_report.i18n import _
 from trytond.rpc import RPC
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
@@ -206,7 +206,7 @@ class PrintGeneralLedger(Wizard):
             }
 
 
-class GeneralLedgerReport(DominateReportMixin, metaclass=PoolMeta):
+class GeneralLedgerReport(DominateReport):
     __name__ = 'account_reports.general_ledger'
 
     @classmethod

@@ -9,7 +9,7 @@ from trytond.wizard import Wizard, StateView, StateReport, Button
 from trytond.pyson import Eval, If, Bool
 from trytond.rpc import RPC
 from trytond.i18n import gettext
-from trytond.modules.html_report.dominate_report import DominateReportMixin
+from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.html_report.engine import DualRecord
 from trytond.modules.html_report.i18n import _
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
@@ -202,7 +202,7 @@ class PrintTaxesByInvoiceAndPeriod(Wizard):
             }
 
 
-class TaxesByInvoiceReport(DominateReportMixin, metaclass=PoolMeta):
+class TaxesByInvoiceReport(DominateReport):
     __name__ = 'account_reports.taxes_by_invoice'
     side_margin = 0
 

@@ -18,7 +18,7 @@ from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
 from collections import defaultdict
-from trytond.modules.html_report.dominate_report import DominateReportMixin
+from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.html_report.i18n import _
 from openpyxl import Workbook
 from dominate.util import raw
@@ -300,7 +300,7 @@ class PrintTrialBalance(Wizard):
             'parties': party_ids,
             }
 
-class TrialBalanceReport(DominateReportMixin, metaclass=PoolMeta):
+class TrialBalanceReport(DominateReport):
     __name__ = 'account_reports.trial_balance'
     side_margin = 0
 

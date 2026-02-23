@@ -9,7 +9,7 @@ from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
-from trytond.modules.html_report.dominate_report import DominateReportMixin
+from trytond.modules.html_report.dominate_report import DominateReport
 from datetime import timedelta
 from sql import Null
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
@@ -131,7 +131,7 @@ class PrintJournal(Wizard):
         return 'end'
 
 
-class JournalReport(DominateReportMixin, metaclass=PoolMeta):
+class JournalReport(DominateReport):
     __name__ = 'account_reports.journal'
 
     @classmethod
