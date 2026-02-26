@@ -16,6 +16,8 @@ from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from openpyxl import Workbook
 from dominate.tags import div, h1, p, table, thead, tbody, tr, td, th
 
+from .common import css as common_css
+
 
 class PrintJournalStart(ModelView):
     'Print Journal'
@@ -133,6 +135,21 @@ class PrintJournal(Wizard):
 
 class JournalReport(DominateReport):
     __name__ = 'account_reports.journal'
+
+    @classmethod
+    def css(cls, action, data, records):
+        return common_css()
+
+    @classmethod
+    def css_header(cls, action, data, records):
+        side_margin = (action.html_side_margin
+            if action and action.html_side_margin is not None
+            else cls.side_margin)
+        return (
+            '%s\nbody { margin: %scm %scm 0 %scm; }\n'
+            'header { padding: 0; width: 100%%; box-sizing: border-box; }\n'
+            % (common_css(), side_margin, side_margin, side_margin)
+        )
 
     @classmethod
     def _get_open_close_moves(cls, _type, description, fiscalyear, accounts,

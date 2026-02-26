@@ -220,6 +220,17 @@ class GeneralLedgerReport(DominateReport):
         return common_css()
 
     @classmethod
+    def css_header(cls, action, data, records):
+        side_margin = (action.html_side_margin
+            if action and action.html_side_margin is not None
+            else cls.side_margin)
+        return (
+            '%s\nbody { margin: %scm %scm 0 %scm; }\n'
+            'header { padding: 0; width: 100%%; box-sizing: border-box; }\n'
+            % (common_css(), side_margin, side_margin, side_margin)
+        )
+
+    @classmethod
     def _ref_origin_invoice_line(cls, line):
         if not line.origin or not line.origin.invoice:
             return ''
