@@ -1,0 +1,34 @@
+{% set nc = namespace(before_invoice_id=None) %}
+{%for l in record %}
+    {% if nc.before_invoice_id != l.invoice.id %}
+        <tr class="{% if l.invoice.state == 'cancelled' %}grey{% endif %}">
+            <td>{{ l.invoice.move.date }}</td>
+            <td>{{ l.account.code}}</td>
+            <td style="text-align: left;">{{ l.invoice.party.rec_name}}</td>
+            <td>{{ l.invoice.party_tax_identifier and l.invoice.party_tax_identifier.code or l.invoice.party.tax_identifier and l.invoice.party.tax_identifier.code or '' }}</td>
+            <td class="no-wrap">{% if l.invoice.state == 'cancelled' %}*{% endif %}{{ l.invoice.number }}</td>
+            <td class="no-wrap">{{ l.invoice.invoice_date }}</td>
+            <td style="text-align: right;">{% if l.base %}{{l.company_base | render(digits=l.invoice.company.currency.digits)}}{% else %}0.0{% endif %}</td>
+            <td>{% if l.tax_name %}{{ l.tax_name }}{% else %} --- {% endif %}</td>
+            <td style="text-align: right;" class="no-wrap">{% if l.amount %}{{ l.company_amount | render(digits=l.invoice.company.currency.digits)}}{% else %}0.0{% endif %}</td>
+            {% set total = l.company_base + l.company_amount %}
+            <td style="text-align: right;" class="no-wrap">{{ total | render(l.invoice.company.currency.digits) }} </td>
+            <td style="text-align: right;" class="bold no-wrap">{{ l.invoice.company_total_amount | render(digits=l.invoice.company.currency.digits)}}</td>
+        </tr>
+    {% else %}
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="text-align: right;">{% if l.base %}{{l.company_base | render(digits=l.invoice.company.currency.digits)}}{% else %}0.0{% endif %}</td>
+            <td>{% if l.tax_name %}{{ l.tax_name }}{% else %} --- {% endif %}</td>
+            <td style="text-align: right;" class="no-wrap">{% if l.amount %}{{ l.company_amount | render(digits=l.invoice.company.currency.digits)}}{% else %}0.0{% endif %}</td>
+            {% set total = l.company_base + l.company_amount %}
+            <td style="text-align: right;" class="no-wrap">{{ total | render(l.invoice.company.currency.digits) }} </td>
+        </tr>
+    {% endif %}
+    {% set nc.before_invoice_id = l.invoice.id %}
+{% endfor %}

@@ -211,7 +211,6 @@ class PrintTrialBalanceStart(ModelView):
         Configuration = pool.get('account.configuration')
 
         config = Configuration(1)
-
         accounts_digits = getattr(config, 'default_account_code_digits', None)
 
         if (accounts_digits and self.show_digits and

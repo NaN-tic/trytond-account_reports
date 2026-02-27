@@ -1,0 +1,76 @@
+
+{%- set p = data['parameters'] -%}
+<table>
+    {% if p['comparison_fiscalyear'] != '' %}
+        <tr>
+            <th></th>
+            <th></th>
+            <th colspan="4" style="text-align: center;">{{ _('Main Balance') }} {{ p['fiscalyear'] }}</th>
+            <th colspan="4" style="text-align: center;">{{ _('Comparision Balance') }} {{ p['comparison_fiscalyear'] }}</th>
+        </tr>
+        <tr>
+            <th colspan="10"></th>
+        </tr>
+    {% endif %}
+    <tr>
+        <th>{{ _('Code')}}</th>
+        <th>{{ _('Account') }}</th>
+        {% if p['comparison_fiscalyear'] != '' %}
+            <th style="text-align: right;">{{ _('Initial') }}</th>
+            <th style="text-align: right;">{{ _('Debit') }}</th>
+            <th style="text-align: right;">{{ _('Credit') }}</th>
+            <th style="text-align: right;">{{ _('Balance') }}</th>
+            <th style="text-align: right;">{{ _('Initial') }}</th>
+            <th style="text-align: right;">{{ _('Debit') }}</th>
+            <th style="text-align: right;">{{ _('Credit') }}</th>
+            <th style="text-align: right;">{{ _('Balance') }}</th>
+        {% else %}
+            <th style="text-align: right;">{{ _('Initial') }}</th>
+            <th style="text-align: right;">{{ _('Debit') }}</th>
+            <th style="text-align: right;">{{ _('Credit') }}</th>
+            <th style="text-align: right;">{{ _('Balance') }}</th>
+        {% endif %}
+    </tr>
+
+    {% for record in records %}
+        <tr>
+            <td>{{ record['code'] }}</td>
+            <td>{{ record['name'] }}</td>
+            {% if p['comparison_fiscalyear'] != '' %}
+                <td style="text-align: right;">{{ record['period_initial_balance']|render }}</td>
+                <td style="text-align: right;">{{ record['period_debit']|render }}</td>
+                <td style="text-align: right;">{{ record['period_credit']|render }}</td>
+                <td style="text-align: right;">{{ record['period_balance']|render }}</td>
+                <td style="text-align: right;">{{ record['initial_balance']|render }}</td>
+                <td style="text-align: right;">{{ record['debit']|render }}</td>
+                <td style="text-align: right;">{{ record['credit']|render }}</td>
+                <td style="text-align: right;">{{ record['balance']|render }}</td>
+            {% else %}
+                <td style="text-align: right;">{{ record['period_initial_balance']|render }}</td>
+                <td style="text-align: right;">{{ record['period_debit']|render }}</td>
+                <td style="text-align: right;">{{ record['period_credit']|render }}</td>
+                <td style="text-align: right;">{{ record['period_balance']|render }}</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+
+    <tr>
+        <td></td>
+        <td></td>
+        {% if p['comparison_fiscalyear'] != '' %}
+            <td style="text-align: right;">{{ p['total_period_initial_balance']|render}}</td>
+            <td style="text-align: right;">{{ p['total_period_debit']|render }}</td>
+            <td style="text-align: right;">{{ p['total_period_credit']|render }}</td>
+            <td style="text-align: right;">{{ p['total_period_balance']|render }}</td>
+            <td style="text-align: right;">{{ p['total_initial_balance']|render }}</td>
+            <td style="text-align: right;">{{ p['total_debit']|render }}</td>
+            <td style="text-align: right;">{{ p['total_credit']|render }}</td>
+            <td style="text-align: right;">{{ p['total_balance']|render }}</td>
+        {% else %}
+            <td style="text-align: right;">{{ p['total_period_initial_balance']|render}}</td>
+            <td style="text-align: right;">{{ p['total_period_debit']|render }}</td>
+            <td style="text-align: right;">{{ p['total_period_credit']|render }}</td>
+            <td style="text-align: right;">{{ p['total_period_balance']|render }}</td>
+        {% endif %}
+    </tr>
+</table>
