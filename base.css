@@ -36,6 +36,26 @@ header {
     width: 100%;
     font-family: 'Arial';
 }
+.header-table {
+  width: 100%;
+  padding-right: 1cm;
+}
+.company-name {
+  font-style: italic;
+  font-size: 14px;
+  font-weight: bold;
+  width: 60%;
+}
+.center {
+  text-align: center;
+  font-size: 15px;
+}
+.right {
+  text-align: right;
+}
+.header-title {
+  font-size: 20px;
+}
 .logo {
     width: auto;
     height: 50px;

@@ -9,12 +9,19 @@ from sql.operators import In
 
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
-from trytond.tools import reduce_ids
+from trytond.tools import reduce_ids, file_open
 from trytond.transaction import Transaction
 
 
 class TimeoutException(Exception):
     pass
+
+
+def css():
+    with file_open('account_reports/base.css') as f:
+        return f.read()
+
+
 
 
 class TimeoutChecker:

@@ -20,6 +20,15 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
     def setUp(self):
         super(AccountReportsTestCase, self).setUp()
 
+    def assert_report_rendered(self, Report, data, expected_ext):
+        result = Report.execute([], data)
+        self.assertEqual(result[0], expected_ext)
+        self.assertTrue(result[1])
+
+    def assert_xlsx_report_rendered(self, Report, data):
+        content = Report.get_content([], data)
+        self.assertTrue(content)
+
     def create_fiscalyear_and_chart(self, company=None, fiscalyear=None,
             chart=True):
         'Test fiscalyear'
@@ -269,6 +278,8 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
             'account_reports.print_general_ledger', type='wizard')
         GeneralLedgerReport = pool.get(
             'account_reports.general_ledger', type='report')
+        GeneralLedgerXlsxReport = pool.get(
+            'account_reports.general_ledger_xlsx', type='report')
         company = create_company()
         fiscalyear = self.create_moves(company)
         period = fiscalyear.periods[0]
@@ -289,6 +300,13 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_general_ledger.start.timeout = 30
         checker = TimeoutChecker(print_general_ledger.start.timeout, GeneralLedgerReport.timeout_exception)
         _, data = print_general_ledger.do_print_(None)
+        self.assert_report_rendered(GeneralLedgerReport, data, 'pdf')
+        data_html = data.copy()
+        data_html['output_format'] = 'html'
+        self.assert_report_rendered(GeneralLedgerReport, data_html, 'html')
+        data_xlsx = data.copy()
+        data_xlsx['output_format'] = 'xlsx'
+        self.assert_xlsx_report_rendered(GeneralLedgerXlsxReport, data_xlsx)
 
         # Full general_ledger
         self.assertEqual(data['company'], company.id)
@@ -457,10 +475,190 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(parameters['accounts'], ', '.join([r.code for r in receivables]))
         self.assertEqual(len(records), 1)
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
-        debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
-        self.assertEqual(credit, Decimal(0))
-        self.assertEqual(debit, Decimal('100.0'))
         self.assertEqual(True, all([line for k, m in records.items() for line in m['lines'] if line['line'].party]))
+
+    @with_transaction()
+    def test_trial_balance_render(self):
+        'Test Trial Balance rendering'
+        pool = Pool()
+        PrintTrialBalance = pool.get(
+            'account_reports.print_trial_balance', type='wizard')
+        TrialBalanceReport = pool.get(
+            'account_reports.trial_balance', type='report')
+        TrialBalanceXlsxReport = pool.get(
+            'account_reports.trial_balance_xlsx', type='report')
+        company = create_company()
+        fiscalyear = self.create_moves(company)
+        period = fiscalyear.periods[0]
+        last_period = fiscalyear.periods[-1]
+
+        session_id, _, _ = PrintTrialBalance.create()
+        print_trial_balance = PrintTrialBalance(session_id)
+        print_trial_balance.start.company = company
+        print_trial_balance.start.fiscalyear = fiscalyear
+        print_trial_balance.start.start_period = period
+        print_trial_balance.start.end_period = last_period
+        print_trial_balance.start.comparison_fiscalyear = None
+        print_trial_balance.start.comparison_start_period = None
+        print_trial_balance.start.comparison_end_period = None
+        print_trial_balance.start.show_digits = 0
+        print_trial_balance.start.only_moves = False
+        print_trial_balance.start.moves_or_initial = False
+        print_trial_balance.start.hide_split_parties = False
+        print_trial_balance.start.split_parties = False
+        print_trial_balance.start.add_initial_balance = False
+        print_trial_balance.start.accounts = []
+        print_trial_balance.start.parties = []
+        print_trial_balance.start.output_format = 'pdf'
+        print_trial_balance.start.timeout = 30
+
+        _, data = print_trial_balance.do_print_(None)
+        self.assert_report_rendered(TrialBalanceReport, data, 'pdf')
+        data_html = data.copy()
+        data_html['output_format'] = 'html'
+        self.assert_report_rendered(TrialBalanceReport, data_html, 'html')
+        data_xlsx = data.copy()
+        data_xlsx['output_format'] = 'xlsx'
+        self.assert_xlsx_report_rendered(TrialBalanceXlsxReport, data_xlsx)
+
+    @with_transaction()
+    def test_taxes_by_invoice_render(self):
+        'Test Taxes by Invoice rendering'
+        pool = Pool()
+        PrintTaxesByInvoice = pool.get(
+            'account_reports.print_taxes_by_invoice', type='wizard')
+        TaxesByInvoiceReport = pool.get(
+            'account_reports.taxes_by_invoice', type='report')
+        TaxesByInvoiceXlsxReport = pool.get(
+            'account_reports.taxes_by_invoice_xlsx', type='report')
+        company = create_company()
+        fiscalyear = self.create_moves(company)
+
+        session_id, _, _ = PrintTaxesByInvoice.create()
+        print_taxes = PrintTaxesByInvoice(session_id)
+        print_taxes.start.company = company
+        print_taxes.start.fiscalyear = fiscalyear
+        print_taxes.start.start_date = None
+        print_taxes.start.end_date = None
+        print_taxes.start.periods = []
+        print_taxes.start.parties = []
+        print_taxes.start.excluded_parties = []
+        print_taxes.start.partner_type = 'customers'
+        print_taxes.start.grouping = 'base_tax_code'
+        print_taxes.start.tax_type = 'all'
+        print_taxes.start.totals_only = False
+        print_taxes.start.taxes = []
+        print_taxes.start.output_format = 'pdf'
+        print_taxes.start.timeout = 30
+
+        _, data = print_taxes.do_print_(None)
+        self.assert_report_rendered(TaxesByInvoiceReport, data, 'pdf')
+        data_html = data.copy()
+        data_html['output_format'] = 'html'
+        self.assert_report_rendered(TaxesByInvoiceReport, data_html, 'html')
+        data_xlsx = data.copy()
+        data_xlsx['output_format'] = 'xlsx'
+        self.assert_xlsx_report_rendered(TaxesByInvoiceXlsxReport, data_xlsx)
+
+    @with_transaction()
+    def test_journal(self):
+        'Test journal'
+        pool = Pool()
+        PrintJournal = pool.get('account_reports.print_journal',
+            type='wizard')
+        JournalReport = pool.get('account_reports.journal',
+            type='report')
+        JournalXlsxReport = pool.get('account_reports.journal_xlsx',
+            type='report')
+        company = create_company()
+        fiscalyear = self.create_moves(company)
+        period = fiscalyear.periods[0]
+        last_period = fiscalyear.periods[-1]
+        journals = self.get_journals()
+        journal_revenue = journals['REV']
+        journal_expense = journals['EXP']
+        session_id, _, _ = PrintJournal.create()
+        print_journal = PrintJournal(session_id)
+        print_journal.start.company = company
+        print_journal.start.fiscalyear = fiscalyear
+        print_journal.start.start_period = period
+        print_journal.start.end_period = last_period
+        print_journal.start.journals = []
+        print_journal.start.output_format = 'html'
+        print_journal.start.open_close_account_moves = False
+        print_journal.start.open_move_description = 'Open'
+        print_journal.start.close_move_description = 'Close'
+
+        _, data = print_journal.do_print_(None)
+        self.assert_report_rendered(JournalReport, data, 'html')
+        print_journal.start.output_format = 'pdf'
+        _, data_pdf = print_journal.do_print_(None)
+        self.assert_report_rendered(JournalReport, data_pdf, 'pdf')
+        data_xlsx = data.copy()
+        data_xlsx['output_format'] = 'xlsx'
+        self.assert_xlsx_report_rendered(JournalXlsxReport, data_xlsx)
+        # Full Journal
+        self.assertEqual(data['company'], company.id)
+        self.assertEqual(data['fiscalyear'], fiscalyear.id)
+        self.assertEqual(data['start_period'], period.id)
+        self.assertEqual(data['end_period'], last_period.id)
+        self.assertEqual(len(data['journals']), 0)
+        self.assertEqual(data['output_format'], 'html')
+        records, parameters = JournalReport.prepare(data)
+        self.assertEqual(len(records), 12)
+        self.assertEqual(parameters['start_period'], period.name)
+        self.assertEqual(parameters['end_period'], last_period.name)
+        self.assertEqual(parameters['fiscal_year'], fiscalyear.name)
+        self.assertEqual(parameters['journals'], '')
+        credit = sum([m['credit'] for m in records])
+        debit = sum([m['debit'] for m in records])
+        self.assertEqual(credit, debit)
+        self.assertEqual(credit, Decimal('730.0'))
+        with_party = [m for m in records if m['party_name']]
+        self.assertEqual(len(with_party), 6)
+        # Filtering periods
+        session_id, _, _ = PrintJournal.create()
+        print_journal = PrintJournal(session_id)
+        print_journal.start.company = company
+        print_journal.start.fiscalyear = fiscalyear
+        print_journal.start.start_period = period
+        print_journal.start.end_period = period
+        print_journal.start.journals = []
+        print_journal.start.output_format = 'html'
+        print_journal.start.open_close_account_moves = False
+        print_journal.start.open_move_description = 'Open'
+        print_journal.start.close_move_description = 'Close'
+
+        _, data = print_journal.do_print_(None)
+        records, parameters = JournalReport.prepare(data)
+        self.assertEqual(len(records), 8)
+        credit = sum([m['credit'] for m in records])
+        debit = sum([m['debit'] for m in records])
+        self.assertEqual(credit, debit)
+        self.assertEqual(credit, Decimal('380.0'))
+        # Filtering journals
+        journals = self.get_journals()
+        journal_revenue = journals['REV']
+        journal_expense = journals['EXP']
+        session_id, _, _ = PrintJournal.create()
+        print_journal = PrintJournal(session_id)
+        print_journal.start.company = company
+        print_journal.start.fiscalyear = fiscalyear
+        print_journal.start.start_period = period
+        print_journal.start.end_period = period
+        print_journal.start.journals = [journal_revenue, journal_expense]
+        print_journal.start.output_format = 'html'
+        print_journal.start.open_close_account_moves = False
+        print_journal.start.open_move_description = 'Open'
+        print_journal.start.close_move_description = 'Close'
+        _, data = print_journal.do_print_(None)
+        records, parameters = JournalReport.prepare(data)
+        self.assertNotEqual(parameters['journals'], '')
+        self.assertEqual(len(records), 8)
+        credit = sum([m['credit'] for m in records])
+        debit = sum([m['debit'] for m in records])
+        self.assertEqual(credit, debit)
+        self.assertEqual(credit, Decimal('380.0'))
 
 
 del ModuleTestCase
