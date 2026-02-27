@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<tryton>
+    <data>
+        <record model="ir.ui.view" id="print_general_ledger_start_view_form">
+            <field name="model">account_reports.print_general_ledger.start</field>
+            <field name="type">form</field>
+            <field name="name">print_general_ledger_start_form</field>
+        </record>
+        <record model="ir.action.wizard" id="wizard_print_general_ledger">
+            <field name="name">Print General Ledger</field>
+            <field name="wiz_name">account_reports.print_general_ledger</field>
+        </record>
+
+        <record model="ir.action.report" id="report_general_ledger">
+            <field name="name">General Ledger</field>
+            <field name="report_name">account_reports.general_ledger</field>
+            <field name="extension">pdf</field>
+            <field name="template_extension">html</field>
+        </record>
+        <record model="ir.action.report" id="report_general_ledger_xlsx">
+            <field name="name">General Ledger</field>
+            <field name="report_name">account_reports.general_ledger_xlsx</field>
+            <field name="extension">xlsx</field>
+        </record>
+
+        <!-- menu wizard -->
+        <menuitem id="menu_print_general_ledger" name="Print General Ledger"
+            parent="account.menu_reporting" action="wizard_print_general_ledger"
+            icon="tryton-print"/>
+    </data>
+</tryton>

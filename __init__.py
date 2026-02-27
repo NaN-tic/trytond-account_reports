@@ -5,6 +5,7 @@ from . import common
 from . import general_ledger
 from . import taxes_by_invoice
 from . import trial_balance
+from . import journal
 
 
 def register():
@@ -14,8 +15,25 @@ def register():
         common.Account,
         common.Party,
         common.FiscalYear,
+        general_ledger.PrintGeneralLedgerStart,
+        taxes_by_invoice.PrintTaxesByInvoiceAndPeriodStart,
+        trial_balance.PrintTrialBalanceStart,
+        journal.PrintJournalStart,
         module=module, type_='model')
-
-    general_ledger.register(module)
-    taxes_by_invoice.register(module)
-    trial_balance.register(module)
+    Pool.register(
+        general_ledger.PrintGeneralLedger,
+        taxes_by_invoice.PrintTaxesByInvoiceAndPeriod,
+        trial_balance.PrintTrialBalance,
+        journal.PrintJournal,
+        module=module, type_='wizard')
+    Pool.register(
+        journal.JournalReport,
+        journal.JournalXlsxReport,
+        general_ledger.GeneralLedgerReport,
+        general_ledger.GeneralLedgerXlsxReport,
+        taxes_by_invoice.TaxesByInvoiceReport,
+        taxes_by_invoice.TaxesByInvoiceXlsxReport,
+        taxes_by_invoice.TaxesByInvoiceAndPeriodReport,
+        trial_balance.TrialBalanceReport,
+        trial_balance.TrialBalanceXlsxReport,
+        module=module, type_='report')

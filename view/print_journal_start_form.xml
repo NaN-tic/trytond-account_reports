@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<form>
+    <group id='company_info' colspan="4" col="2">
+        <label name="company"/>
+        <field name="company"/>
+    </group>
+    <group id='fiscal_info' colspan="4" col="6">
+        <label name="fiscalyear"/>
+        <field name="fiscalyear"/>
+        <label name="start_period"/>
+        <field name="start_period"/>
+        <label name="end_period"/>
+        <field name="end_period"/>
+    </group>
+    <group id="open_close_info" colspan="4" col="6">
+        <label name="open_close_account_moves"/>
+        <field name="open_close_account_moves"/>
+        <label name="open_move_description"/>
+        <field name="open_move_description"/>
+        <label name="close_move_description"/>
+        <field name="close_move_description"/>
+    </group>
+    <newline/>
+    <label id="select_journals" string="Left empty to select all journals by default"/>
+    <field name="journals" colspan="4"/>
+    <newline/>
+    <label name="output_format"/>
+    <field name="output_format"/>
+</form>

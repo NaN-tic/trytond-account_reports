@@ -1,10 +1,9 @@
 # The COPYRIGHT filei at the top level of this repository contains the full
 # copyright notices and License terms.
-import os
 from datetime import timedelta, datetime
 from decimal import Decimal
 
-from trytond.pool import Pool
+from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 from trytond.model import ModelView, fields
 from trytond.wizard import Wizard, StateView, StateReport, Button
@@ -13,10 +12,17 @@ from trytond.rpc import RPC
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
-from trytond.modules.account_reports.common import TimeoutException, TimeoutChecker
+from trytond.modules.account_reports.common import (
+    TimeoutException, TimeoutChecker, css as common_css)
 from trytond.modules.account_reports.tools import vat_label
-from trytond.modules.html_report.html_report import HTMLReport
+from trytond.modules.account_reports.xlsx import (
+    XlsxReport, save_workbook, convert_str_to_float)
 from collections import defaultdict
+from trytond.modules.html_report.dominate_report import DominateReport
+from trytond.modules.html_report.i18n import _
+from openpyxl import Workbook
+from dominate.util import raw
+from dominate.tags import div, header as header_tag, table, thead, tbody, tr, td, th
 
 _ZERO = Decimal(0)
 
@@ -267,7 +273,11 @@ class PrintTrialBalance(Wizard):
             'output_format': self.start.output_format,
             'timeout': self.start.timeout,
             }
-
+        if self.start.output_format == 'xlsx':
+            ActionReport = Pool().get('ir.action.report')
+            action, = ActionReport.search([
+                    ('report_name', '=', 'account_reports.trial_balance_xlsx'),
+                    ])
         return action, data
 
     def transition_print_(self):
@@ -289,14 +299,34 @@ class PrintTrialBalance(Wizard):
             'parties': party_ids,
             }
 
-class TrialBalanceReport(HTMLReport):
+class TrialBalanceReport(DominateReport):
     __name__ = 'account_reports.trial_balance'
     side_margin = 0
 
     @classmethod
     def __setup__(cls):
-        super(TrialBalanceReport, cls).__setup__()
+        super().__setup__()
         cls.__rpc__['execute'] = RPC(False)
+
+    @classmethod
+    def css(cls, action, data, records):
+        return common_css()
+
+    @classmethod
+    def css_body(cls, action, data, records):
+        return common_css()
+
+    @classmethod
+    def css_header(cls, action, data, records):
+        side_margin = (action.html_side_margin
+            if action and action.html_side_margin is not None
+            else cls.side_margin)
+        return (
+            '%s\nbody { margin: 0; }\n'
+            'header { position: static; padding-top: %scm; padding-left: %scm; '
+            'padding-right: %scm; box-sizing: border-box; }\n'
+            % (common_css(), side_margin, side_margin, side_margin)
+        )
         cls.side_margin = 0.3
 
     @classmethod
@@ -771,6 +801,7 @@ class TrialBalanceReport(HTMLReport):
         parameters['comparison_end_period'] = (comparison_end_period.name
             if comparison_fiscalyear else '')
         parameters['company'] = company and company.rec_name or ''
+        parameters['company_rec_name'] = parameters['company']
         parameters['company_vat'] = (company and
             company.party.tax_identifier and
             company.party.tax_identifier.code) or ''
@@ -842,18 +873,248 @@ class TrialBalanceReport(HTMLReport):
         end_prepare = datetime.now()
 
         context = Transaction().context.copy()
-        context['report_lang'] = Transaction().language
-        context['report_translations'] = os.path.join(
-                os.path.dirname(__file__), 'translations')
         if timeout:
             context['timeout_report'] = timeout - int(
                 (end_prepare - start_prepare).total_seconds())
 
         with Transaction().set_context(**context):
-            return super(TrialBalanceReport, cls).execute(ids, {
+            return super().execute(ids, {
                 'name': 'account_reports.trial_balance',
                 'model': 'account.move.line',
                 'records': records,
                 'parameters': parameters,
                 'output_format': data.get('output_format', 'pdf'),
                 })
+
+    @classmethod
+    def header(cls, action, data, records):
+        render = cls.render
+        p = data['parameters']
+        with header_tag(id='header') as container:
+            with table(cls='header-table'):
+                with thead():
+                    with tr():
+                        with td():
+                            with div():
+                                raw('<span class="company-name">%s</span> <br/>' % p['company'])
+                                raw('%s: %s' % (p['company_vat_label'], p['company_vat']))
+                        with td(cls='center'):
+                            raw('<span class="header-title">%s</span>'
+                                % _('Trial Balance'))
+                        with td(style='text-align: right;'):
+                            raw(render(datetime.now()))
+            with table():
+                with tbody():
+                    with tr():
+                        td(_('Main Balance %s: From: %s To: %s')
+                            % (p['fiscalyear'], p['start_period'],
+                                p['end_period']))
+                    if p['comparison_fiscalyear'] != '':
+                        with tr():
+                            td(_('Comparision Balance %s: From: %s To: %s')
+                                % (p['comparison_fiscalyear'],
+                                    p['comparison_start_period'],
+                                    p['comparison_end_period']))
+                    with tr():
+                        if p['accounts'] != '':
+                            td(_('Accounts: %s') % p['accounts'])
+                        else:
+                            td(_('All Accounts'))
+                    with tr():
+                        if p['parties'] != '':
+                            td(_('Parties: %(parties)s') % {
+                                'parties': p['parties'],
+                                })
+                        else:
+                            td(_('All Parties'))
+        return container
+
+    @classmethod
+    def show_detail(cls, records, parameters):
+        render = cls.render
+        comparison = parameters['comparison_fiscalyear'] != ''
+        detail_table = table()
+        with detail_table:
+            if comparison:
+                with tr():
+                    th('')
+                    th('')
+                    th(_('Main Balance %s') % parameters['fiscalyear'],
+                        colspan='4', style='text-align: center;')
+                    th(_('Comparision Balance %s')
+                        % parameters['comparison_fiscalyear'],
+                        colspan='4', style='text-align: center;')
+                with tr():
+                    th('', colspan='10')
+
+            with tr():
+                th(_('Code'))
+                th(_('Account'))
+                th(_('Initial'), style='text-align: right;')
+                th(_('Debit'), style='text-align: right;')
+                th(_('Credit'), style='text-align: right;')
+                th(_('Balance'), style='text-align: right;')
+                if comparison:
+                    th(_('Initial'), style='text-align: right;')
+                    th(_('Debit'), style='text-align: right;')
+                    th(_('Credit'), style='text-align: right;')
+                    th(_('Balance'), style='text-align: right;')
+            for record in records:
+                with tr():
+                    td(record['code'])
+                    td(record['name'])
+                    td(render(record['period_initial_balance']),
+                        style='text-align: right;')
+                    td(render(record['period_debit']),
+                        style='text-align: right;')
+                    td(render(record['period_credit']),
+                        style='text-align: right;')
+                    td(render(record['period_balance']),
+                        style='text-align: right;')
+                    if comparison:
+                        td(render(record['initial_balance']),
+                            style='text-align: right;')
+                        td(render(record['debit']),
+                            style='text-align: right;')
+                        td(render(record['credit']),
+                            style='text-align: right;')
+                        td(render(record['balance']),
+                            style='text-align: right;')
+            with tr():
+                td('')
+                td('')
+                td(render(parameters['total_period_initial_balance']),
+                    style='text-align: right;')
+                td(render(parameters['total_period_debit']),
+                    style='text-align: right;')
+                td(render(parameters['total_period_credit']),
+                    style='text-align: right;')
+                td(render(parameters['total_period_balance']),
+                    style='text-align: right;')
+                if comparison:
+                    td(render(parameters['total_initial_balance']),
+                        style='text-align: right;')
+                    td(render(parameters['total_debit']),
+                        style='text-align: right;')
+                    td(render(parameters['total_credit']),
+                        style='text-align: right;')
+                    td(render(parameters['total_balance']),
+                        style='text-align: right;')
+        return detail_table
+
+    @classmethod
+    def title(cls, action, data, records):
+        render = cls.render
+        return '%s - %s - %s' % (
+            _('Trial Balance'), data['parameters']['company_rec_name'],
+            render(datetime.now()))
+
+    @classmethod
+    def body(cls, action, data, records):
+        container = div()
+        container.add(cls.show_detail(data['records'], data['parameters']))
+        return container
+
+class TrialBalanceXlsxReport(XlsxReport, metaclass=PoolMeta):
+    __name__ = 'account_reports.trial_balance_xlsx'
+
+    @classmethod
+    def get_content(cls, ids, data):
+        Config = Pool().get('account.configuration')
+        config = Config(1)
+        timeout = data.get('timeout') or config.default_timeout or 300
+        checker = TimeoutChecker(timeout, TrialBalanceReport.timeout_exception)
+
+        start_prepare = datetime.now()
+        with Transaction().set_context(active_test=False):
+            try:
+                records, parameters = TrialBalanceReport.prepare(data, checker)
+            except TimeoutException:
+                raise UserError(gettext('account_reports.msg_timeout_exception'))
+        end_prepare = datetime.now()
+
+        context = Transaction().context.copy()
+        if timeout:
+            context['timeout_report'] = (
+                timeout - int((end_prepare - start_prepare).total_seconds()))
+        with Transaction().set_context(**context):
+            return cls._build_workbook(records, parameters)
+
+    @classmethod
+    def _build_workbook(cls, records, parameters):
+        render = TrialBalanceReport.render
+        wb = Workbook()
+        ws = wb.active
+        ws.title = _('Trial Balance')[:31]
+        comparison = parameters['comparison_fiscalyear'] != ''
+
+        def xls(value, **kwargs):
+            return convert_str_to_float(render(value, **kwargs))
+
+        ws.append([parameters['company_rec_name'], _('Trial Balance'),
+            render(datetime.now())])
+        ws.append(['%s: %s' % (
+            parameters['company_vat_label'], parameters['company_vat'])])
+        ws.append([_('Main Balance %s: From: %s To: %s')
+            % (parameters['fiscalyear'], parameters['start_period'],
+                parameters['end_period'])])
+        if comparison:
+            ws.append([_('Comparision Balance %s: From: %s To: %s')
+                % (parameters['comparison_fiscalyear'],
+                    parameters['comparison_start_period'],
+                    parameters['comparison_end_period'])])
+        ws.append([])
+
+        headers = [
+            _('Code'),
+            _('Account'),
+            _('Initial'),
+            _('Debit'),
+            _('Credit'),
+            _('Balance'),
+            ]
+        if comparison:
+            headers += [
+                _('Initial'),
+                _('Debit'),
+                _('Credit'),
+                _('Balance'),
+                ]
+        ws.append(headers)
+
+        for record in records:
+            row = [
+                record['code'],
+                record['name'],
+                xls(record['period_initial_balance']),
+                xls(record['period_debit']),
+                xls(record['period_credit']),
+                xls(record['period_balance']),
+                ]
+            if comparison:
+                row += [
+                    xls(record['initial_balance']),
+                    xls(record['debit']),
+                    xls(record['credit']),
+                    xls(record['balance']),
+                    ]
+            ws.append(row)
+
+        total_row = [
+            '',
+            '',
+            xls(parameters['total_period_initial_balance']),
+            xls(parameters['total_period_debit']),
+            xls(parameters['total_period_credit']),
+            xls(parameters['total_period_balance']),
+            ]
+        if comparison:
+            total_row += [
+                xls(parameters['total_initial_balance']),
+                xls(parameters['total_debit']),
+                xls(parameters['total_credit']),
+                xls(parameters['total_balance']),
+                ]
+        ws.append(total_row)
+
+        return save_workbook(wb)

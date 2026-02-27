@@ -615,3 +615,171 @@ msgstr "Cancelar"
 msgctxt "wizard_button:account_reports.print_trial_balance,start,print_:"
 msgid "Print"
 msgstr "Imprimir"
+
+msgctxt "html_report:h:"
+msgid "General Ledger"
+msgstr "Libro mayor"
+
+msgctxt "html_report:h:"
+msgid "Start Date: %s End Date: %s"
+msgstr "Fecha inicio: %s Fecha fin: %s"
+
+msgctxt "html_report:h:"
+msgid "Fiscal Year: %s Start Period: %s End Period: %s"
+msgstr "Ejercicio: %s Periodo inicio: %s Periodo fin: %s"
+
+msgctxt "html_report:h:"
+msgid "Initial posting date: %(start_date)s"
+msgstr "Fecha de contabilización inicial: %(start_date)s"
+
+msgctxt "html_report:h:"
+msgid "Final posting date: %(end_date)s"
+msgstr "Fecha de contabilización final: %(end_date)s"
+
+msgctxt "html_report:h:"
+msgid "Fiscal Year: %(fiscal_year)s %(periods)s"
+msgstr "Ejercicio: %(fiscal_year)s %(periods)s"
+
+msgctxt "html_report:h:"
+msgid "Periods: %(periods)s"
+msgstr "Periodos: %(periods)s"
+
+msgctxt "html_report:h:"
+msgid "All Periods"
+msgstr "Todos los periodos"
+
+msgctxt "html_report:h:"
+msgid "Parties: %(parties)s"
+msgstr "Terceros: %(parties)s"
+
+msgctxt "html_report:h:"
+msgid "All Parties"
+msgstr "Todos los terceros"
+
+msgctxt "html_report:h:"
+msgid "Cancelled invoices are shown in %(marker)s. Invoices without a cancelled move or a cancelled move not related to an invoice are not added to the total."
+msgstr "Las facturas anuladas se muestran en %(marker)s. Las facturas sin asiento de anulación o con un asiento de anulación no relacionado con una factura no se añaden al total."
+
+msgctxt "html_report:h:"
+msgid "Accounts: %s"
+msgstr "Cuentas: %s"
+
+msgctxt "html_report:h:"
+msgid "All Accounts"
+msgstr "Todas las cuentas"
+
+msgctxt "html_report:h:"
+msgid "When move number is between parentheses it means that it has no post number and the number shown is the provisional one."
+msgstr "Cuando el número de asiento está entre paréntesis significa que no tiene número de contabilización y el número mostrado es el provisional."
+
+msgctxt "html_report:h:"
+msgid "Previous balance"
+msgstr "Saldo anterior"
+
+msgctxt "html_report:h:"
+msgid "Previous balance..."
+msgstr "Saldo anterior..."
+
+msgctxt "html_report:h:"
+msgid "Date"
+msgstr "Fecha"
+
+msgctxt "html_report:h:"
+msgid "Number"
+msgstr "Número"
+
+msgctxt "html_report:h:"
+msgid "Reference // Description"
+msgstr "Referencia // Descripción"
+
+msgctxt "html_report:h:"
+msgid "Debit"
+msgstr "Debe"
+
+msgctxt "html_report:h:"
+msgid "Credit"
+msgstr "Haber"
+
+msgctxt "html_report:h:"
+msgid "Balance"
+msgstr "Saldo"
+
+msgctxt "html_report:h:"
+msgid "Total Fiscal Year"
+msgstr "Total ejercicio"
+
+msgctxt "html_report:h:"
+msgid "Total"
+msgstr "Total"
+
+msgctxt "html_report:h:"
+msgid "Taxes By Invoice and Period"
+msgstr "Impuestos por factura y periodo"
+
+msgctxt "html_report:h:"
+msgid "Taxes By Invoice"
+msgstr "Impuestos por factura"
+
+msgctxt "html_report:h:"
+msgid "Move Date"
+msgstr "Fecha del asiento"
+
+msgctxt "html_report:h:"
+msgid "Account"
+msgstr "Cuenta"
+
+msgctxt "html_report:h:"
+msgid "NIF"
+msgstr "NIF"
+
+msgctxt "html_report:h:"
+msgid "Invoice"
+msgstr "Factura"
+
+msgctxt "html_report:h:"
+msgid "Base"
+msgstr "Base"
+
+msgctxt "html_report:h:"
+msgid "Tax"
+msgstr "Impuesto"
+
+msgctxt "html_report:h:"
+msgid "Base + Tax"
+msgstr "Base + Impuesto"
+
+msgctxt "html_report:h:"
+msgid "Total Invoice"
+msgstr "Total factura"
+
+msgctxt "html_report:h:"
+msgid "No records found"
+msgstr "No se encontraron registros"
+
+msgctxt "html_report:h:"
+msgid "Trial Balance"
+msgstr "Balance de comprobación"
+
+msgctxt "html_report:h:"
+msgid "Main Balance %s"
+msgstr "Balance principal %s"
+
+msgctxt "html_report:h:"
+msgid "Comparision Balance %s"
+msgstr "Balance de comparación %s"
+
+msgctxt "html_report:h:"
+msgid "Code"
+msgstr "Código"
+
+msgctxt "html_report:h:"
+msgid "Initial"
+msgstr "Inicial"
+
+msgctxt "html_report:h:"
+msgid "Main Balance %s: From: %s To: %s"
+msgstr "Balance principal %s: Desde: %s Hasta: %s"
+
+msgctxt "html_report:h:"
+msgid "Comparision Balance %s: From: %s To: %s"
+msgstr "Balance de comparación %s: Desde: %s Hasta: %s"
