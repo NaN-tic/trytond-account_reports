@@ -614,3 +614,171 @@ msgstr "Cancel·la"
 msgctxt "wizard_button:account_reports.print_trial_balance,start,print_:"
 msgid "Print"
 msgstr "Imprimir"
+
+msgctxt "html_report:h:"
+msgid "General Ledger"
+msgstr "Llibre major"
+
+msgctxt "html_report:h:"
+msgid "Start Date: %s End Date: %s"
+msgstr "Data inici: %s Data fi: %s"
+
+msgctxt "html_report:h:"
+msgid "Fiscal Year: %s Start Period: %s End Period: %s"
+msgstr "Exercici: %s Període inici: %s Període fi: %s"
+
+msgctxt "html_report:h:"
+msgid "Initial posting date: %(start_date)s"
+msgstr "Data de comptabilització inicial: %(start_date)s"
+
+msgctxt "html_report:h:"
+msgid "Final posting date: %(end_date)s"
+msgstr "Data de comptabilització final: %(end_date)s"
+
+msgctxt "html_report:h:"
+msgid "Fiscal Year: %(fiscal_year)s %(periods)s"
+msgstr "Exercici: %(fiscal_year)s %(periods)s"
+
+msgctxt "html_report:h:"
+msgid "Periods: %(periods)s"
+msgstr "Períodes: %(periods)s"
+
+msgctxt "html_report:h:"
+msgid "All Periods"
+msgstr "Tots els períodes"
+
+msgctxt "html_report:h:"
+msgid "Parties: %(parties)s"
+msgstr "Tercers: %(parties)s"
+
+msgctxt "html_report:h:"
+msgid "All Parties"
+msgstr "Tots els tercers"
+
+msgctxt "html_report:h:"
+msgid "Cancelled invoices are shown in %(marker)s. Invoices without a cancelled move or a cancelled move not related to an invoice are not added to the total."
+msgstr "Les factures anul·lades es mostren en %(marker)s. Les factures sense assentament d'anul·lació o amb un assentament d'anul·lació no relacionat amb una factura no s'afegeixen al total."
+
+msgctxt "html_report:h:"
+msgid "Accounts: %s"
+msgstr "Comptes: %s"
+
+msgctxt "html_report:h:"
+msgid "All Accounts"
+msgstr "Tots els comptes"
+
+msgctxt "html_report:h:"
+msgid "When move number is between parentheses it means that it has no post number and the number shown is the provisional one."
+msgstr "Quan el número d'assentament està entre parèntesis vol dir que no té número de comptabilització i el número mostrat és el provisional."
+
+msgctxt "html_report:h:"
+msgid "Previous balance"
+msgstr "Saldo anterior"
+
+msgctxt "html_report:h:"
+msgid "Previous balance..."
+msgstr "Saldo anterior..."
+
+msgctxt "html_report:h:"
+msgid "Date"
+msgstr "Data"
+
+msgctxt "html_report:h:"
+msgid "Number"
+msgstr "Número"
+
+msgctxt "html_report:h:"
+msgid "Reference // Description"
+msgstr "Referència // Descripció"
+
+msgctxt "html_report:h:"
+msgid "Debit"
+msgstr "Deure"
+
+msgctxt "html_report:h:"
+msgid "Credit"
+msgstr "Haver"
+
+msgctxt "html_report:h:"
+msgid "Balance"
+msgstr "Saldo"
+
+msgctxt "html_report:h:"
+msgid "Total Fiscal Year"
+msgstr "Total exercici"
+
+msgctxt "html_report:h:"
+msgid "Total"
+msgstr "Total"
+
+msgctxt "html_report:h:"
+msgid "Taxes By Invoice and Period"
+msgstr "Impostos per factura i període"
+
+msgctxt "html_report:h:"
+msgid "Taxes By Invoice"
+msgstr "Impostos per factura"
+
+msgctxt "html_report:h:"
+msgid "Move Date"
+msgstr "Data d'assentament"
+
+msgctxt "html_report:h:"
+msgid "Account"
+msgstr "Compte"
+
+msgctxt "html_report:h:"
+msgid "NIF"
+msgstr "NIF"
+
+msgctxt "html_report:h:"
+msgid "Invoice"
+msgstr "Factura"
+
+msgctxt "html_report:h:"
+msgid "Base"
+msgstr "Base"
+
+msgctxt "html_report:h:"
+msgid "Tax"
+msgstr "Impost"
+
+msgctxt "html_report:h:"
+msgid "Base + Tax"
+msgstr "Base + Impost"
+
+msgctxt "html_report:h:"
+msgid "Total Invoice"
+msgstr "Total factura"
+
+msgctxt "html_report:h:"
+msgid "No records found"
+msgstr "No s'han trobat registres"
+
+msgctxt "html_report:h:"
+msgid "Trial Balance"
+msgstr "Balanç de comprovació"
+
+msgctxt "html_report:h:"
+msgid "Main Balance %s"
+msgstr "Balanç principal %s"
+
+msgctxt "html_report:h:"
+msgid "Comparision Balance %s"
+msgstr "Balanç de comparació %s"
+
+msgctxt "html_report:h:"
+msgid "Code"
+msgstr "Codi"
+
+msgctxt "html_report:h:"
+msgid "Initial"
+msgstr "Inicial"
+
+msgctxt "html_report:h:"
+msgid "Main Balance %s: From: %s To: %s"
+msgstr "Balanç principal %s: Des de: %s Fins: %s"
+
+msgctxt "html_report:h:"
+msgid "Comparision Balance %s: From: %s To: %s"
+msgstr "Balanç de comparació %s: Des de: %s Fins: %s"
