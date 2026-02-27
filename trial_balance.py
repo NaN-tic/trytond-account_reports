@@ -306,7 +306,7 @@ class TrialBalanceReport(DominateReport):
 
     @classmethod
     def __setup__(cls):
-        super(TrialBalanceReport, cls).__setup__()
+        super().__setup__()
         cls.__rpc__['execute'] = RPC(False)
 
     @classmethod
@@ -879,7 +879,7 @@ class TrialBalanceReport(DominateReport):
                 (end_prepare - start_prepare).total_seconds())
 
         with Transaction().set_context(**context):
-            return super(TrialBalanceReport, cls).execute(ids, {
+            return super().execute(ids, {
                 'name': 'account_reports.trial_balance',
                 'model': 'account.move.line',
                 'records': records,
@@ -947,6 +947,7 @@ class TrialBalanceReport(DominateReport):
                         colspan='4', style='text-align: center;')
                 with tr():
                     th('', colspan='10')
+
             with tr():
                 th(_('Code'))
                 th(_('Account'))
