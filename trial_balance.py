@@ -307,6 +307,7 @@ class TrialBalanceReport(DominateReport):
     def __setup__(cls):
         super().__setup__()
         cls.__rpc__['execute'] = RPC(False)
+        cls.side_margin = 0.3
 
     @classmethod
     def css(cls, action, data, records):
@@ -314,7 +315,13 @@ class TrialBalanceReport(DominateReport):
 
     @classmethod
     def css_body(cls, action, data, records):
-        return common_css()
+        css = common_css()
+        if data.get('output_format') != 'pdf':
+            css += (
+                '\nheader { position: static; padding-top: 0; '
+                'padding-left: 0; }\n'
+            )
+        return css
 
     @classmethod
     def css_header(cls, action, data, records):
@@ -327,7 +334,6 @@ class TrialBalanceReport(DominateReport):
             'padding-right: %scm; box-sizing: border-box; }\n'
             % (common_css(), side_margin, side_margin, side_margin)
         )
-        cls.side_margin = 0.3
 
     @classmethod
     def prepare(cls, data, checker):
@@ -1012,15 +1018,20 @@ class TrialBalanceReport(DominateReport):
     @classmethod
     def body(cls, action, data, records):
         container = div()
+        if data.get('output_format') != 'pdf':
+            container.add(cls.header(action, data, records))
         container.add(cls.show_detail(data['records'], data['parameters']))
         return container
+
 
 class TrialBalanceXlsxReport(XlsxReport, metaclass=PoolMeta):
     __name__ = 'account_reports.trial_balance_xlsx'
 
     @classmethod
     def get_content(cls, ids, data):
-        Config = Pool().get('account.configuration')
+        pool = Pool()
+        Config = pool.get('account.configuration')
+
         config = Config(1)
         timeout = data.get('timeout') or config.default_timeout or 300
         checker = TimeoutChecker(timeout, TrialBalanceReport.timeout_exception)
@@ -1033,7 +1044,7 @@ class TrialBalanceXlsxReport(XlsxReport, metaclass=PoolMeta):
                 raise UserError(gettext('account_reports.msg_timeout_exception'))
         end_prepare = datetime.now()
 
-        context = Transaction().context.copy()
+        context = cls._xlsx_context()
         if timeout:
             context['timeout_report'] = (
                 timeout - int((end_prepare - start_prepare).total_seconds()))
