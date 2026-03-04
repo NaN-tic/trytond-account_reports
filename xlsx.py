@@ -2,6 +2,7 @@ from tempfile import NamedTemporaryFile
 
 from trytond.pool import Pool
 from trytond.report import Report
+from trytond.transaction import Transaction
 
 
 def save_workbook(workbook):
@@ -42,3 +43,16 @@ class XlsxReport(Report):
     @classmethod
     def get_content(cls, ids, data):
         raise NotImplementedError
+
+    @classmethod
+    def _xlsx_context(cls):
+        pool = Pool()
+        Lang = pool.get('ir.lang')
+
+        language = Transaction().language or 'en'
+        langs = Lang.search([('code', '=', language)], limit=1)
+
+        context = Transaction().context.copy()
+        context['html_report_language'] = langs[0] if langs else 'en'
+
+        return context

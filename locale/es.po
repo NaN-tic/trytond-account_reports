@@ -753,12 +753,16 @@ msgid "Total Invoice"
 msgstr "Total factura"
 
 msgctxt "html_report:h:"
+msgid "Cancelled invoices are shown in grey. Invoices without a cancelled move or a cancelled move not related to an invoice are not added to the total."
+msgstr "Las facturas canceladas se muestran en gris. Las facturas que no tienen un movimiento de cancelación, o un movimiento de cancelación no relacionado con una factura, no se suman al total."
+
+msgctxt "html_report:h:"
 msgid "No records found"
 msgstr "No se encontraron registros"
 
 msgctxt "html_report:h:"
 msgid "Trial Balance"
-msgstr "Balance de comprobación"
+msgstr "Balance de sumas y saldos"
 
 msgctxt "html_report:h:"
 msgid "Main Balance %s"

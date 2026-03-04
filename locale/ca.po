@@ -673,11 +673,11 @@ msgstr "Quan el número d'assentament està entre parèntesis vol dir que no té
 
 msgctxt "html_report:h:"
 msgid "Previous balance"
-msgstr "Saldo anterior"
+msgstr "Balanç anterior"
 
 msgctxt "html_report:h:"
 msgid "Previous balance..."
-msgstr "Saldo anterior..."
+msgstr "Balanç anterior..."
 
 msgctxt "html_report:h:"
 msgid "Date"
@@ -701,11 +701,11 @@ msgstr "Haver"
 
 msgctxt "html_report:h:"
 msgid "Balance"
-msgstr "Saldo"
+msgstr "Balanç"
 
 msgctxt "html_report:h:"
 msgid "Total Fiscal Year"
-msgstr "Total exercici"
+msgstr "Total exercici fiscal"
 
 msgctxt "html_report:h:"
 msgid "Total"
@@ -752,12 +752,16 @@ msgid "Total Invoice"
 msgstr "Total factura"
 
 msgctxt "html_report:h:"
+msgid "Cancelled invoices are shown in grey. Invoices without a cancelled move or a cancelled move not related to an invoice are not added to the total."
+msgstr "Les factures cancel·lades es mostren en gris. Les factures que no tenen un moviment de cancel·lació, o un moviment de cancel·lació no relacionat amb una factura, no es sumen al total."
+
+msgctxt "html_report:h:"
 msgid "No records found"
 msgstr "No s'han trobat registres"
 
 msgctxt "html_report:h:"
 msgid "Trial Balance"
-msgstr "Balanç de comprovació"
+msgstr "Balanç de sumes i saldos"
 
 msgctxt "html_report:h:"
 msgid "Main Balance %s"
