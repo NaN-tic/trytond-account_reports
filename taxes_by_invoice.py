@@ -218,7 +218,13 @@ class TaxesByInvoiceReport(DominateReport):
 
     @classmethod
     def css_body(cls, action, data, records):
-        return common_css()
+        css = common_css()
+        if data.get('output_format') != 'pdf':
+            css += (
+                '\nheader { position: static; padding-top: 0; '
+                'padding-left: 0; }\n'
+            )
+        return css
 
     @classmethod
     def css_header(cls, action, data, records):
@@ -538,7 +544,10 @@ class TaxesByInvoiceReport(DominateReport):
                         else:
                             td(_('All Parties'), colspan='2')
                     with tr():
-                        td(_('Cancelled invoices are shown in grey. Invoices without a cancelled move or a cancelled move not related to an invoice are not added to the total.'),
+                        td(_(
+                            'Cancelled invoices are shown in grey. Invoices '
+                            'without a cancelled move or a cancelled move not '
+                            'related to an invoice are not added to the total.'),
                             colspan='2')
         return container
 
@@ -644,8 +653,7 @@ class TaxesByInvoiceReport(DominateReport):
                         colspan=11)
                 currency_digits = key.company.currency.digits
                 if not data['parameters']['totals_only']:
-                    for row in cls.show_detail_lines(record_lines):
-                        table_node.add(row)
+                    cls.show_detail_lines(record_lines)
                 if data['parameters']['tax_totals'].get(key):
                     total_row = tr(cls='bold')
                     cls._cell(total_row,
@@ -666,7 +674,6 @@ class TaxesByInvoiceReport(DominateReport):
                         digits=currency_digits),
                         style_value='text-align: right;')
                     cls._cell(total_row, '')
-                    table_node.add(total_row)
                 if data['parameters']['jump_page'] and index == len(items) - 1:
                     total_row = tr(cls='bold')
                     cls._cell(total_row, 'Total',
@@ -686,7 +693,6 @@ class TaxesByInvoiceReport(DominateReport):
                         digits=currency_digits),
                         style_value='text-align: right;')
                     cls._cell(total_row, '')
-                    table_node.add(total_row)
             nodes.append(table_node)
             if data['parameters']['jump_page'] and index < len(items) - 1:
                 nodes.append(p('', style='page-break-before: always'))
@@ -708,12 +714,15 @@ class TaxesByInvoiceReport(DominateReport):
     @classmethod
     def body(cls, action, data, records):
         container = div()
+        if data.get('output_format') != 'pdf':
+            container.add(cls.header(action, data, records))
         if data['parameters']['records_found']:
             for node in cls.show_detail(data):
                 container.add(node)
         else:
             container.add(strong(_('No records found')))
         return container
+
 
 class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
     __name__ = 'account_reports.taxes_by_invoice_xlsx'
@@ -727,7 +736,10 @@ class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
             parameters['records_found'] = False
             records['no_records'] = ''
 
-        return cls._build_workbook(records, parameters)
+        context = cls._xlsx_context()
+
+        with Transaction().set_context(**context):
+            return cls._build_workbook(records, parameters)
 
     @classmethod
     def _build_workbook(cls, records, parameters):

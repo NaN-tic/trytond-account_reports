@@ -221,7 +221,13 @@ class GeneralLedgerReport(DominateReport):
 
     @classmethod
     def css_body(cls, action, data, records):
-        return common_css()
+        css = common_css()
+        if data.get('output_format') != 'pdf':
+            css += (
+                '\nheader { position: static; padding-top: 0; '
+                'padding-left: 0; }\n'
+            )
+        return css
 
     @classmethod
     def css_header(cls, action, data, records):
@@ -844,8 +850,7 @@ class GeneralLedgerReport(DominateReport):
                         render(record['previous_balance']) if record['lines'] else '',
                         style_value='text-align: right;')
 
-                for line_row in cls.show_detail_lines(record, show_description):
-                    detail_table.add(line_row)
+                cls.show_detail_lines(record, show_description)
 
                 with tr(cls='bold') as total_row:
                     cls._add_cell(total_row, _('Total Fiscal Year'),
@@ -887,17 +892,22 @@ class GeneralLedgerReport(DominateReport):
     @classmethod
     def body(cls, action, data, records):
         container = div()
+        if data.get('output_format') != 'pdf':
+            container.add(cls.header(action, data, records))
         container.add(cls.show_detail(
             data['records'],
             data['parameters'].get('show_description', True)))
         return container
+
 
 class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
     __name__ = 'account_reports.general_ledger_xlsx'
 
     @classmethod
     def get_content(cls, ids, data):
-        Config = Pool().get('account.configuration')
+        pool = Pool()
+        Config = pool.get('account.configuration')
+
         config = Config(1)
         timeout = data.get('timeout') or config.default_timeout or 300
         checker = TimeoutChecker(timeout, GeneralLedgerReport.timeout_exception)
@@ -910,7 +920,7 @@ class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
                 raise UserError(gettext('account_reports.msg_timeout_exception'))
         end_prepare = datetime.now()
 
-        context = Transaction().context.copy()
+        context = cls._xlsx_context()
         if timeout:
             context['timeout_report'] = (
                 timeout - int((end_prepare - start_prepare).total_seconds()))
