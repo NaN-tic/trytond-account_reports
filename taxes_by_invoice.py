@@ -183,9 +183,10 @@ class PrintTaxesByInvoiceAndPeriod(Wizard):
             }
         if self.start.output_format == 'xlsx':
             ActionReport = Pool().get('ir.action.report')
-            action, = ActionReport.search([
+            action_report, = ActionReport.search([
                     ('report_name', '=', 'account_reports.taxes_by_invoice_xlsx'),
                     ])
+            action = action_report.action.get_action_value()
         return action, data
 
     def transition_print_(self):
