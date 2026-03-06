@@ -398,6 +398,8 @@ class TaxesByInvoiceReport(HTMLReport):
         # Tax not deductible
         for line in lines:
             for tax in line.taxes:
+                if tax.tax_kind != 'vat':
+                    continue
                 key = _get_invoice_line_key()
                 if not records.get(key, None):
                     records[key] = []
