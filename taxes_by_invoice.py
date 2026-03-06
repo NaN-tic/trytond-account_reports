@@ -415,6 +415,8 @@ class TaxesByInvoiceReport(DominateReport):
         lines = InvoiceLine.search(invoice_line_domain, order=order)
         for line in lines:
             for tax in line.taxes:
+                if tax.tax_kind != 'vat':
+                    continue
                 fake_key = fake_taxes.get((tax.rate, tax.company))
                 if not fake_key:
                     fake_key = AccountTax()
