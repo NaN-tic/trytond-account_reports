@@ -592,7 +592,8 @@ class TaxesByInvoiceReport(DominateReport):
                     if line.render.base else 0.0)
                 cls._cell(row, render(base, digits=currency_digits),
                     style_value='text-align: right;')
-                cls._cell(row, line.tax.raw.name if line.tax else ' --- ')
+                cls._cell(row, line.tax.raw.name if line.tax else ' --- ',
+                    cls_name='no-wrap')
                 amount = (line.raw.company_amount
                     if line.render.amount else 0.0)
                 cls._cell(row, render(amount, digits=currency_digits),
