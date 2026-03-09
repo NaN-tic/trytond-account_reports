@@ -305,7 +305,7 @@ class TaxesByInvoiceReport(DominateReport):
             company.party.tax_identifier.code) or ''
         parameters['company_vat_label'] = (company and company.party.tax_identifier
             and vat_label(company.party.tax_identifier) or '')
-        parameters['jump_page'] = (True if data['grouping'] == 'invoice'
+        parameters['grouping'] = (True if data['grouping'] == 'invoice'
             else False)
         parameters['records_found'] = True
 
@@ -481,11 +481,8 @@ class TaxesByInvoiceReport(DominateReport):
             parameters['records_found'] = False
             records['no_records'] = ''
 
-        name = 'account_reports.taxes_by_invoice'
-        if parameters['jump_page']:
-            name = 'account_reports.taxes_by_invoice_and_period'
         return super(TaxesByInvoiceReport, cls).execute([], {
-            'name': name,
+            'name': 'account_reports.taxes_by_invoice',
             'model': 'account.invoice.tax',
             'records': records,
             'parameters': parameters,
@@ -497,7 +494,7 @@ class TaxesByInvoiceReport(DominateReport):
         render = cls.render
         p = data['parameters']
         title = (_('Taxes By Invoice and Period')
-            if p['jump_page'] else _('Taxes By Invoice'))
+            if p['grouping'] else _('Taxes By Invoice'))
         with header_tag(id='header') as container:
             with table(cls='header-table'):
                 with thead():
@@ -661,7 +658,7 @@ class TaxesByInvoiceReport(DominateReport):
                 if data['parameters']['tax_totals'].get(key):
                     total_row = tr(cls='bold')
                     cls._cell(total_row,
-                        'Total Period' if data['parameters']['jump_page'] else 'Total',
+                        'Total Period' if data['parameters']['grouping'] else 'Total',
                         style_value='text-align: right;',
                         colspan=6)
                     cls._cell(total_row, render(
@@ -678,7 +675,7 @@ class TaxesByInvoiceReport(DominateReport):
                         digits=currency_digits),
                         style_value='text-align: right;')
                     cls._cell(total_row, '')
-                if data['parameters']['jump_page'] and index == len(items) - 1:
+                if data['parameters']['grouping'] and index == len(items) - 1:
                     total_row = tr(cls='bold')
                     cls._cell(total_row, 'Total',
                         style_value='text-align: right;',
@@ -698,7 +695,7 @@ class TaxesByInvoiceReport(DominateReport):
                         style_value='text-align: right;')
                     cls._cell(total_row, '')
             nodes.append(table_node)
-            if data['parameters']['jump_page'] and index < len(items) - 1:
+            if data['parameters']['grouping'] and index < len(items) - 1:
                 nodes.append(p('', style='page-break-before: always'))
         return nodes
 
@@ -706,7 +703,7 @@ class TaxesByInvoiceReport(DominateReport):
     def title(cls, action, data, records):
         render = cls.render
         title_prefix = (_('Taxes By Invoice and Period')
-            if data['parameters']['jump_page'] else _('Taxes By Invoice'))
+            if data['parameters']['grouping'] else _('Taxes By Invoice'))
         company_name = (data['parameters'].get('company_rec_name')
             or data['parameters'].get('company')
             or '')
@@ -749,7 +746,7 @@ class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
     def _build_workbook(cls, records, parameters):
         render = TaxesByInvoiceReport.render
         title_prefix = (_('Taxes By Invoice and Period')
-            if parameters['jump_page'] else _('Taxes By Invoice'))
+            if parameters['grouping'] else _('Taxes By Invoice'))
         company_name = (parameters.get('company_rec_name')
             or parameters.get('company')
             or '')
@@ -868,7 +865,7 @@ class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
                     before_invoice_id = line.invoice.raw.id
 
             if parameters['tax_totals'].get(key):
-                total_label = ('Total Period' if parameters['jump_page']
+                total_label = ('Total Period' if parameters['grouping']
                     else 'Total')
                 ws.append(
                     [total_label] + [''] * 5
@@ -882,7 +879,7 @@ class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
                             digits=currency_digits),
                         '',
                         ])
-            if parameters['jump_page'] and index == len(items) - 1:
+            if parameters['grouping'] and index == len(items) - 1:
                 ws.append(
                     ['Total'] + [''] * 5
                     + [
@@ -898,7 +895,3 @@ class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
             ws.append([])
 
         return save_workbook(wb)
-
-
-class TaxesByInvoiceAndPeriodReport(TaxesByInvoiceReport):
-    __name__ = 'account_reports.taxes_by_invoice_and_period'
