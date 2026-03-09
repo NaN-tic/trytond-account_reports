@@ -33,7 +33,6 @@ def register():
         general_ledger.GeneralLedgerXlsxReport,
         taxes_by_invoice.TaxesByInvoiceReport,
         taxes_by_invoice.TaxesByInvoiceXlsxReport,
-        taxes_by_invoice.TaxesByInvoiceAndPeriodReport,
         trial_balance.TrialBalanceReport,
         trial_balance.TrialBalanceXlsxReport,
         module=module, type_='report')
