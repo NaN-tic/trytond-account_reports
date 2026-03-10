@@ -10,7 +10,7 @@ from trytond.pyson import Eval, If, Bool
 from trytond.rpc import RPC
 from trytond.i18n import gettext
 from trytond.modules.html_report.dominate_report import DominateReport
-from trytond.modules.html_report.engine import DualRecord
+from trytond.modules.html_report.engine import DualRecord, render as html_render
 from trytond.modules.html_report.i18n import _
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from trytond.modules.account_reports.common import css as common_css
@@ -491,7 +491,6 @@ class TaxesByInvoiceReport(DominateReport):
 
     @classmethod
     def header(cls, action, data, records):
-        render = cls.render
         p = data['parameters']
         title = (_('Taxes By Invoice and Period')
             if p['grouping'] else _('Taxes By Invoice'))
@@ -506,7 +505,7 @@ class TaxesByInvoiceReport(DominateReport):
                         with td(cls='center'):
                             raw('<span class="header-title">%s</span>' % title)
                         with td(cls='right'):
-                            raw(render(datetime.now()))
+                            raw(html_render(datetime.now()))
             with table():
                 with tbody():
                     if p['start_date']:
@@ -565,7 +564,6 @@ class TaxesByInvoiceReport(DominateReport):
 
     @classmethod
     def show_detail_lines(cls, record_lines):
-        render = cls.render
         rows = []
         before_invoice_id = None
         for line in record_lines:
@@ -590,20 +588,20 @@ class TaxesByInvoiceReport(DominateReport):
                     cls_name='no-wrap')
                 base = (line.raw.company_base
                     if line.render.base else 0.0)
-                cls._cell(row, render(base, digits=currency_digits),
+                cls._cell(row, html_render(base, digits=currency_digits),
                     style_value='text-align: right;')
                 cls._cell(row, line.tax.raw.name if line.tax else ' --- ',
                     cls_name='no-wrap')
                 amount = (line.raw.company_amount
                     if line.render.amount else 0.0)
-                cls._cell(row, render(amount, digits=currency_digits),
+                cls._cell(row, html_render(amount, digits=currency_digits),
                     style_value='text-align: right;',
                     cls_name='no-wrap')
-                cls._cell(row, render(total, digits=currency_digits),
+                cls._cell(row, html_render(total, digits=currency_digits),
                     style_value='text-align: right;',
                     cls_name='no-wrap')
                 cls._cell(row,
-                    render(line.invoice.raw.company_total_amount,
+                    html_render(line.invoice.raw.company_total_amount,
                         digits=currency_digits),
                     style_value='text-align: right;',
                     cls_name='bold no-wrap')
@@ -613,14 +611,14 @@ class TaxesByInvoiceReport(DominateReport):
                     cls._cell(row, '')
                 base = (line.raw.company_base
                     if line.render.base else 0.0)
-                cls._cell(row, render(base, digits=currency_digits))
+                cls._cell(row, html_render(base, digits=currency_digits))
                 cls._cell(row, line.tax.raw.name if line.tax else ' --- ')
                 amount = (line.raw.company_amount
                     if line.render.amount else 0.0)
-                cls._cell(row, render(amount, digits=currency_digits),
+                cls._cell(row, html_render(amount, digits=currency_digits),
                     style_value='text-align: right;',
                     cls_name='no-wrap')
-                cls._cell(row, render(total, digits=currency_digits),
+                cls._cell(row, html_render(total, digits=currency_digits),
                     style_value='text-align: right;',
                     cls_name='no-wrap')
             before_invoice_id = line.invoice.raw.id
@@ -629,7 +627,6 @@ class TaxesByInvoiceReport(DominateReport):
 
     @classmethod
     def show_detail(cls, data):
-        render = cls.render
         nodes = []
         items = list(data['records'].items())
         for index, (key, record_lines) in enumerate(items):
@@ -662,16 +659,16 @@ class TaxesByInvoiceReport(DominateReport):
                         'Total Period' if data['parameters']['grouping'] else 'Total',
                         style_value='text-align: right;',
                         colspan=6)
-                    cls._cell(total_row, render(
+                    cls._cell(total_row, html_render(
                         data['parameters']['tax_totals'][key]['total_untaxed'],
                         digits=currency_digits),
                         style_value='text-align: right;')
                     cls._cell(total_row, '')
-                    cls._cell(total_row, render(
+                    cls._cell(total_row, html_render(
                         data['parameters']['tax_totals'][key]['total_tax'],
                         digits=currency_digits),
                         style_value='text-align: right;')
-                    cls._cell(total_row, render(
+                    cls._cell(total_row, html_render(
                         data['parameters']['tax_totals'][key]['total'],
                         digits=currency_digits),
                         style_value='text-align: right;')
@@ -681,16 +678,16 @@ class TaxesByInvoiceReport(DominateReport):
                     cls._cell(total_row, 'Total',
                         style_value='text-align: right;',
                         colspan=6)
-                    cls._cell(total_row, render(
+                    cls._cell(total_row, html_render(
                         data['parameters']['totals']['total_untaxed'],
                         digits=currency_digits),
                         style_value='text-align: right;')
                     cls._cell(total_row, '')
-                    cls._cell(total_row, render(
+                    cls._cell(total_row, html_render(
                         data['parameters']['totals']['total_tax'],
                         digits=currency_digits),
                         style_value='text-align: right;')
-                    cls._cell(total_row, render(
+                    cls._cell(total_row, html_render(
                         data['parameters']['totals']['total'],
                         digits=currency_digits),
                         style_value='text-align: right;')
@@ -702,7 +699,6 @@ class TaxesByInvoiceReport(DominateReport):
 
     @classmethod
     def title(cls, action, data, records):
-        render = cls.render
         title_prefix = (_('Taxes By Invoice and Period')
             if data['parameters']['grouping'] else _('Taxes By Invoice'))
         company_name = (data['parameters'].get('company_rec_name')
@@ -711,7 +707,7 @@ class TaxesByInvoiceReport(DominateReport):
         return '%s - %s - %s' % (
             title_prefix,
             company_name,
-            render(datetime.now()))
+            html_render(datetime.now()))
 
     @classmethod
     def body(cls, action, data, records):
@@ -745,7 +741,6 @@ class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
 
     @classmethod
     def _build_workbook(cls, records, parameters):
-        render = TaxesByInvoiceReport.render
         title_prefix = (_('Taxes By Invoice and Period')
             if parameters['grouping'] else _('Taxes By Invoice'))
         company_name = (parameters.get('company_rec_name')
@@ -757,9 +752,9 @@ class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
         ws.title = title_prefix[:31]
 
         def xls(value, **kwargs):
-            return convert_str_to_float(render(value, **kwargs))
+            return convert_str_to_float(html_render(value, **kwargs))
 
-        ws.append([company_name, title_prefix, render(datetime.now())])
+        ws.append([company_name, title_prefix, html_render(datetime.now())])
         ws.append(['%s: %s' % (
             parameters['company_vat_label'], parameters['company_vat'])])
         if parameters['start_date']:
