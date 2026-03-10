@@ -17,6 +17,7 @@ from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
 from trytond.modules.html_report.dominate_report import DominateReport
+from trytond.modules.html_report.engine import render as html_render
 from trytond.modules.html_report.i18n import _
 from trytond.rpc import RPC
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
@@ -700,7 +701,6 @@ class GeneralLedgerReport(DominateReport):
 
     @classmethod
     def header(cls, action, data, records):
-        render = cls.render
         p = data['parameters']
         with header_tag(id='header') as container:
             with table(cls='header-table'):
@@ -714,7 +714,7 @@ class GeneralLedgerReport(DominateReport):
                             raw('<span class="header-title">%s</span>'
                                 % _('General Ledger'))
                         with td(cls='right'):
-                            raw(render(datetime.now()))
+                            raw(html_render(datetime.now()))
             with table():
                 with tbody():
                     with tr():
@@ -759,7 +759,6 @@ class GeneralLedgerReport(DominateReport):
 
     @classmethod
     def show_detail_lines(cls, record, show_description):
-        render = cls.render
         rows = []
         if record['lines']:
             for line_info in record['lines']:
@@ -783,29 +782,29 @@ class GeneralLedgerReport(DominateReport):
                     elif show_description and line and line.move_description_used:
                         description += ' %s ' % line.move_description_used
 
-                    cls._add_cell(row, render(line.date))
+                    cls._add_cell(row, html_render(line.date))
                     cls._add_cell(row, number)
                     cls._add_cell(row, description)
-                    cls._add_cell(row, render(line_info['debit']),
+                    cls._add_cell(row, html_render(line_info['debit']),
                         style_value='text-align: right;',
                         cls_name='no-wrap')
-                    cls._add_cell(row, render(line_info['credit']),
+                    cls._add_cell(row, html_render(line_info['credit']),
                         style_value='text-align: right;',
                         cls_name='no-wrap')
-                    cls._add_cell(row, render(line_info['balance']),
+                    cls._add_cell(row, html_render(line_info['balance']),
                         style_value='text-align: right;',
                         cls_name='no-wrap')
                 else:
                     cls._add_cell(row, '')
                     cls._add_cell(row, '-')
                     cls._add_cell(row, _('Previous balance'))
-                    cls._add_cell(row, render(line_info['debit']),
+                    cls._add_cell(row, html_render(line_info['debit']),
                         style_value='text-align: right;',
                         cls_name='no-wrap')
-                    cls._add_cell(row, render(line_info['credit']),
+                    cls._add_cell(row, html_render(line_info['credit']),
                         style_value='text-align: right;',
                         cls_name='no-wrap')
-                    cls._add_cell(row, render(line_info['balance']),
+                    cls._add_cell(row, html_render(line_info['balance']),
                         style_value='text-align: right;',
                         cls_name='no-wrap')
                 rows.append(row)
@@ -814,13 +813,13 @@ class GeneralLedgerReport(DominateReport):
             cls._add_cell(row, '')
             cls._add_cell(row, '-')
             cls._add_cell(row, _('Previous balance'))
-            cls._add_cell(row, render(record['total_debit']),
+            cls._add_cell(row, html_render(record['total_debit']),
                 style_value='text-align: right;',
                 cls_name='no-wrap')
-            cls._add_cell(row, render(record['total_credit']),
+            cls._add_cell(row, html_render(record['total_credit']),
                 style_value='text-align: right;',
                 cls_name='no-wrap')
-            cls._add_cell(row, render(record['total_debit'] - record['total_credit']),
+            cls._add_cell(row, html_render(record['total_debit'] - record['total_credit']),
                 style_value='text-align: right;',
                 cls_name='no-wrap')
             rows.append(row)
@@ -828,7 +827,6 @@ class GeneralLedgerReport(DominateReport):
 
     @classmethod
     def show_detail(cls, records, show_description):
-        render = cls.render
         detail_table = table()
         with detail_table:
             with tr():
@@ -848,7 +846,7 @@ class GeneralLedgerReport(DominateReport):
                         _('Previous balance...') if record['lines'] else '',
                         style_value='text-align: right;', colspan=2)
                     cls._add_cell(row,
-                        render(record['previous_balance']) if record['lines'] else '',
+                        html_render(record['previous_balance']) if record['lines'] else '',
                         style_value='text-align: right;')
 
                 cls.show_detail_lines(record, show_description)
@@ -856,14 +854,14 @@ class GeneralLedgerReport(DominateReport):
                 with tr(cls='bold') as total_row:
                     cls._add_cell(total_row, _('Total Fiscal Year'),
                         style_value='text-align: right;', colspan=3)
-                    cls._add_cell(total_row, render(record['total_debit']),
+                    cls._add_cell(total_row, html_render(record['total_debit']),
                         style_value='text-align: right;',
                         cls_name='no-wrap')
-                    cls._add_cell(total_row, render(record['total_credit']),
+                    cls._add_cell(total_row, html_render(record['total_credit']),
                         style_value='text-align: right;',
                         cls_name='no-wrap')
                     cls._add_cell(total_row,
-                        render(record['total_debit'] - record['total_credit']),
+                        html_render(record['total_debit'] - record['total_credit']),
                         style_value='text-align: right;',
                         cls_name='no-wrap')
 
@@ -876,7 +874,7 @@ class GeneralLedgerReport(DominateReport):
                     cls._add_cell(total_row, _('Total'), cls_name='left bold',
                         colspan=2)
                     cls._add_cell(total_row,
-                        render(record['previous_balance']
+                        html_render(record['previous_balance']
                             + record['total_debit']
                             - record['total_credit']),
                         style_value='text-align: right;',
@@ -885,10 +883,9 @@ class GeneralLedgerReport(DominateReport):
 
     @classmethod
     def title(cls, action, data, records):
-        render = cls.render
         return '%s - %s - %s' % (
             _('General Ledger'), data['parameters']['company'],
-            render(datetime.now()))
+            html_render(datetime.now()))
 
     @classmethod
     def body(cls, action, data, records):
@@ -931,16 +928,15 @@ class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
 
     @classmethod
     def _build_workbook(cls, records, parameters):
-        render = GeneralLedgerReport.render
         wb = Workbook()
         ws = wb.active
         ws.title = _('General Ledger')[:31]
 
         def xls(value, **kwargs):
-            return convert_str_to_float(render(value, **kwargs))
+            return convert_str_to_float(html_render(value, **kwargs))
 
         ws.append([parameters['company'], _('General Ledger'),
-            render(datetime.now())])
+            html_render(datetime.now())])
         ws.append(['%s: %s' % (
             parameters['company_vat_label'], parameters['company_vat'])])
         if parameters['start_date']:
@@ -1009,7 +1005,7 @@ class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
                                 and line.move_description_used):
                             description += ' %s ' % line.move_description_used
                         ws.append([
-                            render(line.date),
+                            html_render(line.date),
                             number,
                             description,
                             xls(line_info['debit']),

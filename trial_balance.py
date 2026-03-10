@@ -19,6 +19,7 @@ from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
 from collections import defaultdict
 from trytond.modules.html_report.dominate_report import DominateReport
+from trytond.modules.html_report.engine import render as html_render
 from trytond.modules.html_report.i18n import _
 from openpyxl import Workbook
 from dominate.util import raw
@@ -895,7 +896,6 @@ class TrialBalanceReport(DominateReport):
 
     @classmethod
     def header(cls, action, data, records):
-        render = cls.render
         p = data['parameters']
         with header_tag(id='header') as container:
             with table(cls='header-table'):
@@ -909,7 +909,7 @@ class TrialBalanceReport(DominateReport):
                             raw('<span class="header-title">%s</span>'
                                 % _('Trial Balance'))
                         with td(style='text-align: right;'):
-                            raw(render(datetime.now()))
+                            raw(html_render(datetime.now()))
             with table():
                 with tbody():
                     with tr():
@@ -938,7 +938,6 @@ class TrialBalanceReport(DominateReport):
 
     @classmethod
     def show_detail(cls, records, parameters):
-        render = cls.render
         comparison = parameters['comparison_fiscalyear'] != ''
         detail_table = table()
         with detail_table:
@@ -970,51 +969,50 @@ class TrialBalanceReport(DominateReport):
                 with tr():
                     td(record['code'])
                     td(record['name'])
-                    td(render(record['period_initial_balance']),
+                    td(html_render(record['period_initial_balance']),
                         style='text-align: right;')
-                    td(render(record['period_debit']),
+                    td(html_render(record['period_debit']),
                         style='text-align: right;')
-                    td(render(record['period_credit']),
+                    td(html_render(record['period_credit']),
                         style='text-align: right;')
-                    td(render(record['period_balance']),
+                    td(html_render(record['period_balance']),
                         style='text-align: right;')
                     if comparison:
-                        td(render(record['initial_balance']),
+                        td(html_render(record['initial_balance']),
                             style='text-align: right;')
-                        td(render(record['debit']),
+                        td(html_render(record['debit']),
                             style='text-align: right;')
-                        td(render(record['credit']),
+                        td(html_render(record['credit']),
                             style='text-align: right;')
-                        td(render(record['balance']),
+                        td(html_render(record['balance']),
                             style='text-align: right;')
             with tr():
                 td('')
                 td('')
-                td(render(parameters['total_period_initial_balance']),
+                td(html_render(parameters['total_period_initial_balance']),
                     style='text-align: right;')
-                td(render(parameters['total_period_debit']),
+                td(html_render(parameters['total_period_debit']),
                     style='text-align: right;')
-                td(render(parameters['total_period_credit']),
+                td(html_render(parameters['total_period_credit']),
                     style='text-align: right;')
-                td(render(parameters['total_period_balance']),
+                td(html_render(parameters['total_period_balance']),
                     style='text-align: right;')
                 if comparison:
-                    td(render(parameters['total_initial_balance']),
+                    td(html_render(parameters['total_initial_balance']),
                         style='text-align: right;')
-                    td(render(parameters['total_debit']),
+                    td(html_render(parameters['total_debit']),
                         style='text-align: right;')
-                    td(render(parameters['total_credit']),
+                    td(html_render(parameters['total_credit']),
                         style='text-align: right;')
-                    td(render(parameters['total_balance']),
+                    td(html_render(parameters['total_balance']),
                         style='text-align: right;')
         return detail_table
 
     @classmethod
     def title(cls, action, data, records):
-        render = cls.render
         return '%s - %s - %s' % (
             _('Trial Balance'), data['parameters']['company_rec_name'],
-            render(datetime.now()))
+            html_render(datetime.now()))
 
     @classmethod
     def body(cls, action, data, records):
@@ -1054,17 +1052,16 @@ class TrialBalanceXlsxReport(XlsxReport, metaclass=PoolMeta):
 
     @classmethod
     def _build_workbook(cls, records, parameters):
-        render = TrialBalanceReport.render
         wb = Workbook()
         ws = wb.active
         ws.title = _('Trial Balance')[:31]
         comparison = parameters['comparison_fiscalyear'] != ''
 
         def xls(value, **kwargs):
-            return convert_str_to_float(render(value, **kwargs))
+            return convert_str_to_float(html_render(value, **kwargs))
 
         ws.append([parameters['company_rec_name'], _('Trial Balance'),
-            render(datetime.now())])
+            html_render(datetime.now())])
         ws.append(['%s: %s' % (
             parameters['company_vat_label'], parameters['company_vat'])])
         ws.append([_('Main Balance %s: From: %s To: %s')
