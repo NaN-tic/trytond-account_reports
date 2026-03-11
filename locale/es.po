@@ -54,6 +54,42 @@ msgctxt "field:account_reports.print_general_ledger.start,timeout:"
 msgid "Timeout (s)"
 msgstr "Tiempo de espera (s)"
 
+msgctxt "field:account_reports.print_journal.start,close_move_description:"
+msgid "Close Move Description"
+msgstr "Cerrar Mover Descripción"
+
+msgctxt "field:account_reports.print_journal.start,company:"
+msgid "Company"
+msgstr "Compañía"
+
+msgctxt "field:account_reports.print_journal.start,end_period:"
+msgid "End Period"
+msgstr "Período final"
+
+msgctxt "field:account_reports.print_journal.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Año fiscal"
+
+msgctxt "field:account_reports.print_journal.start,journals:"
+msgid "Journals"
+msgstr "Revistas"
+
+msgctxt "field:account_reports.print_journal.start,open_close_account_moves:"
+msgid "Create Open/Close Moves"
+msgstr "Crear movimientos de apertura y cierre"
+
+msgctxt "field:account_reports.print_journal.start,open_move_description:"
+msgid "Open Move Description"
+msgstr "Descripción de movimiento abierto"
+
+msgctxt "field:account_reports.print_journal.start,output_format:"
+msgid "Output Format"
+msgstr "Formato de salida"
+
+msgctxt "field:account_reports.print_journal.start,start_period:"
+msgid "Start Period"
+msgstr "Periodo de inicio"
+
 msgctxt "field:account_reports.print_taxes_by_invoice.start,company:"
 msgid "Company"
 msgstr "Empresa"
@@ -201,6 +237,18 @@ msgstr ""
 "Si el cálculo del informe tarda más que el tiempo de espera especificado (en"
 " segundos), el proceso se detendrá automáticamente."
 
+msgctxt "help:account_reports.print_journal.start,open_close_account_moves:"
+msgid ""
+"If this field is checked and Start Period is 01 and the fiscal year before "
+"are closed, an open move of this year will be created. And if 12 is in End "
+"Period and the fiscal year are closed a close move of the year are created. "
+"And will use all journals."
+msgstr ""
+"Si este campo está marcado y el Período de Inicio es 01 y el año fiscal "
+"anterior está cerrado, se creará un movimiento abierto de este año. Si el "
+"Período de Fin es 12 y el año fiscal está cerrado, se creará un movimiento "
+"de cierre del año. Se utilizarán todos los diarios."
+
 msgctxt "help:account_reports.print_taxes_by_invoice.start,parties:"
 msgid "Leave empty to select all parties"
 msgstr "Dejar en blanco para seleccionar todos los terceross"
@@ -229,23 +277,234 @@ msgstr ""
 "Si el cálculo del informe demora más que el tiempo de espera especificado "
 "(en segundos), el proceso se detendrá automáticamente."
 
-msgctxt "model:account_reports.print_general_ledger.start,name:"
-msgid "Print General Ledger"
-msgstr "Imprimir libro mayor"
+msgctxt "html_report:h:"
+msgid "Account"
+msgstr "Cuenta"
 
-msgctxt "model:account_reports.print_taxes_by_invoice.start,name:"
-msgid "Print Taxes by Invoice and Period"
-msgstr "Imprimir impuestos por factura y período"
+msgctxt "html_report:h:"
+msgid "Accounts: %s"
+msgstr "Cuentas: %s"
 
-msgctxt "model:account_reports.print_trial_balance.start,name:"
-msgid "Print Trial Balance Start"
-msgstr "Inicio imprimir balance de sumas y saldos"
+msgctxt "html_report:h:"
+msgid "All Accounts"
+msgstr "Todas las cuentas"
+
+msgctxt "html_report:h:"
+msgid "All Parties"
+msgstr "Todos los terceros"
+
+msgctxt "html_report:h:"
+msgid "All Periods"
+msgstr "Todos los periodos"
+
+msgctxt "html_report:h:"
+msgid "Balance"
+msgstr "Saldo"
+
+msgctxt "html_report:h:"
+msgid "Base"
+msgstr "Base"
+
+msgctxt "html_report:h:"
+msgid "Base + Tax"
+msgstr "Base + Impuesto"
+
+msgctxt "html_report:h:"
+msgid ""
+"Cancelled invoices are shown in %(marker)s. Invoices without a cancelled "
+"move or a cancelled move not related to an invoice are not added to the "
+"total."
+msgstr ""
+"Las facturas anuladas se muestran en %(marker)s. Las facturas sin asiento de"
+" anulación o con un asiento de anulación no relacionado con una factura no "
+"se añaden al total."
+
+msgctxt "html_report:h:"
+msgid ""
+"Cancelled invoices are shown in grey. Invoices without a cancelled move or a"
+" cancelled move not related to an invoice are not added to the total."
+msgstr ""
+"Las facturas canceladas se muestran en gris. Las facturas que no tienen un "
+"movimiento de cancelación, o un movimiento de cancelación no relacionado con"
+" una factura, no se suman al total."
+
+msgctxt "html_report:h:"
+msgid "Code"
+msgstr "Código"
+
+msgctxt "html_report:h:"
+msgid "Comparision Balance %s"
+msgstr "Balance de comparación %s"
+
+msgctxt "html_report:h:"
+msgid "Comparision Balance %s: From: %s To: %s"
+msgstr "Balance de comparación %s: Desde: %s Hasta: %s"
+
+msgctxt "html_report:h:"
+msgid "Credit"
+msgstr "Haber"
+
+msgctxt "html_report:h:"
+msgid "Date"
+msgstr "Fecha"
+
+msgctxt "html_report:h:"
+msgid "Debit"
+msgstr "Debe"
+
+msgctxt "html_report:h:"
+msgid "Final posting date: %(end_date)s"
+msgstr "Fecha de contabilización final: %(end_date)s"
+
+msgctxt "html_report:h:"
+msgid "Fiscal Year: %(fiscal_year)s %(periods)s"
+msgstr "Ejercicio: %(fiscal_year)s %(periods)s"
+
+msgctxt "html_report:h:"
+msgid "Fiscal Year: %s Start Period: %s End Period: %s"
+msgstr "Ejercicio: %s Periodo inicio: %s Periodo fin: %s"
+
+msgctxt "html_report:h:"
+msgid "General Ledger"
+msgstr "Libro mayor"
+
+msgctxt "html_report:h:"
+msgid "Initial"
+msgstr "Inicial"
+
+msgctxt "html_report:h:"
+msgid "Initial posting date: %(start_date)s"
+msgstr "Fecha de contabilización inicial: %(start_date)s"
+
+msgctxt "html_report:h:"
+msgid "Invoice"
+msgstr "Factura"
+
+msgctxt "html_report:h:"
+msgid "Main Balance %s"
+msgstr "Balance principal %s"
+
+msgctxt "html_report:h:"
+msgid "Main Balance %s: From: %s To: %s"
+msgstr "Balance principal %s: Desde: %s Hasta: %s"
+
+msgctxt "html_report:h:"
+msgid "Move Date"
+msgstr "Fecha del asiento"
+
+msgctxt "html_report:h:"
+msgid "NIF"
+msgstr "NIF"
+
+msgctxt "html_report:h:"
+msgid "No records found"
+msgstr "No se encontraron registros"
+
+msgctxt "html_report:h:"
+msgid "Number"
+msgstr "Número"
+
+msgctxt "html_report:h:"
+msgid "Parties: %(parties)s"
+msgstr "Terceros: %(parties)s"
+
+msgctxt "html_report:h:"
+msgid "Parties: %s"
+msgstr "Partes: %s"
+
+msgctxt "html_report:h:"
+msgid "Periods: %(periods)s"
+msgstr "Periodos: %(periods)s"
+
+msgctxt "html_report:h:"
+msgid "Previous balance"
+msgstr "Saldo anterior"
+
+msgctxt "html_report:h:"
+msgid "Previous balance..."
+msgstr "Saldo anterior..."
+
+msgctxt "html_report:h:"
+msgid "Reference // Description"
+msgstr "Referencia // Descripción"
+
+msgctxt "html_report:h:"
+msgid "Start Date: %s End Date: %s"
+msgstr "Fecha inicio: %s Fecha fin: %s"
+
+msgctxt "html_report:h:"
+msgid "Tax"
+msgstr "Impuesto"
+
+msgctxt "html_report:h:"
+msgid "Taxes By Invoice"
+msgstr "Impuestos por factura"
+
+msgctxt "html_report:h:"
+msgid "Taxes By Invoice and Period"
+msgstr "Impuestos por factura y periodo"
+
+msgctxt "html_report:h:"
+msgid "Total"
+msgstr "Total"
+
+msgctxt "html_report:h:"
+msgid "Total Fiscal Year"
+msgstr "Total ejercicio"
+
+msgctxt "html_report:h:"
+msgid "Total Invoice"
+msgstr "Total factura"
+
+msgctxt "html_report:h:"
+msgid "Trial Balance"
+msgstr "Balance de sumas y saldos"
+
+msgctxt "html_report:h:"
+msgid ""
+"When move number is between parentheses it means that it has no post number "
+"and the number shown is the provisional one."
+msgstr ""
+"Cuando el número de asiento está entre paréntesis significa que no tiene "
+"número de contabilización y el número mostrado es el provisional."
+
+msgctxt "model:account_reports.print_general_ledger.start,string:"
+msgid "Account Reports Print General Ledger Start"
+msgstr "Informes de cuenta Imprimir Libro mayor Iniciar"
+
+msgctxt "model:account_reports.print_journal.start,string:"
+msgid "Account Reports Print Journal Start"
+msgstr "Informes de cuenta Imprimir Diario Iniciar"
+
+msgctxt "model:account_reports.print_taxes_by_invoice.start,string:"
+msgid "Account Reports Print Taxes By Invoice Start"
+msgstr "Informes de Cuenta Imprimir Impuestos Por Factura Iniciar"
+
+msgctxt "model:account_reports.print_trial_balance.start,string:"
+msgid "Account Reports Print Trial Balance Start"
+msgstr "Informes de cuenta Imprimir Balance de prueba Iniciar"
 
 msgctxt "model:ir.action,name:report_general_ledger"
 msgid "General Ledger"
 msgstr "Libro mayor"
 
+msgctxt "model:ir.action,name:report_general_ledger_xlsx"
+msgid "General Ledger"
+msgstr "Libro mayor"
+
+msgctxt "model:ir.action,name:report_journal"
+msgid "Journal"
+msgstr "Diario"
+
+msgctxt "model:ir.action,name:report_journal_xlsx"
+msgid "Journal"
+msgstr "Diario"
+
 msgctxt "model:ir.action,name:report_taxes_by_invoice"
+msgid "Taxes by Invoice"
+msgstr "Impuestos por factura"
+
+msgctxt "model:ir.action,name:report_taxes_by_invoice_xlsx"
 msgid "Taxes by Invoice"
 msgstr "Impuestos por factura"
 
@@ -253,9 +512,17 @@ msgctxt "model:ir.action,name:report_trial_balance"
 msgid "Trial Balance"
 msgstr "Balance de sumas y saldos"
 
+msgctxt "model:ir.action,name:report_trial_balance_xlsx"
+msgid "Trial Balance"
+msgstr "Balance de comprobación"
+
 msgctxt "model:ir.action,name:wizard_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimir libro mayor"
+
+msgctxt "model:ir.action,name:wizard_print_journal"
+msgid "Print Journal"
+msgstr "Revista impresa"
 
 msgctxt "model:ir.action,name:wizard_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
@@ -265,10 +532,6 @@ msgctxt "model:ir.action,name:wizard_print_trial_balance"
 msgid "Print Trial Balance"
 msgstr "Imprimir balance de sumas y saldos"
 
-msgctxt "model:ir.action.wizard,name:"
-msgid "Print Abreviated Journal"
-msgstr "Imprimir diario abreviado"
-
 msgctxt "model:ir.action.wizard,name:wizard_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimir libro mayor"
@@ -277,14 +540,12 @@ msgctxt "model:ir.action.wizard,name:wizard_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
 msgstr "Imprimir impuestos por factura y período"
 
-#, python-format
 msgctxt "model:ir.message,text:fiscalyear_end_date"
 msgid "The final posting date does not match the fiscal year \"%(fiscalyear)s\"."
 msgstr ""
 "La fecha de contabilización final no coincide con el ejercicio fiscal "
 "\"%(fiscalyear)s\"."
 
-#, python-format
 msgctxt "model:ir.message,text:fiscalyear_start_date"
 msgid ""
 "The initial posting date does not match the fiscal year \"%(fiscalyear)s\"."
@@ -309,6 +570,10 @@ msgstr ""
 "aumentar el tiempo de espera de los informes de la cuenta o exportarlos al "
 "formato XLS."
 
+msgctxt "model:ir.ui.menu,name:menu_print_general_journal"
+msgid "Print Journal"
+msgstr "Revista impresa"
+
 msgctxt "model:ir.ui.menu,name:menu_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimir libro mayor"
@@ -320,6 +585,154 @@ msgstr "Imprimir impuestos por factura y período"
 msgctxt "model:ir.ui.menu,name:menu_print_trial_balance"
 msgid "Print Trial Balance"
 msgstr "Imprimir balance de sumas y saldos"
+
+msgctxt "report:account.general_ledger:"
+msgid "/"
+msgstr "/"
+
+msgctxt "report:account.general_ledger:"
+msgid ":"
+msgstr ":"
+
+msgctxt "report:account.general_ledger:"
+msgid "Balance"
+msgstr "Balance"
+
+msgctxt "report:account.general_ledger:"
+msgid "Company:"
+msgstr "Compañía:"
+
+msgctxt "report:account.general_ledger:"
+msgid "Credit"
+msgstr "Crédito"
+
+msgctxt "report:account.general_ledger:"
+msgid "Date"
+msgstr "Fecha"
+
+msgctxt "report:account.general_ledger:"
+msgid "Debit"
+msgstr "Débito"
+
+msgctxt "report:account.general_ledger:"
+msgid "Description"
+msgstr "Descripción"
+
+msgctxt "report:account.general_ledger:"
+msgid "Draft"
+msgstr "Borrador"
+
+msgctxt "report:account.general_ledger:"
+msgid "Fiscal Year:"
+msgstr "Año fiscal:"
+
+msgctxt "report:account.general_ledger:"
+msgid "From Date:"
+msgstr "Desde fecha:"
+
+msgctxt "report:account.general_ledger:"
+msgid "From Period"
+msgstr "De Periodo"
+
+msgctxt "report:account.general_ledger:"
+msgid "General Ledger"
+msgstr "Libro mayor"
+
+msgctxt "report:account.general_ledger:"
+msgid "Move"
+msgstr "Mover"
+
+msgctxt "report:account.general_ledger:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "report:account.general_ledger:"
+msgid "Origin"
+msgstr "Origen"
+
+msgctxt "report:account.general_ledger:"
+msgid "Print Date:"
+msgstr "Fecha de impresión:"
+
+msgctxt "report:account.general_ledger:"
+msgid "To"
+msgstr "A"
+
+msgctxt "report:account.general_ledger:"
+msgid "Total"
+msgstr "Total"
+
+msgctxt "report:account.general_ledger:"
+msgid "User:"
+msgstr "Usuario:"
+
+msgctxt "report:account.general_ledger:"
+msgid "at"
+msgstr "en"
+
+msgctxt "report:account.trial_balance:"
+msgid "/"
+msgstr "/"
+
+msgctxt "report:account.trial_balance:"
+msgid "Account"
+msgstr "Cuenta"
+
+msgctxt "report:account.trial_balance:"
+msgid "Company:"
+msgstr "Compañía:"
+
+msgctxt "report:account.trial_balance:"
+msgid "Credit"
+msgstr "Crédito"
+
+msgctxt "report:account.trial_balance:"
+msgid "Debit"
+msgstr "Débito"
+
+msgctxt "report:account.trial_balance:"
+msgid "End Balance"
+msgstr "Saldo final"
+
+msgctxt "report:account.trial_balance:"
+msgid "Fiscal Year:"
+msgstr "Año fiscal:"
+
+msgctxt "report:account.trial_balance:"
+msgid "From Date:"
+msgstr "Desde fecha:"
+
+msgctxt "report:account.trial_balance:"
+msgid "From Period:"
+msgstr "Desde el período:"
+
+msgctxt "report:account.trial_balance:"
+msgid "Print Date:"
+msgstr "Fecha de impresión:"
+
+msgctxt "report:account.trial_balance:"
+msgid "Start Balance"
+msgstr "Saldo inicial"
+
+msgctxt "report:account.trial_balance:"
+msgid "To"
+msgstr "A"
+
+msgctxt "report:account.trial_balance:"
+msgid "Total"
+msgstr "Total"
+
+msgctxt "report:account.trial_balance:"
+msgid "Trial Balance"
+msgstr "Balance de comprobación"
+
+msgctxt "report:account.trial_balance:"
+msgid "User:"
+msgstr "Usuario:"
+
+msgctxt "report:account.trial_balance:"
+msgid "at"
+msgstr "en"
 
 msgctxt "report:account_reports.general_ledger:"
 msgid " From"
@@ -501,6 +914,18 @@ msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
 msgid "PDF"
 msgstr "PDF"
 
+msgctxt "selection:account_reports.print_journal.start,output_format:"
+msgid "Excel"
+msgstr "Sobresalir"
+
+msgctxt "selection:account_reports.print_journal.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_journal.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
 msgctxt "selection:account_reports.print_taxes_by_invoice.start,grouping:"
 msgid "Base Tax Code"
 msgstr "Código de impuesto"
@@ -568,6 +993,11 @@ msgctxt "view:account_reports.print_general_ledger.start:"
 msgid "Leave empty to select all parties"
 msgstr "Dejar en blanco para seleccionar todos los terceros"
 
+msgctxt "view:account_reports.print_journal.start:"
+msgid "Left empty to select all journals by default"
+msgstr ""
+"Dejar vacío para seleccionar todas las revistas de forma predeterminada"
+
 msgctxt "view:account_reports.print_taxes_by_invoice.start:"
 msgid "Left empty to select all parties"
 msgstr "Dejar en blanco para seleccionar todos los terceros"
@@ -600,6 +1030,14 @@ msgctxt "wizard_button:account_reports.print_general_ledger,start,print_:"
 msgid "Print"
 msgstr "Imprimir"
 
+msgctxt "wizard_button:account_reports.print_journal,start,end:"
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgctxt "wizard_button:account_reports.print_journal,start,print_:"
+msgid "Print"
+msgstr "Imprimir"
+
 msgctxt "wizard_button:account_reports.print_taxes_by_invoice,start,end:"
 msgid "Cancel"
 msgstr "Cancelar"
@@ -615,175 +1053,3 @@ msgstr "Cancelar"
 msgctxt "wizard_button:account_reports.print_trial_balance,start,print_:"
 msgid "Print"
 msgstr "Imprimir"
-
-msgctxt "html_report:h:"
-msgid "General Ledger"
-msgstr "Libro mayor"
-
-msgctxt "html_report:h:"
-msgid "Start Date: %s End Date: %s"
-msgstr "Fecha inicio: %s Fecha fin: %s"
-
-msgctxt "html_report:h:"
-msgid "Fiscal Year: %s Start Period: %s End Period: %s"
-msgstr "Ejercicio: %s Periodo inicio: %s Periodo fin: %s"
-
-msgctxt "html_report:h:"
-msgid "Initial posting date: %(start_date)s"
-msgstr "Fecha de contabilización inicial: %(start_date)s"
-
-msgctxt "html_report:h:"
-msgid "Final posting date: %(end_date)s"
-msgstr "Fecha de contabilización final: %(end_date)s"
-
-msgctxt "html_report:h:"
-msgid "Fiscal Year: %(fiscal_year)s %(periods)s"
-msgstr "Ejercicio: %(fiscal_year)s %(periods)s"
-
-msgctxt "html_report:h:"
-msgid "Periods: %(periods)s"
-msgstr "Periodos: %(periods)s"
-
-msgctxt "html_report:h:"
-msgid "All Periods"
-msgstr "Todos los periodos"
-
-msgctxt "html_report:h:"
-msgid "Parties: %(parties)s"
-msgstr "Terceros: %(parties)s"
-
-msgctxt "html_report:h:"
-msgid "All Parties"
-msgstr "Todos los terceros"
-
-msgctxt "html_report:h:"
-msgid "Cancelled invoices are shown in %(marker)s. Invoices without a cancelled move or a cancelled move not related to an invoice are not added to the total."
-msgstr "Las facturas anuladas se muestran en %(marker)s. Las facturas sin asiento de anulación o con un asiento de anulación no relacionado con una factura no se añaden al total."
-
-msgctxt "html_report:h:"
-msgid "Accounts: %s"
-msgstr "Cuentas: %s"
-
-msgctxt "html_report:h:"
-msgid "All Accounts"
-msgstr "Todas las cuentas"
-
-msgctxt "html_report:h:"
-msgid "When move number is between parentheses it means that it has no post number and the number shown is the provisional one."
-msgstr "Cuando el número de asiento está entre paréntesis significa que no tiene número de contabilización y el número mostrado es el provisional."
-
-msgctxt "html_report:h:"
-msgid "Previous balance"
-msgstr "Saldo anterior"
-
-msgctxt "html_report:h:"
-msgid "Previous balance..."
-msgstr "Saldo anterior..."
-
-msgctxt "html_report:h:"
-msgid "Date"
-msgstr "Fecha"
-
-msgctxt "html_report:h:"
-msgid "Number"
-msgstr "Número"
-
-msgctxt "html_report:h:"
-msgid "Reference // Description"
-msgstr "Referencia // Descripción"
-
-msgctxt "html_report:h:"
-msgid "Debit"
-msgstr "Debe"
-
-msgctxt "html_report:h:"
-msgid "Credit"
-msgstr "Haber"
-
-msgctxt "html_report:h:"
-msgid "Balance"
-msgstr "Saldo"
-
-msgctxt "html_report:h:"
-msgid "Total Fiscal Year"
-msgstr "Total ejercicio"
-
-msgctxt "html_report:h:"
-msgid "Total"
-msgstr "Total"
-
-msgctxt "html_report:h:"
-msgid "Taxes By Invoice and Period"
-msgstr "Impuestos por factura y periodo"
-
-msgctxt "html_report:h:"
-msgid "Taxes By Invoice"
-msgstr "Impuestos por factura"
-
-msgctxt "html_report:h:"
-msgid "Move Date"
-msgstr "Fecha del asiento"
-
-msgctxt "html_report:h:"
-msgid "Account"
-msgstr "Cuenta"
-
-msgctxt "html_report:h:"
-msgid "NIF"
-msgstr "NIF"
-
-msgctxt "html_report:h:"
-msgid "Invoice"
-msgstr "Factura"
-
-msgctxt "html_report:h:"
-msgid "Base"
-msgstr "Base"
-
-msgctxt "html_report:h:"
-msgid "Tax"
-msgstr "Impuesto"
-
-msgctxt "html_report:h:"
-msgid "Base + Tax"
-msgstr "Base + Impuesto"
-
-msgctxt "html_report:h:"
-msgid "Total Invoice"
-msgstr "Total factura"
-
-msgctxt "html_report:h:"
-msgid "Cancelled invoices are shown in grey. Invoices without a cancelled move or a cancelled move not related to an invoice are not added to the total."
-msgstr "Las facturas canceladas se muestran en gris. Las facturas que no tienen un movimiento de cancelación, o un movimiento de cancelación no relacionado con una factura, no se suman al total."
-
-msgctxt "html_report:h:"
-msgid "No records found"
-msgstr "No se encontraron registros"
-
-msgctxt "html_report:h:"
-msgid "Trial Balance"
-msgstr "Balance de sumas y saldos"
-
-msgctxt "html_report:h:"
-msgid "Main Balance %s"
-msgstr "Balance principal %s"
-
-msgctxt "html_report:h:"
-msgid "Comparision Balance %s"
-msgstr "Balance de comparación %s"
-
-msgctxt "html_report:h:"
-msgid "Code"
-msgstr "Código"
-
-msgctxt "html_report:h:"
-msgid "Initial"
-msgstr "Inicial"
-
-msgctxt "html_report:h:"
-msgid "Main Balance %s: From: %s To: %s"
-msgstr "Balance principal %s: Desde: %s Hasta: %s"
-
-msgctxt "html_report:h:"
-msgid "Comparision Balance %s: From: %s To: %s"
-msgstr "Balance de comparación %s: Desde: %s Hasta: %s"
