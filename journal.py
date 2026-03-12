@@ -179,7 +179,7 @@ class JournalReport(DominateReport):
             pass
         if not isinstance(number, int):
             # In case sequence changed prefix or suffix and not equal from number
-            raise  UserError(gettext('account_jasper_reports.msg_renumber_move',
+            raise  UserError(gettext('account_reports.msg_renumber_move',
                 sequence=sequence.rec_name, move=move.rec_name))
 
         if _type == 'open':

@@ -1020,6 +1020,15 @@ msgctxt "view:account_reports.print_trial_balance.start:"
 msgid "Comparison Period"
 msgstr "Període de comparació"
 
+#, python-format
+msgctxt "model:ir.message,text:msg_renumber_move"
+msgid ""
+"We have noticed that the sequence \"%(sequence)s\" pattern does not match the post number of \"%(move)s\".\n"
+"Please proceed to renumber the records before consulting the journal report."
+msgstr ""
+"Hem detectat que el patró de la seqüència \"%(sequence)s\" no concorda amb la numeració de l'assentament \"%(move)s\".\n"
+"Procediu a renumerar els assentaments abans de consultar el diari"
+
 msgctxt "wizard_button:account_reports.print_general_ledger,start,end:"
 msgid "Cancel"
 msgstr "Cancel·la"
