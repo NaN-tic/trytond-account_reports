@@ -1022,6 +1022,15 @@ msgctxt "view:account_reports.print_trial_balance.start:"
 msgid "Comparison Period"
 msgstr "Período de comparación"
 
+#, python-format
+msgctxt "model:ir.message,text:msg_renumber_move"
+msgid ""
+"We have noticed that the sequence \"%(sequence)s\" pattern does not match the post number of \"%(move)s\".\n"
+"Please proceed to renumber the records before consulting the journal report."
+msgstr ""
+"Hemos detectado que el patrón de la secuencia \"%(sequence)s\" no concuerda con la numeración del asiento \"%(move)s\".\n"
+"Proceda a renumerar los asientos antes de consultar el diario."
+
 msgctxt "wizard_button:account_reports.print_general_ledger,start,end:"
 msgid "Cancel"
 msgstr "Cancelar"
