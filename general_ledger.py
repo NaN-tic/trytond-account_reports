@@ -769,7 +769,7 @@ class GeneralLedgerReport(DominateReport):
                     if line.move and line.move.number:
                         number = line.move.number
                     else:
-                        number = (line.move and line.move.move_number or '')
+                        number = (line.move and line.move.number or '')
                         number += (line.party and line.party.name or '')
                     description = ''
                     if line_info['ref']:
