@@ -143,7 +143,15 @@ class JournalReport(DominateReport):
 
     @classmethod
     def css_body(cls, action, data, records):
-        return common_css(cls.page_orientation)
+        css = common_css(cls.page_orientation)
+        css += (
+            '\n.move-separator td {'
+            ' border-top: 1px solid #000;'
+            ' padding: 0;'
+            ' height: 3px;'
+            '}\n'
+        )
+        return css
 
     @classmethod
     def css_header(cls, action, data, records):
@@ -451,7 +459,7 @@ class JournalReport(DominateReport):
                     current_month = None
                     month_debit = 0
                     month_credit = 0
-                    for record in records:
+                    for i, record in enumerate(records):
                         if record['month'] != current_month:
                             if current_month is not None:
                                 tr(td("", colspan="3"),
@@ -473,6 +481,12 @@ class JournalReport(DominateReport):
                             td("{:.2f}".format(float(record['credit']))))
                         month_debit += record['debit']
                         month_credit += record['credit']
+                        next_record = (
+                            records[i + 1] if i + 1 < len(records) else None)
+                        if (next_record is None
+                                or next_record['move_number']
+                                != record['move_number']):
+                            tr(td("", colspan="6"), cls="move-separator")
                     if current_month is not None:
                         tr(td("", colspan="3"),
                             td("Total month {}".format(current_month)),
