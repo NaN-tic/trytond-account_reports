@@ -369,6 +369,22 @@ msgid "General Ledger"
 msgstr "Llibre major"
 
 msgctxt "html_report:h:"
+msgid "Abreviated Journal"
+msgstr "Diari abreviat"
+
+msgctxt "html_report:h:"
+msgid "Fiscal Year"
+msgstr "Exercici fiscal"
+
+msgctxt "html_report:h:"
+msgid "VAT"
+msgstr "NIF"
+
+msgctxt "html_report:h:"
+msgid "Total Period"
+msgstr "Total període"
+
+msgctxt "html_report:h:"
 msgid "Initial"
 msgstr "Inicial"
 

@@ -289,10 +289,10 @@ class AbreviatedJournalReport(DominateReport):
             with table():
                 with tbody():
                     with tr():
-                        td(_(
-                            'Fiscal Year: %(fiscal_year)s') % {
-                                'fiscal_year': p.get('fiscal_year', ''),
-                                }, colspan='3')
+                        td('%s: %s' % (
+                                _('Fiscal Year'),
+                                p.get('fiscal_year', ''),
+                                ), colspan='3')
         return container
 
     @classmethod
@@ -359,7 +359,7 @@ class AbreviatedJournalReport(DominateReport):
                                         cls='text-right abj-amount'),
                                     )
                             tr(
-                                td('%s%s' % (_('Total Period: '),
+                                td('%s: %s' % (_('Total Period'),
                                     month['month']), colspan='2',
                                     cls='abj-subtotal text-right'),
                                 td(html_render(month['debit']),
@@ -414,7 +414,7 @@ class AbreviatedJournalXlsxReport(XlsxReport, metaclass=PoolMeta):
         ws.append([_('Company:'), parameters.get('company_rec_name', '')])
         if parameters.get('company_vat'):
             ws.append([_('VAT'), parameters['company_vat']])
-        ws.append([_('Fiscal Year:'), parameters.get('fiscal_year', '')])
+        ws.append([_('Fiscal Year'), parameters.get('fiscal_year', '')])
         ws.append([])
 
         ws.append([_('Account'), '', _('Debit'), _('Credit')])
@@ -427,7 +427,7 @@ class AbreviatedJournalXlsxReport(XlsxReport, metaclass=PoolMeta):
             if record['month'] != current_month:
                 if current_month is not None:
                     ws.append([
-                        '%s%s' % (_('Total Period: '), current_month),
+                        '%s: %s' % (_('Total Period'), current_month),
                         '',
                         convert_str_to_float(html_render(month_debit)),
                         convert_str_to_float(html_render(month_credit)),
@@ -447,7 +447,7 @@ class AbreviatedJournalXlsxReport(XlsxReport, metaclass=PoolMeta):
             total_credit += record['credit']
         if current_month is not None:
             ws.append([
-                '%s%s' % (_('Total Period: '), current_month),
+                '%s: %s' % (_('Total Period'), current_month),
                 '',
                 convert_str_to_float(html_render(month_debit)),
                 convert_str_to_float(html_render(month_credit)),
