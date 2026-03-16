@@ -1051,3 +1051,119 @@ msgstr "Cancel·la"
 msgctxt "wizard_button:account_reports.print_trial_balance,start,print_:"
 msgid "Print"
 msgstr "Imprimir"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,company:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt ""
+"field:account_reports.print_abreviated_journal.start,display_account:"
+msgid "Display Accounts"
+msgstr "Mostra comptes"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Exercici fiscal"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,level:"
+msgid "Level"
+msgstr "Nivell"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,output_format:"
+msgid "Output Format"
+msgstr "Tipus de fitxer"
+
+msgctxt "help:account_reports.print_abreviated_journal.start,level:"
+msgid "Display accounts of this level"
+msgstr "Mostra els comptes d'aquest nivell."
+
+msgctxt "model:account_reports.print_abreviated_journal.start,name:"
+msgid "Print Abreviated Journal"
+msgstr "Imprimeix diari abreviat"
+
+msgctxt "model:ir.action,name:report_abreviated_journal"
+msgid "Abreviated Journal"
+msgstr "Diari abreviat"
+
+msgctxt "model:ir.action,name:wizard_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "Imprimeix diari abreviat"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "Imprimeix diari abreviat"
+
+msgctxt "model:ir.ui.menu,name:menu_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "Imprimeix diari abreviat"
+
+msgctxt "report:account_reports.abreviated_journal:"
+msgid "Abreviated Journal"
+msgstr "Diari Abreviat"
+
+msgctxt "report:account_reports.abreviated_journal:"
+msgid "Account"
+msgstr "Compte"
+
+msgctxt "report:account_reports.abreviated_journal:"
+msgid "Credit"
+msgstr "Haver"
+
+msgctxt "report:account_reports.abreviated_journal:"
+msgid "Debit"
+msgstr "Deure"
+
+msgctxt "report:account_reports.abreviated_journal:"
+msgid "Fiscal Year: "
+msgstr "Exercici fiscal: "
+
+msgctxt "report:account_reports.abreviated_journal:"
+msgid "Total Period: "
+msgstr "Total període:"
+
+msgctxt "report:account_reports.abreviated_journal:"
+msgid "VAT"
+msgstr "NIF"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,display_account:"
+msgid "All"
+msgstr "Tots"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,display_account:"
+msgid "With movements"
+msgstr "Amb moviments"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "view:account_reports.print_abreviated_journal.start:"
+msgid "Print Abreviated Journal"
+msgstr "Imprimeix diari abreviat"
+
+msgctxt ""
+"wizard_button:account_reports.print_abreviated_journal,start,end:"
+msgid "Cancel"
+msgstr "Cancel·la"
+
+msgctxt ""
+"wizard_button:account_reports.print_abreviated_journal,start,print_:"
+msgid "Print"
+msgstr "Imprimeix"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_renumber_move"
+msgid ""
+"We have noticed that the sequence \"%(sequence)s\" pattern does not match the post number of \"%(move)s\".\n"
+"Please proceed to renumber the records before consulting the journal report."
+msgstr ""
+"Hem detectat que el patró de la seqüència \"%(sequence)s\" no concorda amb la numeració de l'assentament \"%(move)s\".\n"
+"Procediu a renumerar els assentaments abans de consultar el diari"

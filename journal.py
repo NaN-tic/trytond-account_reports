@@ -135,14 +135,15 @@ class PrintJournal(Wizard):
 
 class JournalReport(DominateReport):
     __name__ = 'account_reports.journal'
+    page_orientation = 'landscape'
 
     @classmethod
     def css(cls, action, data, records):
-        return common_css()
+        return common_css(cls.page_orientation)
 
     @classmethod
     def css_body(cls, action, data, records):
-        return common_css()
+        return common_css(cls.page_orientation)
 
     @classmethod
     def css_header(cls, action, data, records):
@@ -153,7 +154,8 @@ class JournalReport(DominateReport):
             '%s\nbody { margin: 0; }\n'
             'header { position: static; padding-top: %scm; padding-left: %scm; '
             'padding-right: %scm; box-sizing: border-box; }\n'
-            % (common_css(), side_margin, side_margin, side_margin)
+            % (common_css(cls.page_orientation), side_margin, side_margin,
+                side_margin)
         )
 
     @classmethod
@@ -179,7 +181,7 @@ class JournalReport(DominateReport):
             pass
         if not isinstance(number, int):
             # In case sequence changed prefix or suffix and not equal from number
-            raise  UserError(gettext('account_jasper_reports.msg_renumber_move',
+            raise  UserError(gettext('account_reports.msg_renumber_move',
                 sequence=sequence.rec_name, move=move.rec_name))
 
         if _type == 'open':

@@ -210,6 +210,7 @@ class PrintGeneralLedger(Wizard):
 
 class GeneralLedgerReport(DominateReport):
     __name__ = 'account_reports.general_ledger'
+    page_orientation = 'landscape'
 
     @classmethod
     def __setup__(cls):
@@ -219,11 +220,11 @@ class GeneralLedgerReport(DominateReport):
 
     @classmethod
     def css(cls, action, data, records):
-        return common_css()
+        return common_css(cls.page_orientation)
 
     @classmethod
     def css_body(cls, action, data, records):
-        css = common_css()
+        css = common_css(cls.page_orientation)
         if data.get('output_format') != 'pdf':
             css += (
                 '\nheader { position: static; padding-top: 0; '
@@ -240,7 +241,8 @@ class GeneralLedgerReport(DominateReport):
             '%s\nbody { margin: 0; }\n'
             'header { position: static; padding-top: %scm; padding-left: %scm; '
             'padding-right: %scm; box-sizing: border-box; }\n'
-            % (common_css(), side_margin, side_margin, side_margin)
+            % (common_css(cls.page_orientation), side_margin, side_margin,
+                side_margin)
         )
 
     @classmethod

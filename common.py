@@ -17,9 +17,9 @@ class TimeoutException(Exception):
     pass
 
 
-def css():
+def css(orientation='portrait'):
     with file_open('account_reports/base.css') as f:
-        return f.read()
+        return '@page { size: A4 %s; }\n%s' % (orientation, f.read())
 
 
 
