@@ -402,7 +402,7 @@ class JournalReport(DominateReport):
                     'date': line.date,
                     'month': line.date.month,
                     'account_name': line.account.rec_name,
-                    'move_number': line.move.number,
+                    'move_number': line.move.number or '(#%s)' % line.move.id,
                     'move_line_description': line.description,
                     'debit': line.debit,
                     'credit': line.credit,
