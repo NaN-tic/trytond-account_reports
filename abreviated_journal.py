@@ -16,10 +16,13 @@ from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from trytond.modules.html_report.engine import render as html_render
 from trytond.modules.html_report.i18n import _
 from trytond.modules.html_report.dominate_report import DominateReport
-from trytond.pool import Pool
+from trytond.modules.account_reports.xlsx import (
+    XlsxReport, save_workbook, convert_str_to_float)
+from trytond.pool import Pool, PoolMeta
 from trytond.tools import grouped_slice, reduce_ids
 from trytond.transaction import Transaction
 from trytond.wizard import Button, StateReport, StateView, Wizard
+from openpyxl import Workbook
 
 from .common import css as common_css
 
@@ -32,6 +35,7 @@ class PrintAbreviatedJournalStart(ModelView):
     output_format = fields.Selection([
             ('pdf', 'PDF'),
             ('html', 'HTML'),
+            ('xlsx', 'Excel'),
             ], 'Output Format', required=True)
     display_account = fields.Selection([
             ('bal_all', 'All'),
@@ -87,6 +91,13 @@ class PrintAbreviatedJournal(Wizard):
             'level': self.start.level,
             'output_format': self.start.output_format,
             }
+        if self.start.output_format == 'xlsx':
+            ActionReport = Pool().get('ir.action.report')
+            action_report, = ActionReport.search([
+                    ('report_name', '=',
+                        'account_reports.abreviated_journal_xlsx'),
+                    ])
+            action = action_report.action.get_action_value()
         return action, data
 
     def transition_print_(self):
@@ -382,3 +393,69 @@ class AbreviatedJournalReport(DominateReport):
                             cls='abj-total',
                             )
         return container
+
+
+class AbreviatedJournalXlsxReport(XlsxReport, metaclass=PoolMeta):
+    __name__ = 'account_reports.abreviated_journal_xlsx'
+
+    @classmethod
+    def get_content(cls, ids, data):
+        with Transaction().set_context(active_test=False):
+            records, parameters = AbreviatedJournalReport.prepare(data)
+        return cls._build_workbook(records, parameters)
+
+    @classmethod
+    def _build_workbook(cls, records, parameters):
+        wb = Workbook()
+        ws = wb.active
+        ws.title = _('Abreviated Journal')[:31]
+
+        ws.append([_('Abreviated Journal')])
+        ws.append([_('Company:'), parameters.get('company_rec_name', '')])
+        if parameters.get('company_vat'):
+            ws.append([_('VAT'), parameters['company_vat']])
+        ws.append([_('Fiscal Year:'), parameters.get('fiscal_year', '')])
+        ws.append([])
+
+        ws.append([_('Account'), '', _('Debit'), _('Credit')])
+        current_month = None
+        month_debit = Decimal(0)
+        month_credit = Decimal(0)
+        total_debit = Decimal(0)
+        total_credit = Decimal(0)
+        for record in records:
+            if record['month'] != current_month:
+                if current_month is not None:
+                    ws.append([
+                        '%s%s' % (_('Total Period: '), current_month),
+                        '',
+                        convert_str_to_float(html_render(month_debit)),
+                        convert_str_to_float(html_render(month_credit)),
+                        ])
+                current_month = record['month']
+                month_debit = Decimal(0)
+                month_credit = Decimal(0)
+            ws.append([
+                record['code'],
+                record['name'],
+                convert_str_to_float(html_render(record['debit'])),
+                convert_str_to_float(html_render(record['credit'])),
+                ])
+            month_debit += record['debit']
+            month_credit += record['credit']
+            total_debit += record['debit']
+            total_credit += record['credit']
+        if current_month is not None:
+            ws.append([
+                '%s%s' % (_('Total Period: '), current_month),
+                '',
+                convert_str_to_float(html_render(month_debit)),
+                convert_str_to_float(html_render(month_credit)),
+                ])
+        ws.append([
+            '',
+            _('Total'),
+            convert_str_to_float(html_render(total_debit)),
+            convert_str_to_float(html_render(total_credit)),
+            ])
+        return save_workbook(wb)

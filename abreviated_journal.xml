@@ -18,6 +18,11 @@ copyright notices and license terms. -->
             <field name="extension">pdf</field>
             <field name="template_extension">html</field>
         </record>
+        <record model="ir.action.report" id="report_abreviated_journal_xlsx">
+            <field name="name">Abreviated Journal</field>
+            <field name="report_name">account_reports.abreviated_journal_xlsx</field>
+            <field name="extension">xlsx</field>
+        </record>
 
         <menuitem id="menu_print_abreviated_journal" sequence="120"
             action="wizard_print_abreviated_journal"

@@ -1085,6 +1085,10 @@ msgctxt "model:ir.action,name:report_abreviated_journal"
 msgid "Abreviated Journal"
 msgstr "Diari abreviat"
 
+msgctxt "model:ir.action,name:report_abreviated_journal_xlsx"
+msgid "Abreviated Journal"
+msgstr "Diari abreviat"
+
 msgctxt "model:ir.action,name:wizard_print_abreviated_journal"
 msgid "Print Abreviated Journal"
 msgstr "Imprimeix diari abreviat"
@@ -1144,6 +1148,11 @@ msgctxt ""
 "selection:account_reports.print_abreviated_journal.start,output_format:"
 msgid "PDF"
 msgstr "PDF"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
 
 msgctxt "view:account_reports.print_abreviated_journal.start:"
 msgid "Print Abreviated Journal"
