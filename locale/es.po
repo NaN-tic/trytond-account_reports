@@ -282,6 +282,10 @@ msgid "Account"
 msgstr "Cuenta"
 
 msgctxt "html_report:h:"
+msgid "Account / Party"
+msgstr "Cuenta / Tercero"
+
+msgctxt "html_report:h:"
 msgid "Accounts: %s"
 msgstr "Cuentas: %s"
 
@@ -353,6 +357,14 @@ msgid "Debit"
 msgstr "Debe"
 
 msgctxt "html_report:h:"
+msgid "Description"
+msgstr "Descripción"
+
+msgctxt "html_report:h:"
+msgid "From %s To %s"
+msgstr "De %s a %s"
+
+msgctxt "html_report:h:"
 msgid "Final posting date: %(end_date)s"
 msgstr "Fecha de contabilización final: %(end_date)s"
 
@@ -371,6 +383,10 @@ msgstr "Libro mayor"
 msgctxt "html_report:h:"
 msgid "Abreviated Journal"
 msgstr "Diario abreviado"
+
+msgctxt "html_report:h:"
+msgid "Journal"
+msgstr "Diario"
 
 msgctxt "html_report:h:"
 msgid "Fiscal Year"
@@ -409,6 +425,10 @@ msgid "Move Date"
 msgstr "Fecha del asiento"
 
 msgctxt "html_report:h:"
+msgid "Move"
+msgstr "Asiento"
+
+msgctxt "html_report:h:"
 msgid "NIF"
 msgstr "NIF"
 
@@ -431,6 +451,10 @@ msgstr "Partes: %s"
 msgctxt "html_report:h:"
 msgid "Periods: %(periods)s"
 msgstr "Periodos: %(periods)s"
+
+msgctxt "html_report:h:"
+msgid "Company:"
+msgstr "Compañía:"
 
 msgctxt "html_report:h:"
 msgid "Previous balance"
@@ -465,6 +489,10 @@ msgid "Total"
 msgstr "Total"
 
 msgctxt "html_report:h:"
+msgid "Total month %s"
+msgstr "Total mes %s"
+
+msgctxt "html_report:h:"
 msgid "Total Fiscal Year"
 msgstr "Total ejercicio"
 
@@ -475,6 +503,10 @@ msgstr "Total factura"
 msgctxt "html_report:h:"
 msgid "Trial Balance"
 msgstr "Balance de sumas y saldos"
+
+msgctxt "html_report:h:"
+msgid "Journals"
+msgstr "Diarios"
 
 msgctxt "html_report:h:"
 msgid ""

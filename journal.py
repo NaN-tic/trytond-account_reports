@@ -10,6 +10,7 @@ from trytond.exceptions import UserError
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
 from trytond.modules.html_report.dominate_report import DominateReport
+from trytond.modules.html_report.i18n import _
 from datetime import timedelta
 from sql import Null
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
@@ -433,7 +434,7 @@ class JournalReport(DominateReport):
 
     @classmethod
     def title(cls, action, data, records):
-        return "Journal"
+        return _('Journal')
 
     @classmethod
     def body(cls, action, data, records):
@@ -442,19 +443,22 @@ class JournalReport(DominateReport):
         container = div()
         with container:
             with div(cls="header"):
-                h1("Journal")
-                p("Company: " + parameters.get('company_rec_name', ''))
+                h1(_('Journal'))
+                p(_('Company:') + ' ' + parameters.get('company_rec_name', ''))
                 if parameters.get('company_vat'):
-                    p("VAT: " + parameters['company_vat'])
-                p("Fiscal Year: " + parameters.get('fiscal_year', ''))
-                p("From " + parameters.get('start_period', '') + " To "
-                    + parameters.get('end_period', ''))
+                    p('%s: %s' % (_('VAT'), parameters['company_vat']))
+                p('%s: %s' % (_('Fiscal Year'),
+                    parameters.get('fiscal_year', '')))
+                p(_('From %s To %s') % (
+                    parameters.get('start_period', ''),
+                    parameters.get('end_period', '')))
                 if parameters.get('journals'):
-                    p("Journals: " + parameters['journals'])
+                    p('%s: %s' % (_('Journals'), parameters['journals']))
             with table(cls="journal-table"):
                 with thead():
-                    tr(th("Date"), th("Move"), th("Account / Party"),
-                        th("Description"), th("Debit"), th("Credit"))
+                    tr(th(_('Date')), th(_('Move')), th(_('Account / Party')),
+                        th(_('Description')), th(_('Debit')),
+                        th(_('Credit')))
                 with tbody():
                     current_month = None
                     month_debit = 0
@@ -463,7 +467,7 @@ class JournalReport(DominateReport):
                         if record['month'] != current_month:
                             if current_month is not None:
                                 tr(td("", colspan="3"),
-                                    td("Total month {}".format(current_month)),
+                                    td(_('Total month %s') % current_month),
                                     td("{:.2f}".format(month_debit)),
                                     td("{:.2f}".format(month_credit)),
                                     cls="month-total")
@@ -489,19 +493,20 @@ class JournalReport(DominateReport):
                             tr(td("", colspan="6"), cls="move-separator")
                     if current_month is not None:
                         tr(td("", colspan="3"),
-                            td("Total month {}".format(current_month)),
+                            td(_('Total month %s') % current_month),
                             td("{:.2f}".format(month_debit)),
                             td("{:.2f}".format(month_credit)),
                             cls="month-total")
                     total_debit = sum(r['debit'] for r in records)
                     total_credit = sum(r['credit'] for r in records)
-                    tr(td("", colspan="3"), td("Total"),
+                    tr(td("", colspan="3"), td(_('Total')),
                         td("{:.2f}".format(float(total_debit))),
                         td("{:.2f}".format(float(total_credit))),
                         cls="summary")
             with div(cls="footer"):
-                p("When the Move number is between '()' means it hasn't Post "
-                    "Number and the shown number is the provisional one.")
+                p(_("When move number is between parentheses it means that it "
+                    "has no post number and the number shown is the "
+                    "provisional one."))
         return container
 
 
@@ -518,28 +523,29 @@ class JournalXlsxReport(XlsxReport, metaclass=PoolMeta):
     def _build_workbook(cls, records, parameters):
         wb = Workbook()
         ws = wb.active
-        ws.title = "Journal"[:31]
+        ws.title = _('Journal')[:31]
 
-        ws.append(["Journal"])
-        ws.append(["Company:", parameters.get('company_rec_name', '')])
+        ws.append([_('Journal')])
+        ws.append([_('Company:'), parameters.get('company_rec_name', '')])
         if parameters.get('company_vat'):
-            ws.append(["VAT:", parameters['company_vat']])
-        ws.append(["Fiscal Year:", parameters.get('fiscal_year', '')])
-        ws.append(["From", parameters.get('start_period', ''),
-            "To", parameters.get('end_period', '')])
+            ws.append([_('VAT'), parameters['company_vat']])
+        ws.append([_('Fiscal Year'), parameters.get('fiscal_year', '')])
+        ws.append([_('From %s To %s') % (
+            parameters.get('start_period', ''),
+            parameters.get('end_period', ''))])
         if parameters.get('journals'):
-            ws.append(["Journals:", parameters['journals']])
+            ws.append(['%s: %s' % (_('Journals'), parameters['journals'])])
         ws.append([])
 
-        ws.append(["Date", "Move", "Account / Party", "Description",
-            "Debit", "Credit"])
+        ws.append([_('Date'), _('Move'), _('Account / Party'),
+            _('Description'), _('Debit'), _('Credit')])
         current_month = None
         month_debit = 0
         month_credit = 0
         for record in records:
             if record['month'] != current_month:
                 if current_month is not None:
-                    ws.append(["", "", "", "Total month {}".format(current_month),
+                    ws.append(["", "", "", _('Total month %s') % current_month,
                         convert_str_to_float("{:.2f}".format(month_debit)),
                         convert_str_to_float("{:.2f}".format(month_credit))])
                 current_month = record['month']
@@ -559,12 +565,12 @@ class JournalXlsxReport(XlsxReport, metaclass=PoolMeta):
             month_debit += record['debit']
             month_credit += record['credit']
         if current_month is not None:
-            ws.append(["", "", "", "Total month {}".format(current_month),
+            ws.append(["", "", "", _('Total month %s') % current_month,
                 convert_str_to_float("{:.2f}".format(month_debit)),
                 convert_str_to_float("{:.2f}".format(month_credit))])
         total_debit = sum(r['debit'] for r in records)
         total_credit = sum(r['credit'] for r in records)
-        ws.append(["", "", "", "Total",
+        ws.append(["", "", "", _('Total'),
             convert_str_to_float("{:.2f}".format(float(total_debit))),
             convert_str_to_float("{:.2f}".format(float(total_credit)))])
         return save_workbook(wb)
