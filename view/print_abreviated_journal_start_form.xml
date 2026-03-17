@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<form col="4">
+    <label name="company"/>
+    <field name="company"/>
+    <label name="fiscalyear"/>
+    <field name="fiscalyear"/>
+    <label name="display_account"/>
+    <field name="display_account"/>
+    <label name="level"/>
+    <field name="level"/>
+    <label name="output_format"/>
+    <field name="output_format"/>
+</form>
