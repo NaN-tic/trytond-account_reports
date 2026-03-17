@@ -16,6 +16,10 @@ Please proceed to renumber the records before consulting the journal report.</fi
       <record model="ir.message" id="msg_timeout_exception">
           <field name="text">Report computation timed out. You may consider increasing the timeout of the account reports or export to XLS format.</field>
       </record>
+      <record model="ir.message" id="msg_renumber_move">
+          <field name="text">We have noticed that the sequence "%(sequence)s" pattern does not match the post number of "%(move)s".
+Please proceed to renumber the records before consulting the journal report.</field>
+      </record>
       <record model="ir.message" id="msg_missing_fiscalyear">
           <field name="text">The fiscalyear selected it is not valid.</field>
       </record>

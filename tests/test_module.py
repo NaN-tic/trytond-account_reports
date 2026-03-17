@@ -660,5 +660,50 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(credit, debit)
         self.assertEqual(credit, Decimal('380.0'))
 
+    @with_transaction()
+    def test_abreviated_journal(self):
+        'Test abreviated journal'
+        pool = Pool()
+        PrintAbreviatedJournal = pool.get(
+            'account_reports.print_abreviated_journal', type='wizard')
+        AbreviatedJournalReport = pool.get(
+            'account_reports.abreviated_journal', type='report')
+        AbreviatedJournalXlsxReport = pool.get(
+            'account_reports.abreviated_journal_xlsx', type='report')
+        company = create_company()
+        fiscalyear = self.create_moves(company)
+        session_id, _, _ = PrintAbreviatedJournal.create()
+        print_abreviated_journal = PrintAbreviatedJournal(session_id)
+        print_abreviated_journal.start.company = company
+        print_abreviated_journal.start.fiscalyear = fiscalyear
+        print_abreviated_journal.start.display_account = 'bal_all'
+        print_abreviated_journal.start.level = 5
+        print_abreviated_journal.start.output_format = 'pdf'
+
+        _, data = print_abreviated_journal.do_print_(None)
+        self.assert_report_rendered(AbreviatedJournalReport, data, 'pdf')
+        data_html = data.copy()
+        data_html['output_format'] = 'html'
+        self.assert_report_rendered(AbreviatedJournalReport, data_html, 'html')
+        data_xlsx = data.copy()
+        data_xlsx['output_format'] = 'xlsx'
+        self.assert_xlsx_report_rendered(
+            AbreviatedJournalXlsxReport, data_xlsx)
+
+        self.assertEqual(data['company'], company.id)
+        self.assertEqual(data['fiscalyear'], fiscalyear.id)
+        self.assertEqual(data['display_account'], 'bal_all')
+        self.assertEqual(data['level'], 5)
+        self.assertEqual(data['output_format'], 'pdf')
+
+        records, parameters = AbreviatedJournalReport.prepare(data)
+        self.assertTrue(records)
+        self.assertEqual(parameters['company_rec_name'], company.rec_name)
+        self.assertEqual(parameters['fiscal_year'], fiscalyear.rec_name)
+        self.assertEqual(records[0]['month'], fiscalyear.periods[0].rec_name)
+        self.assertEqual(
+            [r['period_date'] for r in records],
+            sorted(r['period_date'] for r in records))
+
 
 del ModuleTestCase
