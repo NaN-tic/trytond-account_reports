@@ -72,7 +72,7 @@ msgstr "Año fiscal"
 
 msgctxt "field:account_reports.print_journal.start,journals:"
 msgid "Journals"
-msgstr "Revistas"
+msgstr "Diarios"
 
 msgctxt "field:account_reports.print_journal.start,open_close_account_moves:"
 msgid "Create Open/Close Moves"
@@ -538,7 +538,7 @@ msgstr "Imprimir libro mayor"
 
 msgctxt "model:ir.action,name:wizard_print_journal"
 msgid "Print Journal"
-msgstr "Revista impresa"
+msgstr "Imprimir diario"
 
 msgctxt "model:ir.action,name:wizard_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
@@ -588,7 +588,7 @@ msgstr ""
 
 msgctxt "model:ir.ui.menu,name:menu_print_general_journal"
 msgid "Print Journal"
-msgstr "Revista impresa"
+msgstr "Imprimir diario"
 
 msgctxt "model:ir.ui.menu,name:menu_print_general_ledger"
 msgid "Print General Ledger"
@@ -1012,7 +1012,7 @@ msgstr "Dejar en blanco para seleccionar todos los terceros"
 msgctxt "view:account_reports.print_journal.start:"
 msgid "Left empty to select all journals by default"
 msgstr ""
-"Dejar vacío para seleccionar todas las revistas de forma predeterminada"
+"Dejar vacío para seleccionar todos los diarios"
 
 msgctxt "view:account_reports.print_taxes_by_invoice.start:"
 msgid "Left empty to select all parties"
