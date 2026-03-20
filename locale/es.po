@@ -60,7 +60,7 @@ msgstr "Cerrar Mover Descripción"
 
 msgctxt "field:account_reports.print_journal.start,company:"
 msgid "Company"
-msgstr "Compañía"
+msgstr "Empresa"
 
 msgctxt "field:account_reports.print_journal.start,end_period:"
 msgid "End Period"
@@ -454,7 +454,7 @@ msgstr "Periodos: %(periods)s"
 
 msgctxt "html_report:h:"
 msgid "Company:"
-msgstr "Compañía:"
+msgstr "Empresa:"
 
 msgctxt "html_report:h:"
 msgid "Previous balance"
@@ -648,7 +648,7 @@ msgstr "Balance"
 
 msgctxt "report:account.general_ledger:"
 msgid "Company:"
-msgstr "Compañía:"
+msgstr "Empresa:"
 
 msgctxt "report:account.general_ledger:"
 msgid "Credit"
@@ -728,7 +728,7 @@ msgstr "Cuenta"
 
 msgctxt "report:account.trial_balance:"
 msgid "Company:"
-msgstr "Compañía:"
+msgstr "Empresa:"
 
 msgctxt "report:account.trial_balance:"
 msgid "Credit"
@@ -964,7 +964,7 @@ msgstr "PDF"
 
 msgctxt "selection:account_reports.print_journal.start,output_format:"
 msgid "Excel"
-msgstr "Sobresalir"
+msgstr "Excel"
 
 msgctxt "selection:account_reports.print_journal.start,output_format:"
 msgid "HTML"
