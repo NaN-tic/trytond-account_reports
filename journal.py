@@ -375,7 +375,7 @@ class JournalReport(DominateReport):
                     initial_balance_date = (
                         start_period.start_date - timedelta(days=1))
                     with Transaction().set_context(date=initial_balance_date):
-                        init_values = Account.read_account_vals(accounts,
+                        init_values = Account.html_read_account_vals(accounts,
                             with_moves=True, exclude_party_moves=True)
                         init_party_values = Party.get_account_values_by_party(
                             parties, accounts, fiscalyear.company)
@@ -390,7 +390,7 @@ class JournalReport(DominateReport):
                 if (end_period.end_date and end_period.end_date.month ==
                         fiscalyear.end_date.month):
                     with Transaction().set_context(date=end_period.end_date):
-                        init_values = Account.read_account_vals(accounts,
+                        init_values = Account.html_read_account_vals(accounts,
                             with_moves=True, exclude_party_moves=True)
                         init_party_values = Party.get_account_values_by_party(
                             parties, accounts, fiscalyear.company)
