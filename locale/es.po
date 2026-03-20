@@ -964,7 +964,7 @@ msgstr "PDF"
 
 msgctxt "selection:account_reports.print_journal.start,output_format:"
 msgid "Excel"
-msgstr "Sobresalir"
+msgstr "Excel"
 
 msgctxt "selection:account_reports.print_journal.start,output_format:"
 msgid "HTML"
