@@ -378,7 +378,7 @@ class JournalReport(DominateReport):
                         init_values = Account.html_read_account_vals(accounts,
                             fiscalyear_before.company, with_moves=True,
                             exclude_party_moves=True)
-                        init_party_values = Party.get_account_values_by_party(
+                        init_party_values = Party.html_get_account_values_by_party(
                             parties, accounts, fiscalyear.company)
 
                     open_moves.extend(cls._get_open_close_moves('open',
@@ -394,7 +394,7 @@ class JournalReport(DominateReport):
                         init_values = Account.html_read_account_vals(accounts,
                             fiscalyear.company, with_moves=True,
                             exclude_party_moves=True)
-                        init_party_values = Party.get_account_values_by_party(
+                        init_party_values = Party.html_get_account_values_by_party(
                             parties, accounts, fiscalyear.company)
 
                     close_moves.extend(cls._get_open_close_moves('close',
