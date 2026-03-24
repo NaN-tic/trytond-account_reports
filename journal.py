@@ -1,5 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
+from decimal import Decimal
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 from trytond.model import ModelView, fields
@@ -18,6 +19,8 @@ from openpyxl import Workbook
 from dominate.tags import div, h1, p, table, thead, tbody, tr, td, th
 
 from .common import css as common_css
+
+ZERO = Decimal('0.00')
 
 
 class PrintJournalStart(ModelView):
@@ -174,11 +177,14 @@ class JournalReport(DominateReport):
         pool = Pool()
         Party = pool.get('party.party')
         Line = pool.get('account.move.line')
-        Sequence = pool.get('ir.sequence')
+        Sequence = pool.get('ir.sequence.strict')
 
         move = Line(line).move
+        sequences = Sequence.search([
+                ('id', '=', move.period.move_sequence_used),
+                ])
         sequence = Sequence.search([
-                ('id', '=', move.period.post_move_sequence_used.id),
+                ('id', '=', move.period.move_sequence_used),
                 ])[0]
         sequence_prefix = Sequence._process(sequence.prefix, date=move.date)
         sequence_sufix = Sequence._process(sequence.suffix, date=move.date)
@@ -235,15 +241,11 @@ class JournalReport(DominateReport):
                 balance = account_values.get('balance', 0)
                 if balance:
                     if _type == 'open':
-                        value['debit'] = (float(balance)
-                            if balance >= 0 else 0)
-                        value['credit'] = (-float(balance)
-                            if balance < 0 else 0)
+                        value['debit'] = balance if balance >= 0 else 0
+                        value['credit'] = -balance if balance < 0 else 0
                     else:
-                        value['debit'] = (-float(balance)
-                            if balance < 0 else 0)
-                        value['credit'] = (float(balance)
-                            if balance >= 0 else 0)
+                        value['debit'] = -balance if balance < 0 else 0
+                        value['credit'] = balance if balance >= 0 else 0
                     moves.append(value)
 
             parties = init_party_values.get(account.id, None)
@@ -254,15 +256,11 @@ class JournalReport(DominateReport):
                         value = {}
                         value.update(main_value)
                         if _type == 'open':
-                            value['debit'] = (float(balance)
-                                if balance >= 0 else 0)
-                            value['credit'] = (-float(balance)
-                                if balance < 0 else 0)
+                            value['debit'] = balance if balance >= 0 else 0
+                            value['credit'] = -balance if balance < 0 else 0
                         else:
-                            value['debit'] = (-float(balance)
-                                if balance < 0 else 0)
-                            value['credit'] = (float(balance)
-                                if balance >= 0 else 0)
+                            value['debit'] = -balance if balance < 0 else 0
+                            value['credit'] = balance if balance >= 0 else 0
                         value['party_name'] = Party(party_id).rec_name
                         moves.append(value)
         return moves
@@ -378,8 +376,9 @@ class JournalReport(DominateReport):
                         init_values = Account.html_read_account_vals(accounts,
                             fiscalyear_before.company, with_moves=True,
                             exclude_party_moves=True)
-                        init_party_values = Party.get_account_values_by_party(
-                            parties, accounts, fiscalyear.company)
+                        init_party_values = (
+                            Party.html_get_account_values_by_party(
+                                parties, accounts, fiscalyear.company))
 
                     open_moves.extend(cls._get_open_close_moves('open',
                         data.get('open_move_description'), fiscalyear,
@@ -394,8 +393,9 @@ class JournalReport(DominateReport):
                         init_values = Account.html_read_account_vals(accounts,
                             fiscalyear.company, with_moves=True,
                             exclude_party_moves=True)
-                        init_party_values = Party.get_account_values_by_party(
-                            parties, accounts, fiscalyear.company)
+                        init_party_values = (
+                            Party.html_get_account_values_by_party(
+                                parties, accounts, fiscalyear.company))
 
                     close_moves.extend(cls._get_open_close_moves('close',
                         data.get('close_move_description'), fiscalyear,
@@ -460,23 +460,23 @@ class JournalReport(DominateReport):
             with table(cls="journal-table"):
                 with thead():
                     tr(th(_('Date')), th(_('Move')), th(_('Account / Party')),
-                        th(_('Description')), th(_('Debit')),
-                        th(_('Credit')))
+                        th(_('Description')), th(_('Debit'), style='text-align: right'),
+                        th(_('Credit'), style='text-align: right'))
                 with tbody():
                     current_month = None
-                    month_debit = 0
-                    month_credit = 0
+                    month_debit = ZERO
+                    month_credit = ZERO
                     for i, record in enumerate(records):
                         if record['month'] != current_month:
                             if current_month is not None:
                                 tr(td("", colspan="3"),
                                     td(_('Total month %s') % current_month),
-                                    td("{:.2f}".format(month_debit)),
-                                    td("{:.2f}".format(month_credit)),
+                                    td("{:.2f}".format(month_debit), style='text-align: right'),
+                                    td("{:.2f}".format(month_credit), style='text-align: right'),
                                     cls="month-total")
                             current_month = record['month']
-                            month_debit = 0
-                            month_credit = 0
+                            month_debit = ZERO
+                            month_credit = ZERO
                         account_party = record['account_name']
                         if record['party_name']:
                             account_party += " / " + record['party_name']
@@ -484,8 +484,8 @@ class JournalReport(DominateReport):
                             td(record['move_number']),
                             td(account_party),
                             td(record.get('move_line_description') or ''),
-                            td("{:.2f}".format(float(record['debit']))),
-                            td("{:.2f}".format(float(record['credit']))))
+                            td("{:.2f}".format(record['debit']), style='text-align: right'),
+                            td("{:.2f}".format(record['credit']), style='text-align: right'))
                         month_debit += record['debit']
                         month_credit += record['credit']
                         next_record = (
@@ -497,14 +497,14 @@ class JournalReport(DominateReport):
                     if current_month is not None:
                         tr(td("", colspan="3"),
                             td(_('Total month %s') % current_month),
-                            td("{:.2f}".format(month_debit)),
-                            td("{:.2f}".format(month_credit)),
+                            td("{:.2f}".format(month_debit), style='text-align: right'),
+                            td("{:.2f}".format(month_credit), style='text-align: right'),
                             cls="month-total")
                     total_debit = sum(r['debit'] for r in records)
                     total_credit = sum(r['credit'] for r in records)
                     tr(td("", colspan="3"), td(_('Total')),
-                        td("{:.2f}".format(float(total_debit))),
-                        td("{:.2f}".format(float(total_credit))),
+                        td("{:.2f}".format(total_debit), style='text-align: right'),
+                        td("{:.2f}".format(total_credit), style='text-align: right'),
                         cls="summary")
             with div(cls="footer"):
                 p(_("When move number is between parentheses it means that it "
@@ -543,8 +543,8 @@ class JournalXlsxReport(XlsxReport, metaclass=PoolMeta):
         ws.append([_('Date'), _('Move'), _('Account / Party'),
             _('Description'), _('Debit'), _('Credit')])
         current_month = None
-        month_debit = 0
-        month_credit = 0
+        month_debit = ZERO
+        month_credit = ZERO
         for record in records:
             if record['month'] != current_month:
                 if current_month is not None:
@@ -552,8 +552,8 @@ class JournalXlsxReport(XlsxReport, metaclass=PoolMeta):
                         convert_str_to_float("{:.2f}".format(month_debit)),
                         convert_str_to_float("{:.2f}".format(month_credit))])
                 current_month = record['month']
-                month_debit = 0
-                month_credit = 0
+                month_debit = ZERO
+                month_credit = ZERO
             account_party = record['account_name']
             if record['party_name']:
                 account_party += " / " + record['party_name']
@@ -562,8 +562,8 @@ class JournalXlsxReport(XlsxReport, metaclass=PoolMeta):
                 record['move_number'],
                 account_party,
                 record['move_line_description'],
-                convert_str_to_float("{:.2f}".format(float(record['debit']))),
-                convert_str_to_float("{:.2f}".format(float(record['credit']))),
+                convert_str_to_float("{:.2f}".format(record['debit'])),
+                convert_str_to_float("{:.2f}".format(record['credit'])),
                 ])
             month_debit += record['debit']
             month_credit += record['credit']
@@ -574,6 +574,6 @@ class JournalXlsxReport(XlsxReport, metaclass=PoolMeta):
         total_debit = sum(r['debit'] for r in records)
         total_credit = sum(r['credit'] for r in records)
         ws.append(["", "", "", _('Total'),
-            convert_str_to_float("{:.2f}".format(float(total_debit))),
-            convert_str_to_float("{:.2f}".format(float(total_credit)))])
+            convert_str_to_float("{:.2f}".format(total_debit)),
+            convert_str_to_float("{:.2f}".format(total_credit))])
         return save_workbook(wb)
