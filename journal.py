@@ -180,9 +180,6 @@ class JournalReport(DominateReport):
         Sequence = pool.get('ir.sequence.strict')
 
         move = Line(line).move
-        sequences = Sequence.search([
-                ('id', '=', move.period.move_sequence_used),
-                ])
         sequence = Sequence.search([
                 ('id', '=', move.period.move_sequence_used),
                 ])[0]
