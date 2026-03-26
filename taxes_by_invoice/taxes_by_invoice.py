@@ -324,6 +324,7 @@ class TaxesByInvoiceReport(HTMLReport):
             'total': _ZERO,
             }
         tax_totals = {}
+        non_deductible_records = {}
 
         def _get_invoice_tax_key():
             if data['grouping'] == 'invoice':
@@ -397,13 +398,20 @@ class TaxesByInvoiceReport(HTMLReport):
 
         # Tax not deductible
         for line in lines:
+            with Transaction().set_context(_deductible_rate=1):
+                taxes_amount = {t['tax']: t['amount']
+                    for t in line._get_taxes().values()}
             for tax in line.taxes:
                 if tax.tax_kind != 'vat':
                     continue
                 key = _get_invoice_line_key()
                 if not records.get(key, None):
                     records[key] = []
-                records[key].append({
+                record_key = (line.invoice.id, tax.id)
+                grouped_records = non_deductible_records.setdefault(key, {})
+                record = grouped_records.get(record_key)
+                if record is None:
+                    record = {
                         'tax_name': '%s (%s%%)' % (gettext(
                                 'account_reports.msg_not_deductible_tax'),
                                 round(tax.rate * 100, 0)),
@@ -412,10 +420,16 @@ class TaxesByInvoiceReport(HTMLReport):
                             if line.amount >= 0 else tax.credit_note_account),
                         'tax': tax,
                         'base': line.amount,
-                        'amount': Decimal('0'),
+                        'amount': taxes_amount[tax.id],
                         'company_base': line.company_amount,
                         'company_amount': Decimal('0'),
-                        })
+                        }
+                    grouped_records[record_key] = record
+                    records[key].append(record)
+                else:
+                    record['base'] += line.amount
+                    record['amount'] += taxes_amount[tax.id]
+                    record['company_base'] += line.company_amount
 
                 # If the invoice is cancelled, do not add its values to the
                 # totals
