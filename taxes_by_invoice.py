@@ -372,6 +372,7 @@ class TaxesByInvoiceReport(DominateReport):
             }
         fake_taxes = {}
         tax_totals = {}
+        non_deductible_records = {}
         if data['grouping'] == 'invoice':
             order = [
                 ('invoice.move.period', 'ASC'),
@@ -418,6 +419,9 @@ class TaxesByInvoiceReport(DominateReport):
         # Tax not deductible
         lines = InvoiceLine.search(invoice_line_domain, order=order)
         for line in lines:
+            with Transaction().set_context(_deductible_rate=1):
+                taxes_amount = {t['tax']: t['amount']
+                    for t in line._get_taxes().values()}
             for tax in line.taxes:
                 if tax.tax_kind != 'vat':
                     continue
@@ -436,18 +440,27 @@ class TaxesByInvoiceReport(DominateReport):
                 else:
                     key = fake_key
 
-                account = (tax.invoice_account if line.amount >= 0
-                    else tax.credit_note_account)
-                fake_line = AccountInvoiceTax()
-                fake_line.invoice = line.invoice
-                fake_line.account = account
-                fake_line.tax = fake_key
-                fake_line.base = line.amount
-                fake_line.amount = Decimal('0')
-                fake_line.currency = line.invoice.currency
-                fake_line.company_base_cache = line.company_amount
-                fake_line.company_amount_cache = Decimal('0')
-                records.setdefault(key, []).append(DualRecord(fake_line))
+                record_key = (line.invoice.id, tax.id)
+                grouped_records = non_deductible_records.setdefault(key, {})
+                fake_line = grouped_records.get(record_key)
+                if fake_line is None:
+                    account = (tax.invoice_account if line.amount >= 0
+                        else tax.credit_note_account)
+                    fake_line = AccountInvoiceTax()
+                    fake_line.invoice = line.invoice
+                    fake_line.account = account
+                    fake_line.tax = fake_key
+                    fake_line.base = line.amount
+                    fake_line.amount = taxes_amount[tax.id]
+                    fake_line.currency = line.invoice.currency
+                    fake_line.company_base_cache = line.company_amount
+                    fake_line.company_amount_cache = Decimal('0')
+                    grouped_records[record_key] = fake_line
+                    records.setdefault(key, []).append(DualRecord(fake_line))
+                else:
+                    fake_line.base += line.amount
+                    fake_line.amount += taxes_amount[tax.id]
+                    fake_line.company_base_cache += line.company_amount
 
                 # If the invoice is cancelled, do not add its values to the
                 # totals
