@@ -180,9 +180,6 @@ class JournalReport(DominateReport):
         Sequence = pool.get('ir.sequence.strict')
 
         move = Line(line).move
-        sequences = Sequence.search([
-                ('id', '=', move.period.move_sequence_used),
-                ])
         sequence = Sequence.search([
                 ('id', '=', move.period.move_sequence_used),
                 ])[0]
@@ -398,8 +395,8 @@ class JournalReport(DominateReport):
                                 parties, accounts, fiscalyear.company))
 
                     close_moves.extend(cls._get_open_close_moves('close',
-                        data.get('close_move_description'), fiscalyear,
-                        accounts, init_values, init_party_values, ids[-1]))
+                            data.get('close_move_description'), fiscalyear,
+                            accounts, init_values, init_party_values, ids[-1]))
 
         records = []
         records.extend(open_moves)
@@ -421,6 +418,7 @@ class JournalReport(DominateReport):
                     'party_name': line.party and line.party.name or '',
                     'account_kind': account_type,
                     })
+        records.extend(close_moves)
         return records, parameters
 
     @classmethod
