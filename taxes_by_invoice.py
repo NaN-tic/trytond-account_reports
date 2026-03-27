@@ -253,6 +253,7 @@ class TaxesByInvoiceReport(DominateReport):
         AccountTax = pool.get('account.tax')
         AccountInvoiceTax = pool.get('account.invoice.tax')
         InvoiceLine = pool.get('account.invoice.line')
+        Currency = pool.get('currency.currency')
 
         fiscalyear = (FiscalYear(data['fiscalyear']) if data.get('fiscalyear')
             else None)
@@ -443,6 +444,11 @@ class TaxesByInvoiceReport(DominateReport):
                 record_key = (line.invoice.id, tax.id)
                 grouped_records = non_deductible_records.setdefault(key, {})
                 fake_line = grouped_records.get(record_key)
+                amount = taxes_amount[tax.id]
+                with Transaction().set_context(
+                        date=line.invoice.currency_date):
+                    company_amount = Currency.compute(line.invoice.currency,
+                        amount, line.invoice.company.currency, round=True)
                 if fake_line is None:
                     account = (tax.invoice_account if line.amount >= 0
                         else tax.credit_note_account)
@@ -451,10 +457,10 @@ class TaxesByInvoiceReport(DominateReport):
                     fake_line.account = account
                     fake_line.tax = fake_key
                     fake_line.base = line.amount
-                    fake_line.amount = taxes_amount[tax.id]
+                    fake_line.amount = amount
                     fake_line.currency = line.invoice.currency
                     fake_line.company_base_cache = line.company_amount
-                    fake_line.company_amount_cache = Decimal('0')
+                    fake_line.company_amount_cache = company_amount
                     grouped_records[record_key] = fake_line
                     records.setdefault(key, []).append(DualRecord(fake_line))
                 else:
