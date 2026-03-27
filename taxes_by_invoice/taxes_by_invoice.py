@@ -210,6 +210,7 @@ class TaxesByInvoiceReport(HTMLReport):
         Invoice = pool.get('account.invoice')
         InvoiceTax = pool.get('account.invoice.tax')
         InvoiceLine = pool.get('account.invoice.line')
+        Currency = pool.get('currency.currency')
 
         fiscalyear = (FiscalYear(data['fiscalyear']) if data.get('fiscalyear')
             else None)
@@ -410,6 +411,11 @@ class TaxesByInvoiceReport(HTMLReport):
                 record_key = (line.invoice.id, tax.id)
                 grouped_records = non_deductible_records.setdefault(key, {})
                 record = grouped_records.get(record_key)
+                amount = taxes_amount[tax.id]
+                with Transaction().set_context(
+                        date=line.invoice.currency_date):
+                    company_amount = Currency.compute(line.invoice.currency,
+                        amount, line.invoice.company.currency, round=True)
                 if record is None:
                     record = {
                         'tax_name': '%s (%s%%)' % (gettext(
@@ -420,9 +426,9 @@ class TaxesByInvoiceReport(HTMLReport):
                             if line.amount >= 0 else tax.credit_note_account),
                         'tax': tax,
                         'base': line.amount,
-                        'amount': taxes_amount[tax.id],
+                        'amount': amount,
                         'company_base': line.company_amount,
-                        'company_amount': Decimal('0'),
+                        'company_amount': company_amount,
                         }
                     grouped_records[record_key] = record
                     records[key].append(record)
