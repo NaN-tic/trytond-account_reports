@@ -316,7 +316,7 @@ class TaxesByInvoiceReport(HTMLReport):
 
         if data['taxes']:
             invoice_tax_domain += [('tax', 'in', data.get('taxes', []))]
-            invoice_line_domain += [('id', 'in', data.get('taxes', []))]
+            invoice_line_domain += [('taxes', 'in', data.get('taxes', []))]
 
         records = {}
         totals = {
@@ -411,11 +411,16 @@ class TaxesByInvoiceReport(HTMLReport):
                 record_key = (line.invoice.id, tax.id)
                 grouped_records = non_deductible_records.setdefault(key, {})
                 record = grouped_records.get(record_key)
-                amount = taxes_amount[tax.id]
+                amount = line.invoice.currency.round(
+                    Decimal(str(line.quantity or 0))
+                    * (line.unit_price or Decimal(0)))
+                tax_amount = taxes_amount[tax.id]
                 with Transaction().set_context(
                         date=line.invoice.currency_date):
                     company_amount = Currency.compute(line.invoice.currency,
                         amount, line.invoice.company.currency, round=True)
+                    company_tax_amount = Currency.compute(line.invoice.currency,
+                        tax_amount, line.invoice.company.currency, round=True)
                 if record is None:
                     record = {
                         'tax_name': '%s (%s%%)' % (gettext(
@@ -425,17 +430,18 @@ class TaxesByInvoiceReport(HTMLReport):
                         'account': (tax.invoice_account
                             if line.amount >= 0 else tax.credit_note_account),
                         'tax': tax,
-                        'base': line.amount,
-                        'amount': amount,
-                        'company_base': line.company_amount,
-                        'company_amount': company_amount,
+                        'base': amount,
+                        'amount': tax_amount,
+                        'company_base': company_amount,
+                        'company_amount': company_tax_amount,
                         }
                     grouped_records[record_key] = record
                     records[key].append(record)
                 else:
-                    record['base'] += line.amount
-                    record['amount'] += taxes_amount[tax.id]
-                    record['company_base'] += line.company_amount
+                    record['base'] += amount
+                    record['amount'] += tax_amount
+                    record['company_base'] += company_amount
+                    record['company_amount'] += company_tax_amount
 
                 # If the invoice is cancelled, do not add its values to the
                 # totals
@@ -453,8 +459,8 @@ class TaxesByInvoiceReport(HTMLReport):
                         'total_untaxed': 0,
                         'total_tax': 0,
                         'total': 0})
-                tax_totals[key]['total_untaxed'] += line.company_amount
-                tax_totals[key]['total'] += line.company_amount
+                tax_totals[key]['total_untaxed'] += company_amount
+                tax_totals[key]['total'] += company_amount
 
         parameters['totals'] = totals
         parameters['tax_totals'] = tax_totals
