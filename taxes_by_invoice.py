@@ -363,7 +363,7 @@ class TaxesByInvoiceReport(DominateReport):
 
         if data['taxes']:
             invoice_tax_domain += [('tax', 'in', data.get('taxes', []))]
-            invoice_line_domain += [('id', 'in', data.get('taxes', []))]
+            invoice_line_domain += [('taxes', 'in', data.get('taxes', []))]
 
         records = {}
         totals = {
@@ -444,9 +444,14 @@ class TaxesByInvoiceReport(DominateReport):
                 record_key = (line.invoice.id, tax.id)
                 grouped_records = non_deductible_records.setdefault(key, {})
                 fake_line = grouped_records.get(record_key)
+                base = line.invoice.currency.round(
+                    Decimal(str(line.quantity or 0))
+                    * (line.unit_price or Decimal(0)))
                 amount = taxes_amount[tax.id]
                 with Transaction().set_context(
                         date=line.invoice.currency_date):
+                    company_base = Currency.compute(line.invoice.currency,
+                        base, line.invoice.company.currency, round=True)
                     company_amount = Currency.compute(line.invoice.currency,
                         amount, line.invoice.company.currency, round=True)
                 if fake_line is None:
@@ -456,17 +461,18 @@ class TaxesByInvoiceReport(DominateReport):
                     fake_line.invoice = line.invoice
                     fake_line.account = account
                     fake_line.tax = fake_key
-                    fake_line.base = line.amount
+                    fake_line.base = base
                     fake_line.amount = amount
                     fake_line.currency = line.invoice.currency
-                    fake_line.company_base_cache = line.company_amount
+                    fake_line.company_base_cache = company_base
                     fake_line.company_amount_cache = company_amount
                     grouped_records[record_key] = fake_line
                     records.setdefault(key, []).append(DualRecord(fake_line))
                 else:
-                    fake_line.base += line.amount
-                    fake_line.amount += taxes_amount[tax.id]
-                    fake_line.company_base_cache += line.company_amount
+                    fake_line.base += base
+                    fake_line.amount += amount
+                    fake_line.company_base_cache += company_base
+                    fake_line.company_amount_cache += company_amount
 
                 # If the invoice is cancelled, do not add its values to the
                 # totals
@@ -484,8 +490,8 @@ class TaxesByInvoiceReport(DominateReport):
                         'total_untaxed': 0,
                         'total_tax': 0,
                         'total': 0})
-                tax_totals[key]['total_untaxed'] += line.company_amount
-                tax_totals[key]['total'] += line.company_amount
+                tax_totals[key]['total_untaxed'] += company_base
+                tax_totals[key]['total'] += company_base + company_amount
 
         parameters['totals'] = totals
         parameters['tax_totals'] = tax_totals
