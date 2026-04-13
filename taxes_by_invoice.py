@@ -464,6 +464,10 @@ class TaxesByInvoiceReport(DominateReport):
                     fake_line.base = base
                     fake_line.amount = amount
                     fake_line.currency = line.invoice.currency
+                    # Synthetic lines are not stored, so function fields must
+                    # be initialized explicitly instead of relying on lazy load.
+                    fake_line.company_base = company_base
+                    fake_line.company_amount = company_amount
                     fake_line.company_base_cache = company_base
                     fake_line.company_amount_cache = company_amount
                     grouped_records[record_key] = fake_line
@@ -471,6 +475,8 @@ class TaxesByInvoiceReport(DominateReport):
                 else:
                     fake_line.base += base
                     fake_line.amount += amount
+                    fake_line.company_base += company_base
+                    fake_line.company_amount += company_amount
                     fake_line.company_base_cache += company_base
                     fake_line.company_amount_cache += company_amount
 
