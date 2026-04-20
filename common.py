@@ -153,6 +153,13 @@ class Account(metaclass=PoolMeta):
                     }
         return values
 
+    @classmethod
+    def read_account_vals(cls, accounts, company, with_moves=False,
+            exclude_party_moves=False):
+        # Backward-compatible alias for older callers.
+        return cls.html_read_account_vals(accounts, company,
+            with_moves=with_moves, exclude_party_moves=exclude_party_moves)
+
 
 class Party(metaclass=PoolMeta):
     __name__ = 'party.party'
