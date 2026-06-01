@@ -399,7 +399,7 @@ class TrialBalanceReport(HTMLReport):
                 party_tree = {}
                 for party_id, value in account_values.items():
                     party = Party(party_id)
-                    key = party.name + (" [" + party.tax_identifier.code + "]"
+                    key = (party.name or '') + (" [" + party.tax_identifier.code + "]"
                         if party.tax_identifier else '')
                     if key in party_tree:
                         party_tree[key]['debit'] += value.get('debit')
