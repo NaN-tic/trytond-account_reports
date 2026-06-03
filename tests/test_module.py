@@ -93,6 +93,20 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
                             'parent': root.id,
                             }])
         accounts['view'] = view
+        cash_accounts = Account.search([
+                ('code', '=', '1.1.1'),
+                ('company', '=', company.id),
+                ], limit=1)
+        if cash_accounts:
+            accounts['cash'], = cash_accounts
+        else:
+            with set_company(company):
+                cash, = Account.create([{
+                            'name': 'Cash',
+                            'code': '1.1.1',
+                            'parent': view.id,
+                            }])
+            accounts['cash'] = cash
         return accounts
 
     def create_parties(self, company):
