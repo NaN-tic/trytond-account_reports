@@ -473,5 +473,130 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(debit, Decimal('100.0'))
         self.assertEqual(True, all([line for k, m in records.items() for line in m['lines'] if line['line'].party]))
 
+    @with_transaction()
+    def test_open_move_lines(self):
+        'Test Open Move Lines'
+        pool = Pool()
+        Move = pool.get('account.move')
+        Line = pool.get('account.move.line')
+        PrintOpenMoveLines = pool.get(
+            'account_reports.print_open_move_lines', type='wizard')
+        OpenMoveLinesReport = pool.get(
+            'account_reports.open_move_lines', type='report')
+
+        company = create_company()
+        fiscalyear = self.create_moves(company)
+        period = fiscalyear.periods[0]
+        last_period = fiscalyear.periods[-1]
+        journals = self.get_journals()
+        accounts = self.get_accounts(company)
+        receivable = accounts['receivable']
+        cash = accounts['cash']
+        customer1, customer2, _, _ = self.get_parties()
+
+        payments = Move.create([{
+                    'company': company.id,
+                    'period': period.id,
+                    'journal': journals['REV'].id,
+                    'date': period.end_date,
+                    'lines': [
+                        ('create', [{
+                                    'account': cash.id,
+                                    'debit': Decimal(200),
+                                    }, {
+                                    'party': customer2.id,
+                                    'account': receivable.id,
+                                    'credit': Decimal(200),
+                                    }]),
+                        ],
+                    }, {
+                    'company': company.id,
+                    'period': last_period.id,
+                    'journal': journals['REV'].id,
+                    'date': last_period.end_date,
+                    'lines': [
+                        ('create', [{
+                                    'account': cash.id,
+                                    'debit': Decimal(100),
+                                    }, {
+                                    'party': customer1.id,
+                                    'account': receivable.id,
+                                    'credit': Decimal(100),
+                                    }]),
+                        ],
+                    }])
+        Move.post(payments)
+
+        customer1_invoice, = Line.search([
+                ('account', '=', receivable.id),
+                ('party', '=', customer1.id),
+                ('debit', '=', Decimal(100)),
+                ('move.date', '=', period.start_date),
+                ])
+        customer2_invoice, = Line.search([
+                ('account', '=', receivable.id),
+                ('party', '=', customer2.id),
+                ('debit', '=', Decimal(200)),
+                ('move.date', '=', period.start_date),
+                ])
+        customer2_payment = next(
+            line for line in payments[0].lines if line.account == receivable)
+        customer1_payment = next(
+            line for line in payments[1].lines if line.account == receivable)
+
+        Line.reconcile([customer2_invoice, customer2_payment])
+        Line.reconcile([customer1_invoice, customer1_payment])
+
+        session_id, _, _ = PrintOpenMoveLines.create()
+        print_open_move_lines = PrintOpenMoveLines(session_id)
+        print_open_move_lines.start.company = company
+        print_open_move_lines.start.date = period.end_date
+        print_open_move_lines.start.parties = []
+        print_open_move_lines.start.accounts = [receivable.id]
+        print_open_move_lines.start.output_format = 'pdf'
+        print_open_move_lines.start.show_description = True
+        print_open_move_lines.start.timeout = 30
+        checker = TimeoutChecker(
+            print_open_move_lines.start.timeout,
+            OpenMoveLinesReport.timeout_exception)
+        _, data = print_open_move_lines.do_print_(None)
+        records, parameters = OpenMoveLinesReport.prepare(data, checker)
+
+        self.assertEqual(data['company'], company.id)
+        self.assertEqual(data['date'], period.end_date)
+        self.assertEqual(data['accounts'], [receivable.id])
+        self.assertEqual(parameters['accounts'], receivable.code)
+        self.assertEqual(parameters['date'], period.end_date.strftime('%d/%m/%Y'))
+        self.assertEqual(len(records), 1)
+        record = next(iter(records.values()))
+        self.assertEqual(record['party'], customer1.rec_name)
+        self.assertEqual(len(record['lines']), 1)
+        self.assertEqual(record['total_debit'], Decimal('100.0'))
+        self.assertEqual(record['total_credit'], Decimal('0.0'))
+        self.assertEqual(record['total_balance'], Decimal('100.0'))
+
+        session_id, _, _ = PrintOpenMoveLines.create()
+        print_open_move_lines = PrintOpenMoveLines(session_id)
+        print_open_move_lines.start.company = company
+        print_open_move_lines.start.date = last_period.end_date
+        print_open_move_lines.start.parties = []
+        print_open_move_lines.start.accounts = [receivable.id]
+        print_open_move_lines.start.output_format = 'pdf'
+        print_open_move_lines.start.show_description = True
+        print_open_move_lines.start.timeout = 30
+        checker = TimeoutChecker(
+            print_open_move_lines.start.timeout,
+            OpenMoveLinesReport.timeout_exception)
+        _, data = print_open_move_lines.do_print_(None)
+        records, _ = OpenMoveLinesReport.prepare(data, checker)
+
+        self.assertEqual(len(records), 1)
+        record = next(iter(records.values()))
+        self.assertEqual(record['party'], customer2.rec_name)
+        self.assertEqual(len(record['lines']), 1)
+        self.assertEqual(record['total_debit'], Decimal('300.0'))
+        self.assertEqual(record['total_credit'], Decimal('0.0'))
+        self.assertEqual(record['total_balance'], Decimal('300.0'))
+
 
 del ModuleTestCase

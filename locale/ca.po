@@ -10,6 +10,10 @@ msgctxt "field:account_reports.print_general_ledger.start,accounts:"
 msgid "Accounts"
 msgstr "Comptes"
 
+msgctxt "field:account_reports.print_open_move_lines.start,accounts:"
+msgid "Accounts"
+msgstr "Comptes"
+
 msgctxt "field:account_reports.print_general_ledger.start,all_accounts:"
 msgid "All accounts with and without balance"
 msgstr "Totes els comptes amb i sense balanç"
@@ -17,6 +21,14 @@ msgstr "Totes els comptes amb i sense balanç"
 msgctxt "field:account_reports.print_general_ledger.start,company:"
 msgid "Company"
 msgstr "Empresa"
+
+msgctxt "field:account_reports.print_open_move_lines.start,company:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "field:account_reports.print_open_move_lines.start,date:"
+msgid "Cut-off Date"
+msgstr "Data de tall"
 
 msgctxt "field:account_reports.print_general_ledger.start,end_date:"
 msgid "Final Posting Date"
@@ -34,11 +46,23 @@ msgctxt "field:account_reports.print_general_ledger.start,output_format:"
 msgid "Output Format"
 msgstr "Tipus de fitxer"
 
+msgctxt "field:account_reports.print_open_move_lines.start,output_format:"
+msgid "Output Format"
+msgstr "Tipus de fitxer"
+
 msgctxt "field:account_reports.print_general_ledger.start,parties:"
 msgid "Parties"
 msgstr "Tercers"
 
+msgctxt "field:account_reports.print_open_move_lines.start,parties:"
+msgid "Parties"
+msgstr "Tercers"
+
 msgctxt "field:account_reports.print_general_ledger.start,show_description:"
+msgid "Show Description"
+msgstr "Mostra descripcions"
+
+msgctxt "field:account_reports.print_open_move_lines.start,show_description:"
 msgid "Show Description"
 msgstr "Mostra descripcions"
 
@@ -51,6 +75,10 @@ msgid "Start Period"
 msgstr "Període inicial"
 
 msgctxt "field:account_reports.print_general_ledger.start,timeout:"
+msgid "Timeout (s)"
+msgstr "Temps d'espera (s)"
+
+msgctxt "field:account_reports.print_open_move_lines.start,timeout:"
 msgid "Timeout (s)"
 msgstr "Temps d'espera (s)"
 
@@ -193,7 +221,19 @@ msgctxt "help:account_reports.print_general_ledger.start,show_description:"
 msgid "If checked show description from Account Move Line"
 msgstr "Si està marcat, es mostra la descripció dels apunts"
 
+msgctxt "help:account_reports.print_open_move_lines.start,show_description:"
+msgid "If checked show description from Account Move Line"
+msgstr "Si està marcat, es mostra la descripció dels apunts"
+
 msgctxt "help:account_reports.print_general_ledger.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"Si el càlcul de l'informe triga més del temps d'espera especificat (en "
+"segons), el procés s'aturarà automàticament."
+
+msgctxt "help:account_reports.print_open_move_lines.start,timeout:"
 msgid ""
 "If report calculation should take more than the specified timeout (in "
 "seconds) the process will be stopped automatically."
@@ -233,6 +273,10 @@ msgctxt "model:account_reports.print_general_ledger.start,name:"
 msgid "Print General Ledger"
 msgstr "Imprimeix llibre major"
 
+msgctxt "model:account_reports.print_open_move_lines.start,name:"
+msgid "Print Open Move Lines"
+msgstr "Imprimeix apunts pendents"
+
 msgctxt "model:account_reports.print_taxes_by_invoice.start,name:"
 msgid "Print Taxes by Invoice and Period"
 msgstr "Imprimeix impostos per factura i període"
@@ -245,6 +289,10 @@ msgctxt "model:ir.action,name:report_general_ledger"
 msgid "General Ledger"
 msgstr "Llibre major"
 
+msgctxt "model:ir.action,name:report_open_move_lines"
+msgid "Open Move Lines"
+msgstr "Apunts pendents"
+
 msgctxt "model:ir.action,name:report_taxes_by_invoice"
 msgid "Taxes by Invoice"
 msgstr "Impostos per factura"
@@ -256,6 +304,10 @@ msgstr "Balanç de sumes i saldos"
 msgctxt "model:ir.action,name:wizard_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimeix llibre major"
+
+msgctxt "model:ir.action,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimeix apunts pendents"
 
 msgctxt "model:ir.action,name:wizard_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
@@ -272,6 +324,10 @@ msgstr "Imprimeix diari abreviat"
 msgctxt "model:ir.action.wizard,name:wizard_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimeix llibre major"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimeix apunts pendents"
 
 msgctxt "model:ir.action.wizard,name:wizard_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
@@ -309,6 +365,10 @@ msgstr ""
 msgctxt "model:ir.ui.menu,name:menu_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimeix llibre major"
+
+msgctxt "model:ir.ui.menu,name:menu_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimeix apunts pendents"
 
 msgctxt "model:ir.ui.menu,name:menu_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
@@ -565,6 +625,14 @@ msgctxt "view:account_reports.print_general_ledger.start:"
 msgid "Leave empty to select all parties"
 msgstr "Deixeu-ho en blanc per seleccionar tots els tercers"
 
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all accounts"
+msgstr "Deixeu-ho en blanc per seleccionar tots els comptes"
+
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all parties"
+msgstr "Deixeu-ho en blanc per seleccionar tots els tercers"
+
 msgctxt "view:account_reports.print_taxes_by_invoice.start:"
 msgid "Left empty to select all parties"
 msgstr "Deixeu-ho en blanc per seleccionar tots els tercers"
@@ -594,6 +662,14 @@ msgid "Cancel"
 msgstr "Cancel·la"
 
 msgctxt "wizard_button:account_reports.print_general_ledger,start,print_:"
+msgid "Print"
+msgstr "Imprimeix"
+
+msgctxt "wizard_button:account_reports.print_open_move_lines,start,end:"
+msgid "Cancel"
+msgstr "Cancel·la"
+
+msgctxt "wizard_button:account_reports.print_open_move_lines,start,print_:"
 msgid "Print"
 msgstr "Imprimeix"
 

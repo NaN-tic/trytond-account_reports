@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<form>
+    <label name="company"/>
+    <field name="company"/>
+    <label name="date"/>
+    <field name="date"/>
+    <label id="select_parties" string="Leave empty to select all parties"/>
+    <field name="parties" colspan="4"/>
+    <label id="select_accounts" string="Leave empty to select all accounts"/>
+    <field name="accounts" colspan="4"/>
+    <label name="show_description"/>
+    <field name="show_description"/>
+    <label name="timeout"/>
+    <field name="timeout"/>
+    <label name="output_format"/>
+    <field name="output_format"/>
+</form>

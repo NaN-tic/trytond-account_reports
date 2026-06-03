@@ -10,6 +10,10 @@ msgctxt "field:account_reports.print_general_ledger.start,accounts:"
 msgid "Accounts"
 msgstr "Cuentas"
 
+msgctxt "field:account_reports.print_open_move_lines.start,accounts:"
+msgid "Accounts"
+msgstr "Cuentas"
+
 msgctxt "field:account_reports.print_general_ledger.start,all_accounts:"
 msgid "All accounts with and without balance"
 msgstr "Todas las cuentas con y sin balance"
@@ -17,6 +21,14 @@ msgstr "Todas las cuentas con y sin balance"
 msgctxt "field:account_reports.print_general_ledger.start,company:"
 msgid "Company"
 msgstr "Empresa"
+
+msgctxt "field:account_reports.print_open_move_lines.start,company:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "field:account_reports.print_open_move_lines.start,date:"
+msgid "Cut-off Date"
+msgstr "Fecha de corte"
 
 msgctxt "field:account_reports.print_general_ledger.start,end_date:"
 msgid "Final Posting Date"
@@ -34,11 +46,23 @@ msgctxt "field:account_reports.print_general_ledger.start,output_format:"
 msgid "Output Format"
 msgstr "Tipo de fichero"
 
+msgctxt "field:account_reports.print_open_move_lines.start,output_format:"
+msgid "Output Format"
+msgstr "Tipo de fichero"
+
 msgctxt "field:account_reports.print_general_ledger.start,parties:"
 msgid "Parties"
 msgstr "Terceros"
 
+msgctxt "field:account_reports.print_open_move_lines.start,parties:"
+msgid "Parties"
+msgstr "Terceros"
+
 msgctxt "field:account_reports.print_general_ledger.start,show_description:"
+msgid "Show Description"
+msgstr "Mostrar descripción"
+
+msgctxt "field:account_reports.print_open_move_lines.start,show_description:"
 msgid "Show Description"
 msgstr "Mostrar descripción"
 
@@ -51,6 +75,10 @@ msgid "Start Period"
 msgstr "Período inicial"
 
 msgctxt "field:account_reports.print_general_ledger.start,timeout:"
+msgid "Timeout (s)"
+msgstr "Tiempo de espera (s)"
+
+msgctxt "field:account_reports.print_open_move_lines.start,timeout:"
 msgid "Timeout (s)"
 msgstr "Tiempo de espera (s)"
 
@@ -193,7 +221,19 @@ msgctxt "help:account_reports.print_general_ledger.start,show_description:"
 msgid "If checked show description from Account Move Line"
 msgstr "Si está marcado, muestra las descripciones de los apuntes contables"
 
+msgctxt "help:account_reports.print_open_move_lines.start,show_description:"
+msgid "If checked show description from Account Move Line"
+msgstr "Si está marcado, muestra las descripciones de los apuntes contables"
+
 msgctxt "help:account_reports.print_general_ledger.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"Si el cálculo del informe tarda más que el tiempo de espera especificado (en"
+" segundos), el proceso se detendrá automáticamente."
+
+msgctxt "help:account_reports.print_open_move_lines.start,timeout:"
 msgid ""
 "If report calculation should take more than the specified timeout (in "
 "seconds) the process will be stopped automatically."
@@ -233,6 +273,10 @@ msgctxt "model:account_reports.print_general_ledger.start,name:"
 msgid "Print General Ledger"
 msgstr "Imprimir libro mayor"
 
+msgctxt "model:account_reports.print_open_move_lines.start,name:"
+msgid "Print Open Move Lines"
+msgstr "Imprimir apuntes pendientes"
+
 msgctxt "model:account_reports.print_taxes_by_invoice.start,name:"
 msgid "Print Taxes by Invoice and Period"
 msgstr "Imprimir impuestos por factura y período"
@@ -245,6 +289,10 @@ msgctxt "model:ir.action,name:report_general_ledger"
 msgid "General Ledger"
 msgstr "Libro mayor"
 
+msgctxt "model:ir.action,name:report_open_move_lines"
+msgid "Open Move Lines"
+msgstr "Apuntes pendientes"
+
 msgctxt "model:ir.action,name:report_taxes_by_invoice"
 msgid "Taxes by Invoice"
 msgstr "Impuestos por factura"
@@ -256,6 +304,10 @@ msgstr "Balance de sumas y saldos"
 msgctxt "model:ir.action,name:wizard_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimir libro mayor"
+
+msgctxt "model:ir.action,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimir apuntes pendientes"
 
 msgctxt "model:ir.action,name:wizard_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
@@ -272,6 +324,10 @@ msgstr "Imprimir diario abreviado"
 msgctxt "model:ir.action.wizard,name:wizard_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimir libro mayor"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimir apuntes pendientes"
 
 msgctxt "model:ir.action.wizard,name:wizard_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
@@ -310,6 +366,10 @@ msgstr ""
 msgctxt "model:ir.ui.menu,name:menu_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimir libro mayor"
+
+msgctxt "model:ir.ui.menu,name:menu_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimir apuntes pendientes"
 
 msgctxt "model:ir.ui.menu,name:menu_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
@@ -566,6 +626,14 @@ msgctxt "view:account_reports.print_general_ledger.start:"
 msgid "Leave empty to select all parties"
 msgstr "Dejar en blanco para seleccionar todos los terceros"
 
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all accounts"
+msgstr "Dejar en blanco para seleccionar todas las cuentas"
+
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all parties"
+msgstr "Dejar en blanco para seleccionar todos los terceros"
+
 msgctxt "view:account_reports.print_taxes_by_invoice.start:"
 msgid "Left empty to select all parties"
 msgstr "Dejar en blanco para seleccionar todos los terceros"
@@ -595,6 +663,14 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 msgctxt "wizard_button:account_reports.print_general_ledger,start,print_:"
+msgid "Print"
+msgstr "Imprimir"
+
+msgctxt "wizard_button:account_reports.print_open_move_lines,start,end:"
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgctxt "wizard_button:account_reports.print_open_move_lines,start,print_:"
 msgid "Print"
 msgstr "Imprimir"
 

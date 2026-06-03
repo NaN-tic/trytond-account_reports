@@ -1,0 +1,42 @@
+{% macro cell(value='', cls='', style='', colspan=1, format='pdf') %}
+  <td
+    {% if cls %}class="{{ cls }}"{% endif %}
+    {% if style %}style="{{ style }}"{% endif %}
+    {% if colspan != 1 %}colspan="{{ colspan }}"{% endif %}
+  >{{ value }}</td>
+  {% if format == 'xlsx' and colspan|int > 1 %}
+    {% for _ in range(colspan - 1) %}
+      <td></td>
+    {% endfor %}
+  {% endif %}
+{% endmacro %}
+
+<table>
+  <tr>
+    <th>{{ _('Date') }}</th>
+    <th>{{ _('Maturity Date') }}</th>
+    <th>{{ _('Number') }}</th>
+    <th>{{ _('Reference') }} // {{ _('Description') }}</th>
+    <th>{{ _('Reconciliation Date') }}</th>
+    <th style="text-align: right;">{{ _('Debit') }}</th>
+    <th style="text-align: right;">{{ _('Credit') }}</th>
+    <th style="text-align: right;">{{ _('Balance') }}</th>
+  </tr>
+{% for key, record in records.items() %}
+    <tr>
+      {{ cell(value=record.code, cls='bold', colspan=2, format=format) }}
+      {{ cell(value=record.party or record.account, cls='bold', colspan=2, format=format) }}
+      {{ cell(value='', colspan=3, format=format) }}
+      {{ cell(value=record.total_balance|render, style='text-align: right;', cls='no-wrap bold', format=format) }}
+    </tr>
+
+    {{ show_detail_lines(record) }}
+
+    <tr class="bold bottom">
+      {{ cell(value=record.code, cls='bold', colspan=2, format=format) }}
+      {{ cell(value=record.party or record.account, cls='bold', colspan=2, format=format) }}
+      {{ cell(value=_('Total'), cls='left bold', colspan=3, format=format) }}
+      {{ cell(value=record.total_balance|render, style='text-align: right;', cls='no-wrap', format=format) }}
+    </tr>
+  {% endfor %}
+</table>

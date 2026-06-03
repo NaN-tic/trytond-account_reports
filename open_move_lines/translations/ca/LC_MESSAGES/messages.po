@@ -1,0 +1,50 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgid "Date"
+msgstr "Data"
+
+msgid "Maturity Date"
+msgstr "Data de venciment"
+
+msgid "Reconciliation Date"
+msgstr "Data de conciliacio"
+
+msgid "Number"
+msgstr "Número"
+
+msgid "Reference"
+msgstr "Referència"
+
+msgid "Description"
+msgstr "Descripció"
+
+msgid "Debit"
+msgstr "Deure"
+
+msgid "Credit"
+msgstr "Haver"
+
+msgid "Balance"
+msgstr "Saldo"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Open Move Lines"
+msgstr "Apunts pendents"
+
+msgid "Cut-off Date"
+msgstr "Data de tall"
+
+msgid "Parties"
+msgstr "Tercers"
+
+msgid "All Parties"
+msgstr "Tots els tercers"
+
+msgid "Accounts"
+msgstr "Comptes"
+
+msgid "All Accounts"
+msgstr "Tots els comptes"

@@ -1,0 +1,50 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgid "Date"
+msgstr "Fecha"
+
+msgid "Maturity Date"
+msgstr "Fecha de vencimiento"
+
+msgid "Reconciliation Date"
+msgstr "Fecha de conciliacion"
+
+msgid "Number"
+msgstr "Número"
+
+msgid "Reference"
+msgstr "Referencia"
+
+msgid "Description"
+msgstr "Descripción"
+
+msgid "Debit"
+msgstr "Debe"
+
+msgid "Credit"
+msgstr "Haber"
+
+msgid "Balance"
+msgstr "Saldo"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Open Move Lines"
+msgstr "Apuntes pendientes"
+
+msgid "Cut-off Date"
+msgstr "Fecha de corte"
+
+msgid "Parties"
+msgstr "Terceros"
+
+msgid "All Parties"
+msgstr "Todos los terceros"
+
+msgid "Accounts"
+msgstr "Cuentas"
+
+msgid "All Accounts"
+msgstr "Todas las cuentas"
