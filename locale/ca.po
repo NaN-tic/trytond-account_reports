@@ -62,6 +62,74 @@ msgctxt "field:account_reports.print_journal.start,company:"
 msgid "Company"
 msgstr "Empresa"
 
+msgctxt "field:account_reports.print_open_move_lines.start,accounts:"
+msgid "Accounts"
+msgstr "Comptes"
+
+msgctxt "field:account_reports.print_open_move_lines.start,company:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "field:account_reports.print_open_move_lines.start,date:"
+msgid "Cut-off Date"
+msgstr "Data de tall"
+
+msgctxt "field:account_reports.print_open_move_lines.start,output_format:"
+msgid "Output Format"
+msgstr "Tipus de fitxer"
+
+msgctxt "field:account_reports.print_open_move_lines.start,parties:"
+msgid "Parties"
+msgstr "Tercers"
+
+msgctxt "field:account_reports.print_open_move_lines.start,show_description:"
+msgid "Show Description"
+msgstr "Mostra descripcions"
+
+msgctxt "field:account_reports.print_open_move_lines.start,timeout:"
+msgid "Timeout (s)"
+msgstr "Temps d'espera (s)"
+
+msgctxt "help:account_reports.print_open_move_lines.start,show_description:"
+msgid "If checked show description from Account Move Line"
+msgstr "Si està marcat, mostra la descripció de l'apunt comptable"
+
+msgctxt "help:account_reports.print_open_move_lines.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"Si el càlcul de l'informe dura més del temps indicat (en segons), el "
+"procés s'aturarà automàticament."
+
+msgctxt "model:ir.action,name:report_open_move_lines"
+msgid "Open Move Lines"
+msgstr "Apunts oberts"
+
+msgctxt "model:ir.action,name:report_open_move_lines_xlsx"
+msgid "Open Move Lines"
+msgstr "Apunts oberts"
+
+msgctxt "model:ir.action,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimeix apunts oberts"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimeix apunts oberts"
+
+msgctxt "model:ir.ui.menu,name:menu_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimeix apunts oberts"
+
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all accounts"
+msgstr "Deixeu-ho buit per seleccionar tots els comptes"
+
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all parties"
+msgstr "Deixeu-ho buit per seleccionar tots els tercers"
+
 msgctxt "field:account_reports.print_journal.start,end_period:"
 msgid "End Period"
 msgstr "Període final"
@@ -349,6 +417,10 @@ msgid "Credit"
 msgstr "Haver"
 
 msgctxt "html_report:h:"
+msgid "Cut-off Date: %s"
+msgstr "Data de tall: %s"
+
+msgctxt "html_report:h:"
 msgid "Date"
 msgstr "Data"
 
@@ -429,6 +501,10 @@ msgid "Move"
 msgstr "Assentament"
 
 msgctxt "html_report:h:"
+msgid "Maturity Date"
+msgstr "Data de venciment"
+
+msgctxt "html_report:h:"
 msgid "NIF"
 msgstr "NIF"
 
@@ -469,8 +545,16 @@ msgid "Reference // Description"
 msgstr "Referència // Descripció"
 
 msgctxt "html_report:h:"
+msgid "Reconciliation Date"
+msgstr "Data de conciliació"
+
+msgctxt "html_report:h:"
 msgid "Start Date: %s End Date: %s"
 msgstr "Data inici: %s Data fi: %s"
+
+msgctxt "html_report:h:"
+msgid "Open Move Lines"
+msgstr "Apunts oberts"
 
 msgctxt "html_report:h:"
 msgid "Tax"
@@ -1090,6 +1174,14 @@ msgid "Cancel"
 msgstr "Cancel·la"
 
 msgctxt "wizard_button:account_reports.print_journal,start,print_:"
+msgid "Print"
+msgstr "Imprimeix"
+
+msgctxt "wizard_button:account_reports.print_open_move_lines,start,end:"
+msgid "Cancel"
+msgstr "Cancel·la"
+
+msgctxt "wizard_button:account_reports.print_open_move_lines,start,print_:"
 msgid "Print"
 msgstr "Imprimeix"
 
