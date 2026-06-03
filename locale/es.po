@@ -62,6 +62,74 @@ msgctxt "field:account_reports.print_journal.start,company:"
 msgid "Company"
 msgstr "Empresa"
 
+msgctxt "field:account_reports.print_open_move_lines.start,accounts:"
+msgid "Accounts"
+msgstr "Cuentas"
+
+msgctxt "field:account_reports.print_open_move_lines.start,company:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "field:account_reports.print_open_move_lines.start,date:"
+msgid "Cut-off Date"
+msgstr "Fecha de corte"
+
+msgctxt "field:account_reports.print_open_move_lines.start,output_format:"
+msgid "Output Format"
+msgstr "Tipo de fichero"
+
+msgctxt "field:account_reports.print_open_move_lines.start,parties:"
+msgid "Parties"
+msgstr "Terceros"
+
+msgctxt "field:account_reports.print_open_move_lines.start,show_description:"
+msgid "Show Description"
+msgstr "Mostrar descripción"
+
+msgctxt "field:account_reports.print_open_move_lines.start,timeout:"
+msgid "Timeout (s)"
+msgstr "Tiempo de espera (s)"
+
+msgctxt "help:account_reports.print_open_move_lines.start,show_description:"
+msgid "If checked show description from Account Move Line"
+msgstr "Si está marcado, muestra la descripción del apunte contable"
+
+msgctxt "help:account_reports.print_open_move_lines.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"Si el cálculo del informe dura más del tiempo indicado (en segundos), el "
+"proceso se detendrá automáticamente."
+
+msgctxt "model:ir.action,name:report_open_move_lines"
+msgid "Open Move Lines"
+msgstr "Apuntes abiertos"
+
+msgctxt "model:ir.action,name:report_open_move_lines_xlsx"
+msgid "Open Move Lines"
+msgstr "Apuntes abiertos"
+
+msgctxt "model:ir.action,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimir apuntes abiertos"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimir apuntes abiertos"
+
+msgctxt "model:ir.ui.menu,name:menu_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimir apuntes abiertos"
+
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all accounts"
+msgstr "Dejar vacío para seleccionar todas las cuentas"
+
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all parties"
+msgstr "Dejar vacío para seleccionar todos los terceros"
+
 msgctxt "field:account_reports.print_journal.start,end_period:"
 msgid "End Period"
 msgstr "Período final"
@@ -349,6 +417,10 @@ msgid "Credit"
 msgstr "Haber"
 
 msgctxt "html_report:h:"
+msgid "Cut-off Date: %s"
+msgstr "Fecha de corte: %s"
+
+msgctxt "html_report:h:"
 msgid "Date"
 msgstr "Fecha"
 
@@ -429,6 +501,10 @@ msgid "Move"
 msgstr "Asiento"
 
 msgctxt "html_report:h:"
+msgid "Maturity Date"
+msgstr "Fecha de vencimiento"
+
+msgctxt "html_report:h:"
 msgid "NIF"
 msgstr "NIF"
 
@@ -469,8 +545,16 @@ msgid "Reference // Description"
 msgstr "Referencia // Descripción"
 
 msgctxt "html_report:h:"
+msgid "Reconciliation Date"
+msgstr "Fecha de conciliación"
+
+msgctxt "html_report:h:"
 msgid "Start Date: %s End Date: %s"
 msgstr "Fecha inicio: %s Fecha fin: %s"
+
+msgctxt "html_report:h:"
+msgid "Open Move Lines"
+msgstr "Apuntes abiertos"
 
 msgctxt "html_report:h:"
 msgid "Tax"
@@ -1083,6 +1167,14 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 msgctxt "wizard_button:account_reports.print_journal,start,print_:"
+msgid "Print"
+msgstr "Imprimir"
+
+msgctxt "wizard_button:account_reports.print_open_move_lines,start,end:"
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgctxt "wizard_button:account_reports.print_open_move_lines,start,print_:"
 msgid "Print"
 msgstr "Imprimir"
 
