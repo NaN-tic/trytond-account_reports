@@ -3,6 +3,7 @@
 from trytond.pool import Pool
 from . import common
 from . import general_ledger
+from . import open_move_lines
 from . import taxes_by_invoice
 from . import trial_balance
 
@@ -17,5 +18,6 @@ def register():
         module=module, type_='model')
 
     general_ledger.register(module)
+    open_move_lines.register(module)
     taxes_by_invoice.register(module)
     trial_balance.register(module)

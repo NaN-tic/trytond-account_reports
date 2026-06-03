@@ -1,0 +1,13 @@
+{% set show_description = data['parameters']['show_description'] %}
+{% for l in record.lines %}
+  <tr>
+    <td>{{ l.line.date and l.line.date|render }}</td>
+    <td>{{ l.line.maturity_date and l.line.maturity_date|render or '' }}</td>
+    <td>{% if l.line.move and l.line.move.post_number %}{{ l.line.move.post_number }}{% else %}{{ l.line.move and l.line.move.move_number or '' }}{% endif %}</td>
+    <td>{% if l.ref %}{{ l.ref }}{% endif %}{% if l.ref and show_description and l.line and (l.line.description or l.line.move_description_used) %} // {% endif %}{% if show_description and l.line and l.line.description %} {{ l.line.description }} {% elif show_description and l.line and l.line.move_description_used %} {{ l.line.move_description_used }} {% endif %}</td>
+    <td>{{ l.line.reconciliation and l.line.reconciliation.date|render or '' }}</td>
+    <td style="text-align: right;" class="no-wrap">{{ l.debit|render }}</td>
+    <td style="text-align: right;" class="no-wrap">{{ l.credit|render }}</td>
+    <td style="text-align: right;" class="no-wrap">{{ l.balance|render }}</td>
+  </tr>
+{% endfor %}
