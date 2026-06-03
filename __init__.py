@@ -7,6 +7,7 @@ from . import general_ledger
 from . import taxes_by_invoice
 from . import trial_balance
 from . import journal
+from . import open_move_lines
 
 
 def register():
@@ -21,6 +22,7 @@ def register():
         taxes_by_invoice.PrintTaxesByInvoiceAndPeriodStart,
         trial_balance.PrintTrialBalanceStart,
         journal.PrintJournalStart,
+        open_move_lines.PrintOpenMoveLinesStart,
         module=module, type_='model')
     Pool.register(
         abreviated_journal.PrintAbreviatedJournal,
@@ -28,6 +30,7 @@ def register():
         taxes_by_invoice.PrintTaxesByInvoiceAndPeriod,
         trial_balance.PrintTrialBalance,
         journal.PrintJournal,
+        open_move_lines.PrintOpenMoveLines,
         module=module, type_='wizard')
     Pool.register(
         abreviated_journal.AbreviatedJournalReport,
@@ -40,4 +43,6 @@ def register():
         taxes_by_invoice.TaxesByInvoiceXlsxReport,
         trial_balance.TrialBalanceReport,
         trial_balance.TrialBalanceXlsxReport,
+        open_move_lines.OpenMoveLinesReport,
+        open_move_lines.OpenMoveLinesXlsxReport,
         module=module, type_='report')
