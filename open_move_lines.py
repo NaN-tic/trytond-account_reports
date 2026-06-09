@@ -407,8 +407,8 @@ class OpenMoveLinesReport(DominateReport):
             number = ''
             if line.move and line.move.number:
                 number = line.move.number
-            elif line.move and line.move.move_number:
-                number = '(%s)' % line.move.move_number
+            elif line.move:
+                number = '(#%s)' % line.move.id
             description = ''
             if line_info['ref']:
                 description += line_info['ref']
@@ -568,8 +568,8 @@ class OpenMoveLinesXlsxReport(XlsxReport, metaclass=PoolMeta):
                 line = line_info['line']
                 if line.move and line.move.number:
                     number = line.move.number
-                elif line.move and line.move.move_number:
-                    number = '(%s)' % line.move.move_number
+                elif line.move:
+                    number = '(#%s)' % line.move.id
                 else:
                     number = ''
                 description = ''
