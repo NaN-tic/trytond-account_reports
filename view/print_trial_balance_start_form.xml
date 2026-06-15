@@ -1,23 +1,25 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
 copyright notices and license terms. -->
-<form >
+<form col="7">
     <label name="company"/>
-    <field name="company"/>
+    <field name="company" colspan="2"/>
     <label name="show_digits"/>
     <field name="show_digits"/>
+    <label name="show_summary_lines"/>
+    <field name="show_summary_lines"/>
     <label name="add_initial_balance"/>
     <field name="add_initial_balance"/>
     <label name="moves_or_initial"/>
-    <field name="moves_or_initial"/>
+    <field name="moves_or_initial" colspan="4"/>
     <label name="split_parties"/>
     <field name="split_parties"/>
     <label name="only_moves"/>
-    <field name="only_moves"/>
-    <label id="all_parties" string="All parties if Empty" colspan="4"/>
-    <field name="parties" colspan="4"/>
-    <label id="all_accounts" string="All accounts if Empty" colspan="4"/>
-    <field name="accounts" colspan="4"/>
+    <field name="only_moves" colspan="4"/>
+    <label id="all_parties" string="All parties if Empty" colspan="7"/>
+    <field name="parties" colspan="7"/>
+    <label id="all_accounts" string="All accounts if Empty" colspan="7"/>
+    <field name="accounts" colspan="7"/>
 
     <label name="fiscalyear"/>
     <field name="fiscalyear"/>
@@ -27,14 +29,14 @@ copyright notices and license terms. -->
     <label name="end_period"/>
     <field name="end_period"/>
 
-    <group id="second_balance" string="Comparison Period" colspan="4">
+    <group id="second_balance" string="Comparison Period" colspan="7" cols="4">
         <label name="comparison_fiscalyear"/>
         <field name="comparison_fiscalyear"/>
         <newline/>
         <label name="comparison_start_period"/>
-        <field name="comparison_start_period"/>
+        <field name="comparison_start_period" xfill="0" xalign="0"/>
         <label name="comparison_end_period"/>
-        <field name="comparison_end_period"/>
+        <field name="comparison_end_period" xfill="0" xalign="0"/>
     </group>
 
     <label name="output_format"/>
