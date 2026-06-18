@@ -429,9 +429,10 @@ class TaxesByInvoiceReport(DominateReport):
                 fake_key = fake_taxes.get((tax.rate, tax.company))
                 if not fake_key:
                     fake_key = AccountTax()
-                    fake_key.name = '%s (%s%%)' % (
-                        gettext('account_reports.msg_not_deductible_tax'),
-                        round(tax.rate * 100, 0))
+                    fake_key.name = gettext(
+                        'account_reports.msg_not_deductible_tax')
+                    if tax.rate is not None:
+                        fake_key.name += f' ({round(tax.rate * 100)}%)'
                     fake_key.rate = tax.rate
                     fake_key.company = tax.company
                     fake_taxes[(tax.rate, tax.company)] = fake_key
