@@ -522,6 +522,110 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assert_xlsx_report_rendered(TrialBalanceXlsxReport, data_xlsx)
 
     @with_transaction()
+    def test_trial_balance_split_parties(self):
+        'Test Trial Balance with split_parties=True'
+        pool = Pool()
+        PrintTrialBalance = pool.get(
+            'account_reports.print_trial_balance', type='wizard')
+        TrialBalanceReport = pool.get(
+            'account_reports.trial_balance', type='report')
+        TrialBalanceXlsxReport = pool.get(
+            'account_reports.trial_balance_xlsx', type='report')
+        company = create_company()
+        fiscalyear = self.create_moves(company)
+        period = fiscalyear.periods[0]
+        last_period = fiscalyear.periods[-1]
+
+        session_id, _, _ = PrintTrialBalance.create()
+        print_trial_balance = PrintTrialBalance(session_id)
+        print_trial_balance.start.company = company
+        print_trial_balance.start.fiscalyear = fiscalyear
+        print_trial_balance.start.start_period = period
+        print_trial_balance.start.end_period = last_period
+        print_trial_balance.start.comparison_fiscalyear = None
+        print_trial_balance.start.comparison_start_period = None
+        print_trial_balance.start.comparison_end_period = None
+        print_trial_balance.start.show_digits = 0
+        print_trial_balance.start.only_moves = False
+        print_trial_balance.start.moves_or_initial = False
+        print_trial_balance.start.hide_split_parties = False
+        print_trial_balance.start.split_parties = True
+        print_trial_balance.start.add_initial_balance = False
+        print_trial_balance.start.accounts = []
+        print_trial_balance.start.parties = []
+        print_trial_balance.start.output_format = 'pdf'
+        print_trial_balance.start.timeout = 30
+
+        _, data = print_trial_balance.do_print_(None)
+        self.assert_report_rendered(TrialBalanceReport, data, 'pdf')
+        data_xlsx = data.copy()
+        data_xlsx['output_format'] = 'xlsx'
+        self.assert_xlsx_report_rendered(TrialBalanceXlsxReport, data_xlsx)
+
+        checker = TimeoutChecker(30, TrialBalanceReport.timeout_exception)
+        records, parameters = TrialBalanceReport.prepare(data, checker)
+
+        self.assertTrue(parameters['split_parties'])
+        party_records = [r for r in records
+            if r['name'] in ('customer1', 'customer2',
+                'supplier1', 'supplier2')]
+        self.assertEqual(len(party_records), 4)
+
+        by_name = {r['name']: r for r in party_records}
+        self.assertEqual(by_name['customer1']['period_debit'], Decimal('100'))
+        self.assertEqual(by_name['customer2']['period_debit'], Decimal('500'))
+        self.assertEqual(by_name['supplier1']['period_credit'], Decimal('30'))
+        self.assertEqual(by_name['supplier2']['period_credit'], Decimal('100'))
+
+    @with_transaction()
+    def test_trial_balance_split_parties_with_filter(self):
+        'Test Trial Balance split_parties with specific parties'
+        pool = Pool()
+        PrintTrialBalance = pool.get(
+            'account_reports.print_trial_balance', type='wizard')
+        TrialBalanceReport = pool.get(
+            'account_reports.trial_balance', type='report')
+        company = create_company()
+        fiscalyear = self.create_moves(company)
+        period = fiscalyear.periods[0]
+        last_period = fiscalyear.periods[-1]
+        customer1, _, supplier1, _ = self.get_parties()
+
+        session_id, _, _ = PrintTrialBalance.create()
+        print_trial_balance = PrintTrialBalance(session_id)
+        print_trial_balance.start.company = company
+        print_trial_balance.start.fiscalyear = fiscalyear
+        print_trial_balance.start.start_period = period
+        print_trial_balance.start.end_period = last_period
+        print_trial_balance.start.comparison_fiscalyear = None
+        print_trial_balance.start.comparison_start_period = None
+        print_trial_balance.start.comparison_end_period = None
+        print_trial_balance.start.show_digits = 0
+        print_trial_balance.start.only_moves = False
+        print_trial_balance.start.moves_or_initial = False
+        print_trial_balance.start.hide_split_parties = False
+        print_trial_balance.start.split_parties = True
+        print_trial_balance.start.add_initial_balance = False
+        print_trial_balance.start.accounts = []
+        print_trial_balance.start.parties = [customer1.id, supplier1.id]
+        print_trial_balance.start.output_format = 'pdf'
+        print_trial_balance.start.timeout = 30
+
+        _, data = print_trial_balance.do_print_(None)
+        self.assert_report_rendered(TrialBalanceReport, data, 'pdf')
+
+        checker = TimeoutChecker(30, TrialBalanceReport.timeout_exception)
+        records, parameters = TrialBalanceReport.prepare(data, checker)
+
+        self.assertTrue(parameters['split_parties'])
+        party_names = {
+            r['name'] for r in records
+            if r['name'] in ('customer1', 'customer2',
+                'supplier1', 'supplier2')
+        }
+        self.assertEqual(party_names, {'customer1', 'supplier1'})
+
+    @with_transaction()
     def test_taxes_by_invoice_render(self):
         'Test Taxes by Invoice rendering'
         pool = Pool()
