@@ -22,5 +22,8 @@ Please proceed to renumber the records before consulting the journal report.</fi
       <record model="ir.message" id="msg_not_deductible_tax">
           <field name="text">Not Deductible VAT</field>
       </record>
+      <record model="ir.message" id="msg_all_parties">
+          <field name="text">All</field>
+      </record>
     </data>
 </tryton>

@@ -689,6 +689,10 @@ msgctxt "model:ir.message,text:msg_missing_fiscalyear"
 msgid "The fiscalyear selected it is not valid."
 msgstr "El año fiscal seleccionado no es válido."
 
+msgctxt "model:ir.message,text:msg_all_parties"
+msgid "All"
+msgstr "Todos"
+
 msgctxt "model:ir.message,text:msg_not_deductible_tax"
 msgid "Not Deductible VAT"
 msgstr "IVA No deducible"
