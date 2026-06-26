@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!-- This file is part account_reports for Tryton.  The COPYRIGHT file at the
+top level of this repository contains the full copyright notices and license
+terms. -->
+<tryton>
+    <data>
+        <record model="ir.ui.view" id="print_invoice_payment_dates_start_view_form">
+            <field name="model">account_reports.print_invoice_payment_dates.start</field>
+            <field name="type">form</field>
+            <field name="name">print_invoice_payment_dates_start_form</field>
+        </record>
+        <record model="ir.action.wizard" id="wizard_print_invoice_payment_dates">
+            <field name="name">Print Invoice Payment Dates</field>
+            <field name="wiz_name">account_reports.print_invoice_payment_dates</field>
+        </record>
+
+        <record model="html.template" id="invoice_payment_dates_header_template">
+            <field name="name">Header</field>
+            <field name="type">header</field>
+            <field name="sequence" eval="99"/>
+            <field name="filename">account_reports/invoice_payment_dates/templates/header_macro.html</field>
+        </record>
+        <record model="html.template" id="invoice_payment_dates_html_template">
+            <field name="name">Invoice Payment Dates</field>
+            <field name="type">base</field>
+            <field name="sequence" eval="99"/>
+            <field name="filename">account_reports/invoice_payment_dates/templates/invoice_payment_dates.html</field>
+        </record>
+
+        <record model="ir.action.report" id="report_invoice_payment_dates">
+            <field name="name">Invoice Payment Dates</field>
+            <field name="report_name">account_reports.invoice_payment_dates</field>
+            <field name="html_template" ref="invoice_payment_dates_html_template"/>
+            <field name="html_header_template" ref="invoice_payment_dates_header_template"/>
+            <field name="extension">pdf</field>
+            <field name="template_extension">jinja</field>
+        </record>
+
+        <menuitem id="menu_print_invoice_payment_dates"
+            name="Print Invoice Payment Dates" parent="account.menu_reporting"
+            action="wizard_print_invoice_payment_dates" icon="tryton-print"/>
+    </data>
+</tryton>

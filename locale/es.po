@@ -691,3 +691,143 @@ msgstr "Cancelar"
 msgctxt "wizard_button:account_reports.print_trial_balance,start,print_:"
 msgid "Print"
 msgstr "Imprimir"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,company:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,end_date:"
+msgid "Final invoice date"
+msgstr "Fecha final de factura"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Ejercicio fiscal"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Invoice Type"
+msgstr "Tipo de factura"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "Output Format"
+msgstr "Tipo de fichero"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,periods:"
+msgid "Periods"
+msgstr "Períodos"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,start_date:"
+msgid "Initial invoice date"
+msgstr "Fecha inicial de factura"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,timeout:"
+msgid "Timeout"
+msgstr "Tiempo de espera"
+
+msgctxt "help:account_reports.print_invoice_payment_dates.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"Si el cálculo del informe tarda más que el tiempo de espera especificado "
+"(en segundos), el proceso se detendrá automáticamente."
+
+msgctxt "model:account_reports.print_invoice_payment_dates.start,name:"
+msgid "Print Invoice Payment Dates"
+msgstr "Imprimir fechas de pago de facturas"
+
+msgctxt "model:ir.action,name:report_invoice_payment_dates"
+msgid "Invoice Payment Dates"
+msgstr "Fechas de pago de facturas"
+
+msgctxt "model:ir.action,name:wizard_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "Imprimir fechas de pago de facturas"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "Imprimir fechas de pago de facturas"
+
+msgctxt "model:ir.ui.menu,name:menu_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "Imprimir fechas de pago de facturas"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Description"
+msgstr "Descripción"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Due Amount"
+msgstr "Importe a vencimiento"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Due Date"
+msgstr "Fecha de vencimiento"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Invoice Date"
+msgstr "Fecha factura"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Invoice Payment Dates"
+msgstr "Fechas de pago de facturas"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "No invoices found"
+msgstr "No se han encontrado facturas"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Number"
+msgstr "Número"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Party"
+msgstr "Tercero"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Payment Date"
+msgstr "Fecha de pago"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Payment Days"
+msgstr "Días de pago"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Payment Type"
+msgstr "Tipo de pago"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Reference"
+msgstr "Referencia"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "State"
+msgstr "Estado"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Supplier Invoices"
+msgstr "Facturas de proveedor"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Customer Invoices"
+msgstr "Facturas de cliente"
+
+msgctxt "selection:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Customer Invoices"
+msgstr "Facturas de cliente"
+
+msgctxt "selection:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Supplier Invoices"
+msgstr "Facturas de proveedor"
+
+msgctxt "selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
