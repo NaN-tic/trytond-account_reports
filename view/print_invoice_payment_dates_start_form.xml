@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<form>
+    <label name="company"/>
+    <field name="company"/>
+    <newline/>
+    <label name="invoice_type"/>
+    <field name="invoice_type"/>
+    <label name="output_format"/>
+    <field name="output_format"/>
+    <newline/>
+    <label name="fiscalyear"/>
+    <field name="fiscalyear"/>
+    <label name="periods"/>
+    <field name="periods"/>
+    <newline/>
+    <label name="start_date"/>
+    <field name="start_date"/>
+    <label name="end_date"/>
+    <field name="end_date"/>
+    <newline/>
+    <label name="timeout"/>
+    <field name="timeout"/>
+</form>
