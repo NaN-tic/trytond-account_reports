@@ -14,26 +14,14 @@ terms. -->
             <field name="wiz_name">account_reports.print_invoice_payment_dates</field>
         </record>
 
-        <record model="html.template" id="invoice_payment_dates_header_template">
-            <field name="name">Header</field>
-            <field name="type">header</field>
-            <field name="sequence" eval="99"/>
-            <field name="filename">account_reports/invoice_payment_dates/templates/header_macro.html</field>
-        </record>
-        <record model="html.template" id="invoice_payment_dates_html_template">
-            <field name="name">Invoice Payment Dates</field>
-            <field name="type">base</field>
-            <field name="sequence" eval="99"/>
-            <field name="filename">account_reports/invoice_payment_dates/templates/invoice_payment_dates.html</field>
-        </record>
-
         <record model="ir.action.report" id="report_invoice_payment_dates">
             <field name="name">Invoice Payment Dates</field>
+            <field name="model">account.invoice</field>
             <field name="report_name">account_reports.invoice_payment_dates</field>
-            <field name="html_template" ref="invoice_payment_dates_html_template"/>
-            <field name="html_header_template" ref="invoice_payment_dates_header_template"/>
             <field name="extension">pdf</field>
-            <field name="template_extension">jinja</field>
+            <field name="template_extension">html</field>
+            <field name="single" eval="False"/>
+            <field name="html_side_margin" eval="None"/>
         </record>
 
         <menuitem id="menu_print_invoice_payment_dates"
