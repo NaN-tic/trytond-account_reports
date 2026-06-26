@@ -3,12 +3,16 @@
 # license terms.
 from datetime import datetime
 
+from dominate.tags import div, header as header_tag, table, tbody, td, th, thead, tr
+
 from trytond.exceptions import UserError
 from trytond.i18n import gettext
 from trytond.model import ModelView, fields
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from trytond.modules.account_reports.common import TimeoutChecker, TimeoutException
-from trytond.modules.html_report.html_report import HTMLReport
+from trytond.modules.html_report.dominate_report import DominateReport
+from trytond.modules.html_report.engine import render as html_render
+from trytond.modules.html_report.i18n import _
 from trytond.pool import Pool
 from trytond.pyson import Bool, Eval, If
 from trytond.rpc import RPC
@@ -134,18 +138,143 @@ class PrintInvoicePaymentDates(Wizard):
         return 'end'
 
 
-class InvoicePaymentDatesReport(HTMLReport):
+class InvoicePaymentDatesReport(DominateReport):
     __name__ = 'account_reports.invoice_payment_dates'
+    page_orientation = 'portrait'
+    side_margin = 0.3
 
     @classmethod
     def __setup__(cls):
         super(InvoicePaymentDatesReport, cls).__setup__()
         cls.__rpc__['execute'] = RPC(False)
-        cls.side_margin = 0.3
 
     @classmethod
     def timeout_exception(cls):
         raise TimeoutException
+
+    @classmethod
+    def title(cls, action, data, records):
+        return '%s - %s - %s' % (
+            _('Invoice Payment Dates'),
+            data['parameters']['company'],
+            html_render(datetime.now()))
+
+    @classmethod
+    def css_body(cls, action, data, records):
+        css = super().css_body(action, data, records)
+        css += '''
+table.invoice-payment-dates {
+    table-layout: fixed;
+    width: 100%;
+}
+table.invoice-payment-dates th,
+table.invoice-payment-dates td {
+    word-wrap: break-word;
+}
+table.invoice-payment-dates .col-number { width: 7%; }
+table.invoice-payment-dates .col-reference { width: 6%; }
+table.invoice-payment-dates .col-invoice-date { width: 7%; }
+table.invoice-payment-dates .col-party { width: 12%; }
+table.invoice-payment-dates .col-state { width: 5%; }
+table.invoice-payment-dates .col-payment-type { width: 7%; }
+table.invoice-payment-dates .col-description { width: 15%; }
+table.invoice-payment-dates .col-amount { width: 6%; }
+table.invoice-payment-dates .col-due-date { width: 7%; }
+table.invoice-payment-dates .col-due-amount { width: 7%; }
+table.invoice-payment-dates .col-payment-date { width: 7%; }
+table.invoice-payment-dates .col-payment-days { width: 6%; }
+'''
+        return css
+
+    @classmethod
+    def header(cls, action, data, records):
+        parameters = data['parameters']
+        with header_tag(id='header') as container:
+            with div(style=(
+                    'padding-top:1cm;padding-left:2cm;text-align:left;'
+                    'font-size:9px;width:100%;font-family:"Arial";')):
+                div(_('Invoice Payment Dates'), cls='bold')
+                div(parameters['company'])
+                div(parameters['invoice_type'])
+                if parameters['periods']:
+                    div(parameters['periods'])
+                else:
+                    period_range = parameters['start_date']
+                    if parameters['start_date'] and parameters['end_date']:
+                        period_range += ' - '
+                    period_range += parameters['end_date']
+                    div(period_range)
+        return container
+
+    @classmethod
+    def body(cls, action, data, records):
+        container = div()
+        if data.get('output_format') != 'pdf':
+            container.add(cls.header(action, data, records))
+        container.add(cls.show_detail(data['records'], data['parameters']))
+        return container
+
+    @classmethod
+    def show_detail(cls, records, parameters):
+        detail_table = table(cls='border invoice-payment-dates')
+        with detail_table:
+            with thead():
+                with tr():
+                    th(_('Number'), cls='col-number')
+                    th(_('Reference'), cls='col-reference')
+                    th(_('Invoice Date'), cls='col-invoice-date')
+                    th(_('Party'), cls='col-party')
+                    th(_('State'), cls='col-state')
+                    th(_('Payment Type'), cls='col-payment-type')
+                    th(_('Description'), cls='col-description')
+                    th(_('Untaxed'), cls='col-amount',
+                        style='text-align: right;')
+                    th(_('Tax'), cls='col-amount', style='text-align: right;')
+                    th(_('Total'), cls='col-amount',
+                        style='text-align: right;')
+                    th(_('Due Date'), cls='col-due-date')
+                    th(_('Due Amount'), cls='col-due-amount',
+                        style='text-align: right;')
+                    th(_('Payment Date'), cls='col-payment-date')
+                    th(_('Payment Days'), cls='col-payment-days',
+                        style='text-align: right;')
+            with tbody():
+                if parameters['records_found']:
+                    for record in records:
+                        with tr():
+                            td(record['number'], cls='col-number no-wrap')
+                            td(record['reference'],
+                                cls='col-reference no-wrap')
+                            td(record['invoice_date'],
+                                cls='col-invoice-date no-wrap')
+                            td(record['party'], cls='col-party')
+                            td(record['state'], cls='col-state')
+                            td(record['payment_type'],
+                                cls='col-payment-type')
+                            td(record['description'],
+                                cls='col-description')
+                            td(html_render(record['untaxed_amount'],
+                                digits=record['currency_digits']),
+                                cls='col-amount right')
+                            td(html_render(record['tax_amount'],
+                                digits=record['currency_digits']),
+                                cls='col-amount right')
+                            td(html_render(record['total_amount'],
+                                digits=record['currency_digits']),
+                                cls='col-amount right')
+                            td(record['due_date'],
+                                cls='col-due-date no-wrap')
+                            td(html_render(record['due_amount'],
+                                digits=record['currency_digits']),
+                                cls='col-due-amount right')
+                            td(record['payment_date'],
+                                cls='col-payment-date no-wrap')
+                            td(record['payment_days'],
+                                cls='col-payment-days right')
+                else:
+                    with tr():
+                        td(_('No invoices found'), colspan='14')
+        return detail_table
 
     @classmethod
     def prepare(cls, data, checker):

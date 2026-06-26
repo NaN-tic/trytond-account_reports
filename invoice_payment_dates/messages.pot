@@ -45,67 +45,67 @@ msgstr ""
 msgid "Timeout"
 msgstr ""
 
-#: templates/header_macro.html:3 templates/invoice_payment_dates.html:4
+#: invoice_payment_dates.py:158 invoice_payment_dates.py:196
 msgid "Invoice Payment Dates"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:35
+#: invoice_payment_dates.py:223
 msgid "Number"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:36
+#: invoice_payment_dates.py:224
 msgid "Reference"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:37
+#: invoice_payment_dates.py:225
 msgid "Invoice Date"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:38
+#: invoice_payment_dates.py:226
 msgid "Party"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:39
+#: invoice_payment_dates.py:227
 msgid "State"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:40
+#: invoice_payment_dates.py:228
 msgid "Payment Type"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:41
+#: invoice_payment_dates.py:229
 msgid "Description"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:42
+#: invoice_payment_dates.py:230
 msgid "Untaxed"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:43
+#: invoice_payment_dates.py:232
 msgid "Tax"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:44
+#: invoice_payment_dates.py:233
 msgid "Total"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:45
+#: invoice_payment_dates.py:235
 msgid "Due Date"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:46
+#: invoice_payment_dates.py:236
 msgid "Due Amount"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:47
+#: invoice_payment_dates.py:238
 msgid "Payment Date"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:48
+#: invoice_payment_dates.py:239
 msgid "Payment Days"
 msgstr ""
 
-#: templates/invoice_payment_dates.html:73
+#: invoice_payment_dates.py:276
 msgid "No invoices found"
 msgstr ""
 
