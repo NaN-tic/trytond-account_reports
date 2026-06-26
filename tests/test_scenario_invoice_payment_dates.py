@@ -13,7 +13,6 @@ from trytond.modules.account.tests.tools import (
 from trytond.modules.account_invoice.tests.tools import (
     set_fiscalyear_invoice_sequences,
     )
-from trytond.modules.account_reports.common import TimeoutChecker
 from trytond.modules.company.tests.tools import create_company, get_company
 from trytond.pool import Pool
 from trytond.tests.test_tryton import drop_db
@@ -165,6 +164,7 @@ class TestInvoicePaymentDates(unittest.TestCase):
                 'account_reports.print_invoice_payment_dates', type='wizard')
             InvoicePaymentDatesReport = Pool().get(
                 'account_reports.invoice_payment_dates', type='report')
+            from trytond.modules.account_reports.common import TimeoutChecker
             company = Company.browse([company.id])[0]
             fiscalyear = FiscalYear.browse([fiscalyear.id])[0]
             period = Period.browse([period.id])[0]
