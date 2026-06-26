@@ -1,0 +1,12 @@
+<header>
+  <div style="padding-top:1cm;padding-left:2.0cm;text-align:left;font-size:9px;width:100%;font-family:'Arial';">
+    <div class="bold">{{ _('Invoice Payment Dates') }}</div>
+    <div>{{ data['parameters']['company'] }}</div>
+    <div>{{ data['parameters']['invoice_type'] }}</div>
+    {% if data['parameters']['periods'] %}
+      <div>{{ data['parameters']['periods'] }}</div>
+    {% else %}
+      <div>{{ data['parameters']['start_date'] }}{% if data['parameters']['start_date'] and data['parameters']['end_date'] %} - {% endif %}{{ data['parameters']['end_date'] }}</div>
+    {% endif %}
+  </div>
+</header>

@@ -1,0 +1,91 @@
+# Spanish translations for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-06-26 00:00+0000\n"
+"PO-Revision-Date: 2026-06-26 00:00+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: es\n"
+"Language-Team: es <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.15.0\n"
+
+msgid "Initial invoice date"
+msgstr "Fecha inicial de factura"
+
+msgid "Final invoice date"
+msgstr "Fecha final de factura"
+
+msgid "Customer Invoices"
+msgstr "Facturas de cliente"
+
+msgid "Supplier Invoices"
+msgstr "Facturas de proveedor"
+
+msgid "Invoice Type"
+msgstr "Tipo de factura"
+
+msgid "Output Format"
+msgstr "Tipo de fichero"
+
+msgid "Timeout"
+msgstr "Tiempo de espera"
+
+msgid "Invoice Payment Dates"
+msgstr "Fechas de pago de facturas"
+
+msgid "Number"
+msgstr "Número"
+
+msgid "Reference"
+msgstr "Referencia"
+
+msgid "Invoice Date"
+msgstr "Fecha factura"
+
+msgid "Party"
+msgstr "Tercero"
+
+msgid "State"
+msgstr "Estado"
+
+msgid "Payment Type"
+msgstr "Tipo de pago"
+
+msgid "Description"
+msgstr "Descripción"
+
+msgid "Untaxed"
+msgstr "Base imponible"
+
+msgid "Tax"
+msgstr "Impuestos"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Due Date"
+msgstr "Fecha de vencimiento"
+
+msgid "Due Amount"
+msgstr "Importe a vencimiento"
+
+msgid "Payment Date"
+msgstr "Fecha de pago"
+
+msgid "Payment Days"
+msgstr "Días de pago"
+
+msgid "No invoices found"
+msgstr "No se han encontrado facturas"
+
+msgid "Print Invoice Payment Dates"
+msgstr "Imprimir fechas de pago de facturas"
