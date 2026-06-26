@@ -18,7 +18,8 @@ from trytond.wizard import Button, StateReport, StateView, Wizard
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 
-from ..general_ledger.general_ledger import GeneralLedgerReport
+from trytond.modules.account_reports.general_ledger.general_ledger import (
+    GeneralLedgerReport)
 
 _ZERO = Decimal(0)
 

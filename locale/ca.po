@@ -688,3 +688,143 @@ msgstr "Cancel·la"
 msgctxt "wizard_button:account_reports.print_trial_balance,start,print_:"
 msgid "Print"
 msgstr "Imprimir"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,company:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,end_date:"
+msgid "Final invoice date"
+msgstr "Data final de factura"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Exercici fiscal"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Invoice Type"
+msgstr "Tipus de factura"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "Output Format"
+msgstr "Tipus de fitxer"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,periods:"
+msgid "Periods"
+msgstr "Períodes"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,start_date:"
+msgid "Initial invoice date"
+msgstr "Data inicial de factura"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,timeout:"
+msgid "Timeout"
+msgstr "Temps d'espera"
+
+msgctxt "help:account_reports.print_invoice_payment_dates.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"Si el càlcul de l'informe triga més del temps d'espera especificat (en "
+"segons), el procés s'aturarà automàticament."
+
+msgctxt "model:account_reports.print_invoice_payment_dates.start,name:"
+msgid "Print Invoice Payment Dates"
+msgstr "Imprimeix les dates de pagament de factures"
+
+msgctxt "model:ir.action,name:report_invoice_payment_dates"
+msgid "Invoice Payment Dates"
+msgstr "Dates de pagament de factures"
+
+msgctxt "model:ir.action,name:wizard_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "Imprimeix les dates de pagament de factures"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "Imprimeix les dates de pagament de factures"
+
+msgctxt "model:ir.ui.menu,name:menu_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "Imprimeix les dates de pagament de factures"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Description"
+msgstr "Descripció"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Due Amount"
+msgstr "Import a venciment"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Due Date"
+msgstr "Data de venciment"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Invoice Date"
+msgstr "Data factura"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Invoice Payment Dates"
+msgstr "Dates de pagament de factures"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "No invoices found"
+msgstr "No s'han trobat factures"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Number"
+msgstr "Número"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Party"
+msgstr "Tercer"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Payment Date"
+msgstr "Data de pagament"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Payment Days"
+msgstr "Dies de pagament"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Payment Type"
+msgstr "Tipus de pagament"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Reference"
+msgstr "Referència"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "State"
+msgstr "Estat"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Supplier Invoices"
+msgstr "Factures de proveïdor"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Customer Invoices"
+msgstr "Factures de client"
+
+msgctxt "selection:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Customer Invoices"
+msgstr "Factures de client"
+
+msgctxt "selection:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Supplier Invoices"
+msgstr "Factures de proveïdor"
+
+msgctxt "selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
