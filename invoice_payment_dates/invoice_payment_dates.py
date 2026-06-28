@@ -140,7 +140,7 @@ class PrintInvoicePaymentDates(Wizard):
 
 class InvoicePaymentDatesReport(DominateReport):
     __name__ = 'account_reports.invoice_payment_dates'
-    page_orientation = 'portrait'
+    page_orientation = 'landscape'
     side_margin = 0.3
 
     @classmethod
@@ -163,26 +163,49 @@ class InvoicePaymentDatesReport(DominateReport):
     def css_body(cls, action, data, records):
         css = super().css_body(action, data, records)
         css += '''
+@page {
+    size: A4 landscape;
+}
 table.invoice-payment-dates {
     table-layout: fixed;
     width: 100%;
+    font-size: 7.5px;
+    line-height: 1.05;
+}
+table.invoice-payment-dates .right {
+    float: none;
+    text-align: right;
 }
 table.invoice-payment-dates th,
 table.invoice-payment-dates td {
-    word-wrap: break-word;
+    overflow-wrap: normal;
+    word-wrap: normal;
+    word-break: normal;
 }
-table.invoice-payment-dates .col-number { width: 7%; }
-table.invoice-payment-dates .col-reference { width: 6%; }
-table.invoice-payment-dates .col-invoice-date { width: 7%; }
-table.invoice-payment-dates .col-party { width: 12%; }
-table.invoice-payment-dates .col-state { width: 5%; }
-table.invoice-payment-dates .col-payment-type { width: 7%; }
-table.invoice-payment-dates .col-description { width: 15%; }
-table.invoice-payment-dates .col-amount { width: 6%; }
-table.invoice-payment-dates .col-due-date { width: 7%; }
-table.invoice-payment-dates .col-due-amount { width: 7%; }
-table.invoice-payment-dates .col-payment-date { width: 7%; }
+table.invoice-payment-dates .col-number { width: 5%; }
+table.invoice-payment-dates .col-reference { width: 4%; }
+table.invoice-payment-dates .col-invoice-date { width: 5%; }
+table.invoice-payment-dates .col-party { width: 16%; }
+table.invoice-payment-dates .col-state { width: 4%; }
+table.invoice-payment-dates .col-payment-type { width: 5%; }
+table.invoice-payment-dates .col-description { width: 12%; }
+table.invoice-payment-dates .col-amount { width: 5%; }
+table.invoice-payment-dates .col-due-date { width: 6%; }
+table.invoice-payment-dates .col-due-amount { width: 5%; }
+table.invoice-payment-dates .col-payment-date { width: 6%; }
 table.invoice-payment-dates .col-payment-days { width: 6%; }
+table.invoice-payment-dates .col-number,
+table.invoice-payment-dates .col-reference,
+table.invoice-payment-dates .col-invoice-date,
+table.invoice-payment-dates .col-state,
+table.invoice-payment-dates .col-payment-type,
+table.invoice-payment-dates .col-amount,
+table.invoice-payment-dates .col-due-date,
+table.invoice-payment-dates .col-due-amount,
+table.invoice-payment-dates .col-payment-date,
+table.invoice-payment-dates .col-payment-days {
+    white-space: nowrap;
+}
 '''
         return css
 
