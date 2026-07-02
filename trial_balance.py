@@ -445,7 +445,7 @@ class TrialBalanceReport(DominateReport):
                 party_tree = {}
                 for party_id, value in account_values.items():
                     party = Party(party_id)
-                    key = party.name + (" [" + party.tax_identifier.code + "]"
+                    key = (party.name or '') + (" [" + party.tax_identifier.code + "]"
                         if party.tax_identifier else '')
                     if key in party_tree:
                         party_tree[key]['debit'] += value.get('debit')
@@ -549,17 +549,21 @@ class TrialBalanceReport(DominateReport):
                 # comapny, so it's needed any aprty that could have an account
                 # move.
                 domain = []
+                parties = None
                 if party_ids:
                     domain.append(('id', 'in', party_ids))
-                parties = Party.search(domain)
-                parties_subtitle = []
+                    parties = Party.search(domain)
 
-                for x in parties:
-                    if len(parties_subtitle) > 0:
-                        parties_subtitle.append('...')
-                        break
-                    parties_subtitle.append(x.name)
-                parties_subtitle = ', '.join(parties_subtitle)
+                    parties_name = []
+                    for x in parties:
+                        if len(parties_name) > 1:
+                            parties_name.append('...')
+                            break
+                        parties_name.append(x.name)
+                    parties_subtitle = ', '.join(parties_name)
+                else:
+                    parties_subtitle = gettext(
+                        'account_reports.msg_all_parties')
 
         digits = data.get('digits', None)
         max_digits = max(len(a.code) for a in accounts) if accounts else None
@@ -582,6 +586,7 @@ class TrialBalanceReport(DominateReport):
 
         init_main_tree = get_account_values(init_values, digits)
         main_tree = get_account_values(values, digits)
+        checker.check()
 
         # Obtain comparison fiscal year values based on accounts and
         # digits.
@@ -599,6 +604,7 @@ class TrialBalanceReport(DominateReport):
             init_comparison_tree = get_account_values(
                 init_comparison_values, digits)
             comparison_tree = get_account_values(comparison_values, digits)
+            checker.check()
 
         init_party_tree = {}
         party_tree = {}
@@ -632,6 +638,7 @@ class TrialBalanceReport(DominateReport):
                     init_comparison_party_values)
                 comparison_party_tree = get_account_party_values(
                     comparison_party_values)
+            checker.check()
 
         def remove_registers(tree, initial=False):
             if initial:
@@ -673,6 +680,13 @@ class TrialBalanceReport(DominateReport):
             comparison_all_codes = set(init_comparison_tree.keys()).union(
                 comparison_tree.keys())
             all_codes = all_codes.union(comparison_all_codes)
+        if split_parties:
+            # Keep accounts whose totals only come from party-specific moves.
+            all_codes.update(init_party_tree.keys())
+            all_codes.update(party_tree.keys())
+            if comparison_fiscalyear:
+                all_codes.update(init_comparison_party_tree.keys())
+                all_codes.update(comparison_party_tree.keys())
 
         account_codes_parties = set(
             list(init_party_tree.keys()) + list(party_tree.keys()))

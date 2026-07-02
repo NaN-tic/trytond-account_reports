@@ -522,6 +522,110 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assert_xlsx_report_rendered(TrialBalanceXlsxReport, data_xlsx)
 
     @with_transaction()
+    def test_trial_balance_split_parties(self):
+        'Test Trial Balance with split_parties=True'
+        pool = Pool()
+        PrintTrialBalance = pool.get(
+            'account_reports.print_trial_balance', type='wizard')
+        TrialBalanceReport = pool.get(
+            'account_reports.trial_balance', type='report')
+        TrialBalanceXlsxReport = pool.get(
+            'account_reports.trial_balance_xlsx', type='report')
+        company = create_company()
+        fiscalyear = self.create_moves(company)
+        period = fiscalyear.periods[0]
+        last_period = fiscalyear.periods[-1]
+
+        session_id, _, _ = PrintTrialBalance.create()
+        print_trial_balance = PrintTrialBalance(session_id)
+        print_trial_balance.start.company = company
+        print_trial_balance.start.fiscalyear = fiscalyear
+        print_trial_balance.start.start_period = period
+        print_trial_balance.start.end_period = last_period
+        print_trial_balance.start.comparison_fiscalyear = None
+        print_trial_balance.start.comparison_start_period = None
+        print_trial_balance.start.comparison_end_period = None
+        print_trial_balance.start.show_digits = 0
+        print_trial_balance.start.only_moves = False
+        print_trial_balance.start.moves_or_initial = False
+        print_trial_balance.start.hide_split_parties = False
+        print_trial_balance.start.split_parties = True
+        print_trial_balance.start.add_initial_balance = False
+        print_trial_balance.start.accounts = []
+        print_trial_balance.start.parties = []
+        print_trial_balance.start.output_format = 'pdf'
+        print_trial_balance.start.timeout = 30
+
+        _, data = print_trial_balance.do_print_(None)
+        self.assert_report_rendered(TrialBalanceReport, data, 'pdf')
+        data_xlsx = data.copy()
+        data_xlsx['output_format'] = 'xlsx'
+        self.assert_xlsx_report_rendered(TrialBalanceXlsxReport, data_xlsx)
+
+        checker = TimeoutChecker(30, TrialBalanceReport.timeout_exception)
+        records, parameters = TrialBalanceReport.prepare(data, checker)
+
+        self.assertTrue(parameters['split_parties'])
+        party_records = [r for r in records
+            if r['name'] in ('customer1', 'customer2',
+                'supplier1', 'supplier2')]
+        self.assertEqual(len(party_records), 4)
+
+        by_name = {r['name']: r for r in party_records}
+        self.assertEqual(by_name['customer1']['period_debit'], Decimal('100'))
+        self.assertEqual(by_name['customer2']['period_debit'], Decimal('500'))
+        self.assertEqual(by_name['supplier1']['period_credit'], Decimal('30'))
+        self.assertEqual(by_name['supplier2']['period_credit'], Decimal('100'))
+
+    @with_transaction()
+    def test_trial_balance_split_parties_with_filter(self):
+        'Test Trial Balance split_parties with specific parties'
+        pool = Pool()
+        PrintTrialBalance = pool.get(
+            'account_reports.print_trial_balance', type='wizard')
+        TrialBalanceReport = pool.get(
+            'account_reports.trial_balance', type='report')
+        company = create_company()
+        fiscalyear = self.create_moves(company)
+        period = fiscalyear.periods[0]
+        last_period = fiscalyear.periods[-1]
+        customer1, _, supplier1, _ = self.get_parties()
+
+        session_id, _, _ = PrintTrialBalance.create()
+        print_trial_balance = PrintTrialBalance(session_id)
+        print_trial_balance.start.company = company
+        print_trial_balance.start.fiscalyear = fiscalyear
+        print_trial_balance.start.start_period = period
+        print_trial_balance.start.end_period = last_period
+        print_trial_balance.start.comparison_fiscalyear = None
+        print_trial_balance.start.comparison_start_period = None
+        print_trial_balance.start.comparison_end_period = None
+        print_trial_balance.start.show_digits = 0
+        print_trial_balance.start.only_moves = False
+        print_trial_balance.start.moves_or_initial = False
+        print_trial_balance.start.hide_split_parties = False
+        print_trial_balance.start.split_parties = True
+        print_trial_balance.start.add_initial_balance = False
+        print_trial_balance.start.accounts = []
+        print_trial_balance.start.parties = [customer1.id, supplier1.id]
+        print_trial_balance.start.output_format = 'pdf'
+        print_trial_balance.start.timeout = 30
+
+        _, data = print_trial_balance.do_print_(None)
+        self.assert_report_rendered(TrialBalanceReport, data, 'pdf')
+
+        checker = TimeoutChecker(30, TrialBalanceReport.timeout_exception)
+        records, parameters = TrialBalanceReport.prepare(data, checker)
+
+        self.assertTrue(parameters['split_parties'])
+        party_names = {
+            r['name'] for r in records
+            if r['name'] in ('customer1', 'customer2',
+                'supplier1', 'supplier2')
+        }
+        self.assertEqual(party_names, {'customer1', 'supplier1'})
+
+    @with_transaction()
     def test_taxes_by_invoice_render(self):
         'Test Taxes by Invoice rendering'
         pool = Pool()
@@ -559,6 +663,151 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         data_xlsx = data.copy()
         data_xlsx['output_format'] = 'xlsx'
         self.assert_xlsx_report_rendered(TaxesByInvoiceXlsxReport, data_xlsx)
+
+    @with_transaction()
+    def test_open_move_lines(self):
+        'Test Open Move Lines'
+        pool = Pool()
+        Move = pool.get('account.move')
+        Line = pool.get('account.move.line')
+        PrintOpenMoveLines = pool.get(
+            'account_reports.print_open_move_lines', type='wizard')
+        OpenMoveLinesReport = pool.get(
+            'account_reports.open_move_lines', type='report')
+        OpenMoveLinesXlsxReport = pool.get(
+            'account_reports.open_move_lines_xlsx', type='report')
+
+        company = create_company()
+        fiscalyear = self.create_moves(company)
+        period = fiscalyear.periods[0]
+        last_period = fiscalyear.periods[-1]
+        journals = self.get_journals()
+        accounts = self.get_accounts(company)
+        receivable = accounts['receivable']
+        view = accounts['view']
+        customer1, customer2, _, _ = self.get_parties()
+
+        with set_company(company):
+            cash, = pool.get('account.account').create([{
+                        'name': 'Open Move Cash',
+                        'code': '57',
+                        'parent': view.id,
+                        'company': company.id,
+                        'type': accounts['expense'].type.id,
+                        'reconcile': False,
+                        }])
+
+        payments = Move.create([{
+                    'company': company.id,
+                    'period': period.id,
+                    'journal': journals['REV'].id,
+                    'date': period.end_date,
+                    'lines': [
+                        ('create', [{
+                                    'account': cash.id,
+                                    'debit': Decimal(200),
+                                    }, {
+                                    'party': customer2.id,
+                                    'account': receivable.id,
+                                    'credit': Decimal(200),
+                                    }]),
+                        ],
+                    }, {
+                    'company': company.id,
+                    'period': last_period.id,
+                    'journal': journals['REV'].id,
+                    'date': last_period.end_date,
+                    'lines': [
+                        ('create', [{
+                                    'account': cash.id,
+                                    'debit': Decimal(100),
+                                    }, {
+                                    'party': customer1.id,
+                                    'account': receivable.id,
+                                    'credit': Decimal(100),
+                                    }]),
+                        ],
+                    }])
+        Move.post(payments)
+
+        customer1_invoice, = Line.search([
+                ('account', '=', receivable.id),
+                ('party', '=', customer1.id),
+                ('debit', '=', Decimal(100)),
+                ('move.date', '=', period.start_date),
+                ])
+        customer2_invoice, = Line.search([
+                ('account', '=', receivable.id),
+                ('party', '=', customer2.id),
+                ('debit', '=', Decimal(200)),
+                ('move.date', '=', period.start_date),
+                ])
+        customer2_payment = next(
+            line for line in payments[0].lines if line.account == receivable)
+        customer1_payment = next(
+            line for line in payments[1].lines if line.account == receivable)
+
+        Line.reconcile([customer2_invoice, customer2_payment])
+        Line.reconcile([customer1_invoice, customer1_payment])
+
+        session_id, _, _ = PrintOpenMoveLines.create()
+        print_open_move_lines = PrintOpenMoveLines(session_id)
+        print_open_move_lines.start.company = company
+        print_open_move_lines.start.date = period.end_date
+        print_open_move_lines.start.parties = []
+        print_open_move_lines.start.accounts = [receivable.id]
+        print_open_move_lines.start.output_format = 'pdf'
+        print_open_move_lines.start.show_description = True
+        print_open_move_lines.start.timeout = 30
+        checker = TimeoutChecker(
+            print_open_move_lines.start.timeout,
+            OpenMoveLinesReport.timeout_exception)
+        _, data = print_open_move_lines.do_print_(None)
+
+        self.assert_report_rendered(OpenMoveLinesReport, data, 'pdf')
+        data_html = data.copy()
+        data_html['output_format'] = 'html'
+        self.assert_report_rendered(OpenMoveLinesReport, data_html, 'html')
+        data_xlsx = data.copy()
+        data_xlsx['output_format'] = 'xlsx'
+        self.assert_xlsx_report_rendered(OpenMoveLinesXlsxReport, data_xlsx)
+
+        records, parameters = OpenMoveLinesReport.prepare(data, checker)
+        self.assertEqual(data['company'], company.id)
+        self.assertEqual(data['date'], period.end_date)
+        self.assertEqual(data['accounts'], [receivable.id])
+        self.assertEqual(parameters['accounts'], receivable.code)
+        self.assertEqual(parameters['date'], period.end_date.strftime('%d/%m/%Y'))
+        self.assertEqual(len(records), 1)
+        record = next(iter(records.values()))
+        self.assertEqual(record['party'], customer1.rec_name)
+        self.assertEqual(len(record['lines']), 1)
+        self.assertEqual(record['total_debit'], Decimal('100.0'))
+        self.assertEqual(record['total_credit'], Decimal('0.0'))
+        self.assertEqual(record['total_balance'], Decimal('100.0'))
+
+        session_id, _, _ = PrintOpenMoveLines.create()
+        print_open_move_lines = PrintOpenMoveLines(session_id)
+        print_open_move_lines.start.company = company
+        print_open_move_lines.start.date = last_period.end_date
+        print_open_move_lines.start.parties = []
+        print_open_move_lines.start.accounts = [receivable.id]
+        print_open_move_lines.start.output_format = 'pdf'
+        print_open_move_lines.start.show_description = True
+        print_open_move_lines.start.timeout = 30
+        checker = TimeoutChecker(
+            print_open_move_lines.start.timeout,
+            OpenMoveLinesReport.timeout_exception)
+        _, data = print_open_move_lines.do_print_(None)
+        records, _ = OpenMoveLinesReport.prepare(data, checker)
+
+        self.assertEqual(len(records), 1)
+        record = next(iter(records.values()))
+        self.assertEqual(record['party'], customer2.rec_name)
+        self.assertEqual(len(record['lines']), 1)
+        self.assertEqual(record['total_debit'], Decimal('300.0'))
+        self.assertEqual(record['total_credit'], Decimal('0.0'))
+        self.assertEqual(record['total_balance'], Decimal('300.0'))
 
     @with_transaction()
     def test_journal(self):
