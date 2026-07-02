@@ -46,6 +46,7 @@ class PrintTrialBalanceStart(ModelView):
         states={
             'invisible': Bool(Eval('only_moves'))
         })
+    show_summary_lines = fields.Boolean('Show Summary Lines')
     accounts = fields.Many2Many('account.account', None, None, 'Accounts')
     hide_split_parties = fields.Boolean('Hide Split Parties')
     split_parties = fields.Boolean('Split Parties',
@@ -181,6 +182,10 @@ class PrintTrialBalanceStart(ModelView):
         config = Config(1)
         return config.default_timeout or 30
 
+    @staticmethod
+    def default_show_summary_lines():
+        return True
+
     @fields.depends('only_moves')
     def on_change_only_moves(self):
         if self.only_moves:
@@ -268,6 +273,7 @@ class PrintTrialBalance(Wizard):
             'add_initial_balance': self.start.add_initial_balance,
             'only_moves': self.start.only_moves,
             'moves_or_initial': self.start.moves_or_initial,
+            'show_summary_lines': self.start.show_summary_lines,
             'split_parties': self.start.split_parties,
             'accounts': [x.id for x in self.start.accounts],
             'parties': [x.id for x in self.start.parties],
@@ -836,6 +842,11 @@ class TrialBalanceReport(DominateReport):
         parameters['digits'] = digits or ''
         parameters['parties'] = parties_subtitle or ''
         parameters['accounts'] = accounts_subtitle or ''
+
+        parameters['show_summary_lines'] = data.get('show_summary_lines', True)
+        if not parameters['show_summary_lines']:
+            return records, parameters
+
         # Totals
         parameters['total_period_initial_balance'] = 0
         parameters['total_period_debit'] = 0
@@ -1002,6 +1013,10 @@ class TrialBalanceReport(DominateReport):
                             style='text-align: right;')
                         td(html_render(record['balance']),
                             style='text-align: right;')
+
+            if not parameters['show_summary_lines']:
+                return detail_table
+
             with tr():
                 td('')
                 td('')
@@ -1124,6 +1139,9 @@ class TrialBalanceXlsxReport(XlsxReport, metaclass=PoolMeta):
                     xls(record['balance']),
                     ]
             ws.append(row)
+
+        if not parameters['show_summary_lines']:
+            return save_workbook(wb)
 
         total_row = [
             '',

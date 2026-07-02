@@ -222,6 +222,10 @@ msgctxt "field:account_reports.print_trial_balance.start,add_initial_balance:"
 msgid "Add Initial Balance"
 msgstr "Añadir saldo inicial"
 
+msgctxt "field:account_reports.print_trial_balance.start,show_summary_lines:"
+msgid "Show Summary Lines"
+msgstr "Mostrar líneas de resumen"
+
 msgctxt "field:account_reports.print_trial_balance.start,company:"
 msgid "Company"
 msgstr "Empresa"
