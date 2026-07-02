@@ -3,6 +3,7 @@ from tempfile import NamedTemporaryFile
 from trytond.pool import Pool
 from trytond.report import Report
 from trytond.transaction import Transaction
+import re
 
 
 def save_workbook(workbook):
@@ -15,7 +16,8 @@ def save_workbook(workbook):
 def convert_str_to_float(value):
     if isinstance(value, str):
         try:
-            return float(value.replace(',', '.'))
+            normalized_value = re.sub(r'[.,](?=.*[.,])', '', value).replace(',', '.')
+            return float(normalized_value)
         except ValueError:
             return value
     return value
