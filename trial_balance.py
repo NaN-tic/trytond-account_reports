@@ -33,9 +33,15 @@ class PrintTrialBalanceStart(ModelView):
     __name__ = 'account_reports.print_trial_balance.start'
 
     fiscalyear = fields.Many2One('account.fiscalyear', 'Fiscal Year',
-            required=True)
+        states={
+            'invisible': Eval('start_date') | Eval('end_date'),
+            'required': ~Eval('start_date') & ~Eval('end_date'),
+            })
     comparison_fiscalyear = fields.Many2One('account.fiscalyear',
-            'Fiscal Year')
+        'Fiscal Year', states={
+            'invisible': Eval('comparison_start_date')
+                | Eval('comparison_end_date'),
+            })
     show_digits = fields.Integer('Digits', required=True)
     only_moves = fields.Boolean('Only Accounts With Move',
         states={
@@ -62,6 +68,9 @@ class PrintTrialBalanceStart(ModelView):
             },
         depends=['company'])
     start_period = fields.Many2One('account.period', 'Start Period',
+        states={
+            'invisible': Eval('start_date') | Eval('end_date'),
+            },
         domain=[
             ('fiscalyear', '=', Eval('fiscalyear')),
             If(Bool(Eval('end_period')),
@@ -70,6 +79,9 @@ class PrintTrialBalanceStart(ModelView):
                 ),
             ])
     end_period = fields.Many2One('account.period', 'End Period',
+        states={
+            'invisible': Eval('start_date') | Eval('end_date'),
+            },
         domain=[
             ('fiscalyear', '=', Eval('fiscalyear')),
             If(Bool(Eval('start_period')),
@@ -77,19 +89,57 @@ class PrintTrialBalanceStart(ModelView):
                 (),
                 )
             ])
+    start_date = fields.Date('Initial Posting Date',
+        states={
+            'invisible': Eval('start_period') | Eval('end_period'),
+            'required': ((Eval('start_date') | Eval('end_date'))
+                & ~Bool(Eval('start_period') | Eval('end_period'))),
+            })
+    end_date = fields.Date('Final Posting Date',
+        states={
+            'invisible': Eval('start_period') | Eval('end_period'),
+            'required': ((Eval('start_date') | Eval('end_date'))
+                & ~Bool(Eval('start_period') | Eval('end_period'))),
+            })
 
     comparison_start_period = fields.Many2One('account.period', 'Start Period',
+        states={
+            'invisible': Eval('comparison_start_date')
+                | Eval('comparison_end_date'),
+            },
         domain=[
             ('fiscalyear', '=', Eval('comparison_fiscalyear')),
             ('start_date', '<=', (Eval('comparison_end_period'),
                     'start_date')),
             ])
     comparison_end_period = fields.Many2One('account.period', 'End Period',
+        states={
+            'invisible': Eval('comparison_start_date')
+                | Eval('comparison_end_date'),
+            },
         domain=[
             ('fiscalyear', '=', Eval('comparison_fiscalyear')),
             ('start_date', '>=', (Eval('comparison_start_period'),
                     'start_date'))
             ])
+    comparison_start_date = fields.Date('Initial Posting Date',
+        states={
+            'invisible': Eval('comparison_start_period')
+                | Eval('comparison_end_period'),
+            'required': ((Eval('comparison_start_date')
+                    | Eval('comparison_end_date'))
+                & ~Bool(Eval('comparison_start_period')
+                    | Eval('comparison_end_period'))),
+            })
+    comparison_end_date = fields.Date('Final Posting Date',
+        states={
+            'invisible': Eval('comparison_start_period')
+                | Eval('comparison_end_period'),
+            'required': ((Eval('comparison_start_date')
+                    | Eval('comparison_end_date'))
+                & ~Bool(Eval('comparison_start_period')
+                    | Eval('comparison_end_period'))),
+            })
     output_format = fields.Selection([
             ('pdf', 'PDF'),
             ('html', 'HTML'),
@@ -126,46 +176,11 @@ class PrintTrialBalanceStart(ModelView):
 
     @staticmethod
     def default_start_period():
-        pool = Pool()
-        FiscalYear = pool.get('account.fiscalyear')
-        Period = pool.get('account.period')
-        try:
-            fiscalyear = FiscalYear.find(
-                Transaction().context.get('company'), test_state=False)
-        except FiscalYearNotFoundError:
-            return None
-
-        clause = [
-            ('fiscalyear', '=', fiscalyear),
-            ]
-        periods = Period.search(clause, order=[('start_date', 'ASC')],
-            limit=1)
-        if periods:
-            return periods[0].id
+        return None
 
     @staticmethod
     def default_end_period():
-        pool = Pool()
-        FiscalYear = pool.get('account.fiscalyear')
-        Period = pool.get('account.period')
-        try:
-            fiscalyear = FiscalYear.find(
-                Transaction().context.get('company'), test_state=False)
-        except FiscalYearNotFoundError:
-            return None
-
-        Date = Pool().get('ir.date')
-        date = Date.today()
-
-        clause = [
-            ('fiscalyear', '=', fiscalyear),
-            ('start_date', '<=', date),
-            ('end_date', '>=', date),
-            ]
-        periods = Period.search(clause, order=[('start_date', 'ASC')],
-            limit=1)
-        if periods:
-            return periods[0].id
+        return None
 
     @staticmethod
     def default_company():
@@ -234,22 +249,34 @@ class PrintTrialBalance(Wizard):
             ])
     print_ = StateReport('account_reports.trial_balance')
 
+    def _validate_date_range(self, start_date, end_date):
+        if start_date and end_date and start_date > end_date:
+            raise UserError(gettext('account_reports.msg_invalid_date_range'))
+
     def do_print_(self, action):
-        start_period = self.start.fiscalyear.periods[0].id
-        if self.start.start_period:
-            start_period = self.start.start_period.id
-        end_period = self.start.fiscalyear.periods[-1].id
-        if self.start.end_period:
-            end_period = self.start.end_period.id
+        self._validate_date_range(self.start.start_date, self.start.end_date)
+        self._validate_date_range(
+            self.start.comparison_start_date,
+            self.start.comparison_end_date)
+        start_period = end_period = None
+        if not (self.start.start_date and self.start.end_date):
+            start_period = (self.start.start_period.id if self.start.start_period
+                else None)
+            end_period = (self.start.end_period.id if self.start.end_period
+                else None)
         comparison_start_period = None
-        if self.start.comparison_start_period:
+        if self.start.comparison_start_date and self.start.comparison_end_date:
+            comparison_start_period = None
+        elif self.start.comparison_start_period:
             comparison_start_period = self.start.comparison_start_period.id
         elif (self.start.comparison_fiscalyear
                 and self.start.comparison_fiscalyear.periods):
             comparison_start_period = (
                 self.start.comparison_fiscalyear.periods[0].id)
         comparison_end_period = None
-        if self.start.comparison_end_period:
+        if self.start.comparison_start_date and self.start.comparison_end_date:
+            comparison_end_period = None
+        elif self.start.comparison_end_period:
             comparison_end_period = self.start.comparison_end_period.id
         elif (self.start.comparison_fiscalyear
                 and self.start.comparison_fiscalyear.periods):
@@ -257,13 +284,18 @@ class PrintTrialBalance(Wizard):
                 self.start.comparison_fiscalyear.periods[-1].id)
         data = {
             'company': self.start.company.id,
-            'fiscalyear': self.start.fiscalyear.id,
+            'fiscalyear': (self.start.fiscalyear.id if self.start.fiscalyear
+                else None),
             'comparison_fiscalyear': (self.start.comparison_fiscalyear and
                 self.start.comparison_fiscalyear.id or None),
             'start_period': start_period,
             'end_period': end_period,
+            'start_date': self.start.start_date,
+            'end_date': self.start.end_date,
             'comparison_start_period': comparison_start_period,
             'comparison_end_period': comparison_end_period,
+            'comparison_start_date': self.start.comparison_start_date,
+            'comparison_end_date': self.start.comparison_end_date,
             'digits': self.start.show_digits or None,
             'add_initial_balance': self.start.add_initial_balance,
             'only_moves': self.start.only_moves,
@@ -450,15 +482,68 @@ class TrialBalanceReport(DominateReport):
                 tree[account.code] = party_tree
             return tree
 
-        # Fiscalyear
+        def subtract_values(values, initial_values):
+            result = {}
+            account_ids = set(values.keys()).union(initial_values.keys())
+            for account_id in account_ids:
+                result[account_id] = {
+                    'credit': (values.get(account_id, {}).get('credit', _ZERO)
+                        - initial_values.get(account_id, {}).get(
+                            'credit', _ZERO)),
+                    'debit': (values.get(account_id, {}).get('debit', _ZERO)
+                        - initial_values.get(account_id, {}).get(
+                            'debit', _ZERO)),
+                    'balance': (values.get(account_id, {}).get('balance', _ZERO)
+                        - initial_values.get(account_id, {}).get(
+                            'balance', _ZERO)),
+                    }
+            return result
+
+        def subtract_party_values(values, initial_values):
+            result = {}
+            account_ids = set(values.keys()).union(initial_values.keys())
+            for account_id in account_ids:
+                result[account_id] = {}
+                party_ids = (set(values.get(account_id, {}).keys())
+                    .union(initial_values.get(account_id, {}).keys()))
+                for party_id in party_ids:
+                    result[account_id][party_id] = {
+                        'credit': (values.get(account_id, {}).get(
+                                party_id, {}).get('credit', _ZERO)
+                            - initial_values.get(account_id, {}).get(
+                                party_id, {}).get('credit', _ZERO)),
+                        'debit': (values.get(account_id, {}).get(
+                                party_id, {}).get('debit', _ZERO)
+                            - initial_values.get(account_id, {}).get(
+                                party_id, {}).get('debit', _ZERO)),
+                        'balance': (values.get(account_id, {}).get(
+                                party_id, {}).get('balance', _ZERO)
+                            - initial_values.get(account_id, {}).get(
+                                party_id, {}).get('balance', _ZERO)),
+                        }
+            return result
+
+        # Main period or date range
         fiscalyear = (FiscalYear(data['fiscalyear']) if data.get('fiscalyear')
             else None)
-        if not fiscalyear:
+        start_date = data.get('start_date')
+        end_date = data.get('end_date')
+        use_date_range = bool(start_date and end_date)
+        if not fiscalyear and not use_date_range:
             raise UserError(gettext(
                 'account_reports.msg_missing_fiscalyear'))
 
         comparison_fiscalyear = (FiscalYear(data['comparison_fiscalyear'])
             if data.get('comparison_fiscalyear') else None)
+        comparison_start_date = data.get('comparison_start_date')
+        comparison_end_date = data.get('comparison_end_date')
+        comparison_use_date_range = bool(
+            comparison_start_date and comparison_end_date)
+        has_comparison = bool(
+            comparison_fiscalyear
+            or data.get('comparison_start_period')
+            or data.get('comparison_end_period')
+            or comparison_use_date_range)
 
         # Company
         if data.get('company'):
@@ -473,32 +558,49 @@ class TrialBalanceReport(DominateReport):
             if data.get('start_period') else None)
         end_period = (Period(data['end_period']) if data.get('end_period')
             else None)
-        if not start_period:
-            start_period = Period.find(company, fiscalyear.start_date,
-                test_state=True)
-        if not end_period:
-            end_period = Period.find(company, fiscalyear.end_date,
-                test_state=True)
-        initial_balance_date = start_period.start_date - timedelta(days=1)
-        periods = [x.id for x in fiscalyear.get_periods(start_period,
-            end_period)]
+        periods = None
+        if not use_date_range:
+            if not start_period:
+                start_period = Period.find(company, fiscalyear.start_date,
+                    test_state=True)
+            if not end_period:
+                end_period = Period.find(company, fiscalyear.end_date,
+                    test_state=True)
+            range_start_date = start_period.start_date
+            range_end_date = end_period.end_date
+            periods = [x.id for x in fiscalyear.get_periods(start_period,
+                end_period)]
+        else:
+            range_start_date = start_date
+            range_end_date = end_date
+        initial_balance_date = range_start_date - timedelta(days=1)
 
-        if comparison_fiscalyear:
+        comparison_start_period = comparison_end_period = None
+        comparison_periods = None
+        if has_comparison:
             comparison_start_period = (Period(data['comparison_start_period'])
                 if data.get('comparison_start_period') else None)
             comparison_end_period = (Period(data['comparison_end_period'])
                 if data.get('comparison_end_period') else None)
-            if not comparison_start_period:
-                comparison_start_period = Period.find(company,
-                    comparison_fiscalyear.start_date, test_state=True)
-            if not comparison_end_period:
-                comparison_end_period = Period.find(company,
-                    comparison_fiscalyear.end_date, test_state=True)
-            init_comparison_date = (comparison_start_period.start_date -
-                timedelta(days=1))
-            comparison_periods = [x.id for x in
-                comparison_fiscalyear.get_periods(
-                    comparison_start_period, comparison_end_period)]
+            if not comparison_use_date_range:
+                if not comparison_fiscalyear:
+                    raise UserError(gettext(
+                        'account_reports.msg_missing_fiscalyear'))
+                if not comparison_start_period:
+                    comparison_start_period = Period.find(company,
+                        comparison_fiscalyear.start_date, test_state=True)
+                if not comparison_end_period:
+                    comparison_end_period = Period.find(company,
+                        comparison_fiscalyear.end_date, test_state=True)
+                comparison_range_start_date = comparison_start_period.start_date
+                comparison_range_end_date = comparison_end_period.end_date
+                comparison_periods = [x.id for x in
+                    comparison_fiscalyear.get_periods(
+                        comparison_start_period, comparison_end_period)]
+            else:
+                comparison_range_start_date = comparison_start_date
+                comparison_range_end_date = comparison_end_date
+            init_comparison_date = comparison_range_start_date - timedelta(days=1)
 
         # Possible parties selected
         split_parties = data.get('split_parties', False)
@@ -569,14 +671,21 @@ class TrialBalanceReport(DominateReport):
 
         exclude_party_moves = True if party_ids else False
         # Obtain main fiscal year values based on accounts and digits.
-        with Transaction().set_context(periods=periods):
-            values = Account.html_read_account_vals(accounts,
-                fiscalyear.company, with_moves=with_moves,
-                exclude_party_moves=exclude_party_moves)
         with Transaction().set_context(date=initial_balance_date):
             init_values = Account.html_read_account_vals(accounts,
-                fiscalyear.company, with_moves=with_moves,
+                company, with_moves=with_moves,
                 exclude_party_moves=exclude_party_moves)
+        if periods is not None:
+            with Transaction().set_context(periods=periods):
+                values = Account.html_read_account_vals(accounts,
+                    company, with_moves=with_moves,
+                    exclude_party_moves=exclude_party_moves)
+        else:
+            with Transaction().set_context(date=range_end_date):
+                end_values = Account.html_read_account_vals(accounts,
+                    company, with_moves=with_moves,
+                    exclude_party_moves=exclude_party_moves)
+            values = subtract_values(end_values, init_values)
 
         init_main_tree = get_account_values(init_values, digits)
         main_tree = get_account_values(values, digits)
@@ -586,15 +695,23 @@ class TrialBalanceReport(DominateReport):
         # digits.
         init_comparison_tree = {}
         comparison_tree = {}
-        if comparison_fiscalyear:
-            with Transaction().set_context(periods=comparison_periods):
-                comparison_values = Account.html_read_account_vals(
-                    accounts, fiscalyear.company, with_moves=with_moves,
-                    exclude_party_moves=exclude_party_moves)
+        if has_comparison:
             with Transaction().set_context(date=init_comparison_date):
                 init_comparison_values = Account.html_read_account_vals(
-                    accounts, fiscalyear.company, with_moves=with_moves,
+                    accounts, company, with_moves=with_moves,
                     exclude_party_moves=exclude_party_moves)
+            if comparison_periods is not None:
+                with Transaction().set_context(periods=comparison_periods):
+                    comparison_values = Account.html_read_account_vals(
+                        accounts, company, with_moves=with_moves,
+                        exclude_party_moves=exclude_party_moves)
+            else:
+                with Transaction().set_context(date=comparison_range_end_date):
+                    comparison_end_values = Account.html_read_account_vals(
+                        accounts, company, with_moves=with_moves,
+                        exclude_party_moves=exclude_party_moves)
+                comparison_values = subtract_values(comparison_end_values,
+                    init_comparison_values)
             init_comparison_tree = get_account_values(
                 init_comparison_values, digits)
             comparison_tree = get_account_values(comparison_values, digits)
@@ -608,26 +725,43 @@ class TrialBalanceReport(DominateReport):
         if split_parties:
             with Transaction().set_context(date=initial_balance_date):
                 init_party_values = Party.html_get_account_values_by_party(
-                    parties, accounts, fiscalyear.company)
-            with Transaction().set_context(fiscalyear=fiscalyear.id,
-                    periods=periods):
-                party_values = Party.html_get_account_values_by_party(parties,
-                    accounts, fiscalyear.company)
+                    parties, accounts, company)
+            if periods is not None:
+                with Transaction().set_context(fiscalyear=fiscalyear.id,
+                        periods=periods):
+                    party_values = Party.html_get_account_values_by_party(
+                        parties, accounts, company)
+            else:
+                with Transaction().set_context(date=range_end_date):
+                    end_party_values = Party.html_get_account_values_by_party(
+                        parties, accounts, company)
+                party_values = subtract_party_values(end_party_values,
+                    init_party_values)
 
             init_party_tree = get_account_party_values(init_party_values)
             party_tree = get_account_party_values(party_values)
 
-            if comparison_fiscalyear:
+            if has_comparison:
                 with Transaction().set_context(date=init_comparison_date):
                     init_comparison_party_values = (
                         Party.html_get_account_values_by_party(parties,
-                            accounts, fiscalyear.company))
-                with Transaction().set_context(
-                        fiscalyear=comparison_fiscalyear.id,
-                        periods=comparison_periods):
-                    comparison_party_values = (
-                        Party.html_get_account_values_by_party(parties,
-                            accounts, comparison_fiscalyear.company))
+                            accounts, company))
+                if comparison_periods is not None:
+                    with Transaction().set_context(
+                            fiscalyear=comparison_fiscalyear.id,
+                            periods=comparison_periods):
+                        comparison_party_values = (
+                            Party.html_get_account_values_by_party(parties,
+                                accounts, company))
+                else:
+                    with Transaction().set_context(
+                            date=comparison_range_end_date):
+                        comparison_end_party_values = (
+                            Party.html_get_account_values_by_party(parties,
+                                accounts, company))
+                    comparison_party_values = subtract_party_values(
+                        comparison_end_party_values,
+                        init_comparison_party_values)
                 init_comparison_party_tree = get_account_party_values(
                     init_comparison_party_values)
                 comparison_party_tree = get_account_party_values(
@@ -650,7 +784,7 @@ class TrialBalanceReport(DominateReport):
         init_main_tree = remove_registers(init_main_tree, initial=True)
         for code, value in init_party_tree.items():
             init_party_tree[code] = remove_registers(value, initial=True)
-        if comparison_fiscalyear:
+        if has_comparison:
             init_comparison_tree = (
                 remove_registers(init_comparison_tree, initial=True))
             for code, value in init_comparison_party_tree.items():
@@ -660,7 +794,7 @@ class TrialBalanceReport(DominateReport):
             main_tree = remove_registers(main_tree)
             for code, value in party_tree.items():
                 party_tree[code] = remove_registers(value)
-            if comparison_fiscalyear:
+            if has_comparison:
                 comparison_tree = (
                     remove_registers(comparison_tree))
                 comparison_party_tree = (
@@ -668,7 +802,7 @@ class TrialBalanceReport(DominateReport):
 
         # Get all the account codes to print in the report.
         all_codes = set(init_main_tree.keys()).union(main_tree.keys())
-        if comparison_fiscalyear:
+        if has_comparison:
             # if comaprission fiscalyear is selected, need to add the possible
             # extra accounts in the comparision.
             comparison_all_codes = set(init_comparison_tree.keys()).union(
@@ -678,7 +812,7 @@ class TrialBalanceReport(DominateReport):
             # Keep accounts whose totals only come from party-specific moves.
             all_codes.update(init_party_tree.keys())
             all_codes.update(party_tree.keys())
-            if comparison_fiscalyear:
+            if has_comparison:
                 all_codes.update(init_comparison_party_tree.keys())
                 all_codes.update(comparison_party_tree.keys())
 
@@ -695,7 +829,7 @@ class TrialBalanceReport(DominateReport):
                 all_parties[code] = []
             for party in value.keys():
                 all_parties[code].append(party)
-        if comparison_fiscalyear:
+        if has_comparison:
             # if comaprission fiscalyear is selected, need to add the possible
             # extra accounts in the comparision.
             for code, value in init_comparison_party_tree.items():
@@ -814,16 +948,26 @@ class TrialBalanceReport(DominateReport):
                             add_initial_balance)
                         records.append(record)
         parameters = {}
-        parameters['second_balance'] = comparison_fiscalyear and True or False
-        parameters['fiscalyear'] = fiscalyear.name
-        parameters['comparison_fiscalyear'] = (comparison_fiscalyear and
-            comparison_fiscalyear.name or '')
+        parameters['second_balance'] = has_comparison
+        parameters['fiscalyear'] = fiscalyear.name if fiscalyear else ''
+        parameters['comparison_fiscalyear'] = (comparison_fiscalyear.name
+            if comparison_fiscalyear else '')
         parameters['start_period'] = start_period and start_period.name or ''
         parameters['end_period'] = end_period and end_period.name or ''
-        parameters['comparison_start_period'] = (comparison_start_period.name
-            if comparison_fiscalyear else '')
-        parameters['comparison_end_period'] = (comparison_end_period.name
-            if comparison_fiscalyear else '')
+        parameters['start_date'] = (start_date.strftime('%d/%m/%Y')
+            if use_date_range else '')
+        parameters['end_date'] = (end_date.strftime('%d/%m/%Y')
+            if use_date_range else '')
+        parameters['comparison_start_period'] = (
+            comparison_start_period.name if comparison_start_period else '')
+        parameters['comparison_end_period'] = (
+            comparison_end_period.name if comparison_end_period else '')
+        parameters['comparison_start_date'] = (
+            comparison_start_date.strftime('%d/%m/%Y')
+            if comparison_use_date_range else '')
+        parameters['comparison_end_date'] = (
+            comparison_end_date.strftime('%d/%m/%Y')
+            if comparison_use_date_range else '')
         parameters['company'] = company and company.rec_name or ''
         parameters['company_rec_name'] = parameters['company']
         parameters['company_vat'] = (company and
@@ -929,15 +1073,24 @@ class TrialBalanceReport(DominateReport):
             with table():
                 with tbody():
                     with tr():
-                        td(_('Main Balance %s: From: %s To: %s')
-                            % (p['fiscalyear'], p['start_period'],
-                                p['end_period']))
-                    if p['comparison_fiscalyear'] != '':
+                        if p['start_date']:
+                            td(_('Main Balance %s: From: %s To: %s')
+                                % ('', p['start_date'], p['end_date']))
+                        else:
+                            td(_('Main Balance %s: From: %s To: %s')
+                                % (p['fiscalyear'], p['start_period'],
+                                    p['end_period']))
+                    if p['comparison_start_date'] or p['comparison_fiscalyear'] != '':
                         with tr():
-                            td(_('Comparision Balance %s: From: %s To: %s')
-                                % (p['comparison_fiscalyear'],
-                                    p['comparison_start_period'],
-                                    p['comparison_end_period']))
+                            if p['comparison_start_date']:
+                                td(_('Comparision Balance %s: From: %s To: %s')
+                                    % ('', p['comparison_start_date'],
+                                        p['comparison_end_date']))
+                            else:
+                                td(_('Comparision Balance %s: From: %s To: %s')
+                                    % (p['comparison_fiscalyear'],
+                                        p['comparison_start_period'],
+                                        p['comparison_end_period']))
                     with tr():
                         if p['accounts'] != '':
                             td(_('Accounts: %s') % p['accounts'])
@@ -954,7 +1107,7 @@ class TrialBalanceReport(DominateReport):
 
     @classmethod
     def show_detail(cls, records, parameters):
-        comparison = parameters['comparison_fiscalyear'] != ''
+        comparison = parameters['second_balance']
         detail_table = table()
         with detail_table:
             if comparison:
@@ -1080,14 +1233,23 @@ class TrialBalanceXlsxReport(XlsxReport, metaclass=PoolMeta):
             html_render(datetime.now())])
         ws.append(['%s: %s' % (
             parameters['company_vat_label'], parameters['company_vat'])])
-        ws.append([_('Main Balance %s: From: %s To: %s')
-            % (parameters['fiscalyear'], parameters['start_period'],
-                parameters['end_period'])])
+        if parameters['start_date']:
+            ws.append([_('Main Balance %s: From: %s To: %s')
+                % ('', parameters['start_date'], parameters['end_date'])])
+        else:
+            ws.append([_('Main Balance %s: From: %s To: %s')
+                % (parameters['fiscalyear'], parameters['start_period'],
+                    parameters['end_period'])])
         if comparison:
-            ws.append([_('Comparision Balance %s: From: %s To: %s')
-                % (parameters['comparison_fiscalyear'],
-                    parameters['comparison_start_period'],
-                    parameters['comparison_end_period'])])
+            if parameters['comparison_start_date']:
+                ws.append([_('Comparision Balance %s: From: %s To: %s')
+                    % ('', parameters['comparison_start_date'],
+                        parameters['comparison_end_date'])])
+            else:
+                ws.append([_('Comparision Balance %s: From: %s To: %s')
+                    % (parameters['comparison_fiscalyear'],
+                        parameters['comparison_start_period'],
+                        parameters['comparison_end_period'])])
         ws.append([])
 
         headers = [

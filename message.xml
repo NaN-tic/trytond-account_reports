@@ -19,6 +19,9 @@ Please proceed to renumber the records before consulting the journal report.</fi
       <record model="ir.message" id="msg_missing_fiscalyear">
           <field name="text">The fiscalyear selected it is not valid.</field>
       </record>
+      <record model="ir.message" id="msg_invalid_date_range">
+          <field name="text">The initial posting date must be before or equal to the final posting date.</field>
+      </record>
       <record model="ir.message" id="msg_not_deductible_tax">
           <field name="text">Not Deductible VAT</field>
       </record>
