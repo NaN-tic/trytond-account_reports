@@ -689,6 +689,10 @@ msgctxt "model:ir.message,text:msg_missing_fiscalyear"
 msgid "The fiscalyear selected it is not valid."
 msgstr "L'any fiscal seleccionat no és vàlid."
 
+msgctxt "model:ir.message,text:msg_invalid_date_range"
+msgid "The initial posting date must be before or equal to the final posting date."
+msgstr "La data de comptabilització inicial ha de ser anterior o igual a la data de comptabilització final."
+
 msgctxt "model:ir.message,text:msg_all_parties"
 msgid "All"
 msgstr "Tots"

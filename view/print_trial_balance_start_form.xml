@@ -26,6 +26,10 @@ copyright notices and license terms. -->
     <field name="start_period"/>
     <label name="end_period"/>
     <field name="end_period"/>
+    <label name="start_date"/>
+    <field name="start_date"/>
+    <label name="end_date"/>
+    <field name="end_date"/>
 
     <group id="second_balance" string="Comparison Period" colspan="4">
         <label name="comparison_fiscalyear"/>
@@ -35,6 +39,10 @@ copyright notices and license terms. -->
         <field name="comparison_start_period"/>
         <label name="comparison_end_period"/>
         <field name="comparison_end_period"/>
+        <label name="comparison_start_date"/>
+        <field name="comparison_start_date"/>
+        <label name="comparison_end_date"/>
+        <field name="comparison_end_date"/>
     </group>
 
     <label name="output_format"/>
