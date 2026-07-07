@@ -1296,21 +1296,6 @@ msgctxt ""
 msgid "With movements"
 msgstr "Amb moviments"
 
-msgctxt ""
-"selection:account_reports.print_abreviated_journal.start,output_format:"
-msgid "HTML"
-msgstr "HTML"
-
-msgctxt ""
-"selection:account_reports.print_abreviated_journal.start,output_format:"
-msgid "PDF"
-msgstr "PDF"
-
-msgctxt ""
-"selection:account_reports.print_abreviated_journal.start,output_format:"
-msgid "Excel"
-msgstr "Excel"
-
 msgctxt "view:account_reports.print_abreviated_journal.start:"
 msgid "Print Abreviated Journal"
 msgstr "Imprimeix diari abreviat"
