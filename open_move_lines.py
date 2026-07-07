@@ -1,3 +1,4 @@
+
 # This file is part of account_reports for tryton.  The COPYRIGHT file
 # at the top level of this repository contains the full copyright notices and
 # license terms.
@@ -15,7 +16,8 @@ from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import XlsxReport, convert_str_to_float, save_workbook
 from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.html_report.engine import render as html_render
-from trytond.modules.html_report.i18n import _
+from trytond.modules.xgettext import _
+
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
 from trytond.rpc import RPC
@@ -24,7 +26,6 @@ from trytond.transaction import Transaction
 from trytond.wizard import Button, StateReport, StateView, Wizard
 
 _ZERO = Decimal(0)
-
 
 class PrintOpenMoveLinesStart(ModelView):
     'Print Open Move Lines'
@@ -77,7 +78,6 @@ class PrintOpenMoveLinesStart(ModelView):
     def default_show_description():
         return False
 
-
 class PrintOpenMoveLines(Wizard):
     'Print Open Move Lines'
     __name__ = 'account_reports.print_open_move_lines'
@@ -126,7 +126,6 @@ class PrintOpenMoveLines(Wizard):
             'accounts': list(set(account_ids)),
             'parties': party_ids,
             }
-
 
 class OpenMoveLinesReport(DominateReport):
     __name__ = 'account_reports.open_move_lines'
@@ -487,7 +486,6 @@ class OpenMoveLinesReport(DominateReport):
             data['records'],
             data['parameters'].get('show_description', True)))
         return container
-
 
 class OpenMoveLinesXlsxReport(XlsxReport, metaclass=PoolMeta):
     __name__ = 'account_reports.open_move_lines_xlsx'
