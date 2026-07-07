@@ -521,6 +521,60 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         data_xlsx['output_format'] = 'xlsx'
         self.assert_xlsx_report_rendered(TrialBalanceXlsxReport, data_xlsx)
 
+        checker = TimeoutChecker(30, TrialBalanceReport.timeout_exception)
+        records, parameters = TrialBalanceReport.prepare(data, checker)
+        self.assertTrue(records)
+        self.assertEqual(parameters['start_period'], period.name)
+        self.assertEqual(parameters['end_period'], last_period.name)
+        self.assertEqual(parameters['start_date'], '')
+        self.assertEqual(parameters['end_date'], '')
+
+        session_id, _, _ = PrintTrialBalance.create()
+        print_trial_balance = PrintTrialBalance(session_id)
+        print_trial_balance.start.company = company
+        print_trial_balance.start.fiscalyear = None
+        print_trial_balance.start.start_period = None
+        print_trial_balance.start.end_period = None
+        print_trial_balance.start.start_date = period.start_date
+        print_trial_balance.start.end_date = period.end_date
+        print_trial_balance.start.comparison_fiscalyear = None
+        print_trial_balance.start.comparison_start_period = None
+        print_trial_balance.start.comparison_end_period = None
+        print_trial_balance.start.comparison_start_date = last_period.start_date
+        print_trial_balance.start.comparison_end_date = last_period.end_date
+        print_trial_balance.start.show_digits = 0
+        print_trial_balance.start.only_moves = False
+        print_trial_balance.start.moves_or_initial = False
+        print_trial_balance.start.hide_split_parties = False
+        print_trial_balance.start.split_parties = False
+        print_trial_balance.start.add_initial_balance = False
+        print_trial_balance.start.accounts = []
+        print_trial_balance.start.parties = []
+        print_trial_balance.start.output_format = 'pdf'
+        print_trial_balance.start.timeout = 30
+
+        _, data = print_trial_balance.do_print_(None)
+        records, parameters = TrialBalanceReport.prepare(data, checker)
+        self.assertEqual(data['start_date'], period.start_date)
+        self.assertEqual(data['end_date'], period.end_date)
+        self.assertEqual(data['comparison_start_date'], last_period.start_date)
+        self.assertEqual(data['comparison_end_date'], last_period.end_date)
+        self.assertEqual(data['start_period'], None)
+        self.assertEqual(data['end_period'], None)
+        self.assertTrue(parameters['second_balance'])
+        self.assertEqual(parameters['start_date'], period.start_date.strftime('%d/%m/%Y'))
+        self.assertEqual(parameters['end_date'], period.end_date.strftime('%d/%m/%Y'))
+        self.assertEqual(parameters['comparison_start_date'], last_period.start_date.strftime('%d/%m/%Y'))
+        self.assertEqual(parameters['comparison_end_date'], last_period.end_date.strftime('%d/%m/%Y'))
+        self.assertEqual(parameters['start_period'], '')
+        self.assertEqual(parameters['end_period'], '')
+        self.assertEqual(parameters['comparison_start_period'], '')
+        self.assertEqual(parameters['comparison_end_period'], '')
+        self.assertTrue(any(r['period_debit'] for r in records))
+        self.assertTrue(any(r['period_credit'] for r in records))
+        self.assertTrue(any(r['debit'] for r in records))
+        self.assertTrue(any(r['credit'] for r in records))
+
     @with_transaction()
     def test_trial_balance_split_parties(self):
         'Test Trial Balance with split_parties=True'
