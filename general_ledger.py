@@ -1,3 +1,4 @@
+
 # This file is part of account_reports for tryton.  The COPYRIGHT file
 # at the top level of this repository contains the full copyright notices and
 # license terms.
@@ -18,7 +19,8 @@ from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
 from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.html_report.engine import render as html_render
-from trytond.modules.html_report.i18n import _
+from trytond.modules.xgettext import _
+
 from trytond.rpc import RPC
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from openpyxl import Workbook
@@ -26,7 +28,6 @@ from dominate.util import raw
 from dominate.tags import div, header as header_tag, table, thead, tbody, tr, td, th
 
 _ZERO = Decimal(0)
-
 
 class PrintGeneralLedgerStart(ModelView):
     'Print General Ledger'
@@ -148,7 +149,6 @@ class PrintGeneralLedgerStart(ModelView):
         if self.accounts:
             self.all_accounts = False
 
-
 class PrintGeneralLedger(Wizard):
     'Print General Ledger'
     __name__ = 'account_reports.print_general_ledger'
@@ -206,7 +206,6 @@ class PrintGeneralLedger(Wizard):
             'accounts': account_ids,
             'parties': party_ids,
             }
-
 
 class GeneralLedgerReport(DominateReport):
     __name__ = 'account_reports.general_ledger'
@@ -898,7 +897,6 @@ class GeneralLedgerReport(DominateReport):
             data['records'],
             data['parameters'].get('show_description', True)))
         return container
-
 
 class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
     __name__ = 'account_reports.general_ledger_xlsx'

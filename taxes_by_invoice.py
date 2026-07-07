@@ -1,3 +1,4 @@
+
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from datetime import datetime
@@ -11,7 +12,8 @@ from trytond.rpc import RPC
 from trytond.i18n import gettext
 from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.html_report.engine import DualRecord, render as html_render
-from trytond.modules.html_report.i18n import _
+from trytond.modules.xgettext import _
+
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from trytond.modules.account_reports.common import css as common_css
 from trytond.modules.account_reports.tools import vat_label
@@ -22,7 +24,6 @@ from dominate.util import raw
 from dominate.tags import div, header as header_tag, table, thead, tbody, tr, td, th, p, strong
 
 _ZERO = Decimal(0)
-
 
 class PrintTaxesByInvoiceAndPeriodStart(ModelView):
     'Print Taxes by Invoice and Period'
@@ -148,7 +149,6 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
         if not self.fiscalyear:
             self.periods = None
 
-
 class PrintTaxesByInvoiceAndPeriod(Wizard):
     'Print TaxesByInvoiceAndPeriod'
     __name__ = 'account_reports.print_taxes_by_invoice'
@@ -202,7 +202,6 @@ class PrintTaxesByInvoiceAndPeriod(Wizard):
         return {
             'parties': party_ids,
             }
-
 
 class TaxesByInvoiceReport(DominateReport):
     __name__ = 'account_reports.taxes_by_invoice'
@@ -754,7 +753,6 @@ class TaxesByInvoiceReport(DominateReport):
         else:
             container.add(strong(_('No records found')))
         return container
-
 
 class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
     __name__ = 'account_reports.taxes_by_invoice_xlsx'

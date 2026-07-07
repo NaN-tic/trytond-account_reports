@@ -1,3 +1,4 @@
+
 # This file is part of account_reports for tryton.  The COPYRIGHT file
 # at the top level of this repository contains the full copyright notices and
 # license terms.
@@ -12,7 +13,8 @@ from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from trytond.modules.account_reports.common import TimeoutChecker, TimeoutException
 from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.html_report.engine import render as html_render
-from trytond.modules.html_report.i18n import _
+from trytond.modules.xgettext import _
+
 from trytond.pool import Pool
 from trytond.pyson import Bool, Eval, If
 from trytond.rpc import RPC
@@ -105,7 +107,6 @@ class PrintInvoicePaymentDatesStart(ModelView):
         if not self.fiscalyear:
             self.periods = None
 
-
 class PrintInvoicePaymentDates(Wizard):
     'Print Invoice Payment Dates'
     __name__ = 'account_reports.print_invoice_payment_dates'
@@ -136,7 +137,6 @@ class PrintInvoicePaymentDates(Wizard):
 
     def transition_print_(self):
         return 'end'
-
 
 class InvoicePaymentDatesReport(DominateReport):
     __name__ = 'account_reports.invoice_payment_dates'

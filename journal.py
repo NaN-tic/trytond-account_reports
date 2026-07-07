@@ -1,3 +1,4 @@
+
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from decimal import Decimal
@@ -11,7 +12,8 @@ from trytond.exceptions import UserError
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
 from trytond.modules.html_report.dominate_report import DominateReport
-from trytond.modules.html_report.i18n import _
+from trytond.modules.xgettext import _
+
 from datetime import timedelta
 from sql import Null
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
@@ -21,7 +23,6 @@ from dominate.tags import div, h1, p, table, thead, tbody, tr, td, th
 from .common import css as common_css
 
 ZERO = Decimal('0.00')
-
 
 class PrintJournalStart(ModelView):
     'Print Journal'
@@ -97,7 +98,6 @@ class PrintJournalStart(ModelView):
         self.start_period = None
         self.end_period = None
 
-
 class PrintJournal(Wizard):
     'Print Journal'
     __name__ = 'account_reports.print_journal'
@@ -136,7 +136,6 @@ class PrintJournal(Wizard):
 
     def transition_print_(self):
         return 'end'
-
 
 class JournalReport(DominateReport):
     __name__ = 'account_reports.journal'
@@ -509,7 +508,6 @@ class JournalReport(DominateReport):
                     "has no post number and the number shown is the "
                     "provisional one."))
         return container
-
 
 class JournalXlsxReport(XlsxReport, metaclass=PoolMeta):
     __name__ = 'account_reports.journal_xlsx'

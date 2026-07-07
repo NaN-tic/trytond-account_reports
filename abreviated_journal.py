@@ -1,3 +1,4 @@
+
 # coding=utf-8
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
@@ -14,7 +15,8 @@ from trytond.i18n import gettext
 from trytond.model import ModelView, fields
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from trytond.modules.html_report.engine import render as html_render
-from trytond.modules.html_report.i18n import _
+from trytond.modules.xgettext import _
+
 from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
@@ -25,7 +27,6 @@ from trytond.wizard import Button, StateReport, StateView, Wizard
 from openpyxl import Workbook
 
 from .common import css as common_css
-
 
 class PrintAbreviatedJournalStart(ModelView):
     'Print Abreviated Journal'
@@ -72,7 +73,6 @@ class PrintAbreviatedJournalStart(ModelView):
     def default_level():
         return 1
 
-
 class PrintAbreviatedJournal(Wizard):
     'Print Abreviated Journal'
     __name__ = 'account_reports.print_abreviated_journal'
@@ -102,7 +102,6 @@ class PrintAbreviatedJournal(Wizard):
 
     def transition_print_(self):
         return 'end'
-
 
 class AbreviatedJournalReport(DominateReport):
     __name__ = 'account_reports.abreviated_journal'
@@ -393,7 +392,6 @@ class AbreviatedJournalReport(DominateReport):
                             cls='abj-total',
                             )
         return container
-
 
 class AbreviatedJournalXlsxReport(XlsxReport, metaclass=PoolMeta):
     __name__ = 'account_reports.abreviated_journal_xlsx'
