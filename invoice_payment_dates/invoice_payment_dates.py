@@ -12,7 +12,7 @@ from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from trytond.modules.account_reports.common import TimeoutChecker, TimeoutException
 from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.html_report.engine import render as html_render
-from trytond.modules.html_report.i18n import _
+from trytond.modules.xgettext import _
 from trytond.pool import Pool
 from trytond.pyson import Bool, Eval, If
 from trytond.rpc import RPC

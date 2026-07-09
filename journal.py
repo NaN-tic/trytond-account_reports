@@ -11,7 +11,7 @@ from trytond.exceptions import UserError
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
 from trytond.modules.html_report.dominate_report import DominateReport
-from trytond.modules.html_report.i18n import _
+from trytond.modules.xgettext import _
 from datetime import timedelta
 from sql import Null
 from trytond.modules.account.exceptions import FiscalYearNotFoundError

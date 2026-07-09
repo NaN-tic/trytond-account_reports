@@ -20,7 +20,7 @@ from trytond.modules.account_reports.xlsx import (
 from collections import defaultdict
 from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.html_report.engine import render as html_render
-from trytond.modules.html_report.i18n import _
+from trytond.modules.xgettext import _
 from openpyxl import Workbook
 from dominate.util import raw
 from dominate.tags import div, header as header_tag, table, thead, tbody, tr, td, th

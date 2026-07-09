@@ -14,7 +14,7 @@ from trytond.i18n import gettext
 from trytond.model import ModelView, fields
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from trytond.modules.html_report.engine import render as html_render
-from trytond.modules.html_report.i18n import _
+from trytond.modules.xgettext import _
 from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
