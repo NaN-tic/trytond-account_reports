@@ -421,10 +421,12 @@ class TaxesByInvoiceReport(DominateReport):
         lines = InvoiceLine.search(invoice_line_domain, order=order)
         for line in lines:
             with Transaction().set_context(_deductible_rate=1):
-                taxes_amount = {t['tax']: t['amount']
+                taxes_amount = {t.tax.id: t.amount
                     for t in line._get_taxes().values()}
             for tax in line.taxes:
                 if tax.tax_kind != 'vat':
+                    continue
+                if tax.id not in taxes_amount:
                     continue
                 fake_key = fake_taxes.get((tax.rate, tax.company))
                 if not fake_key:
