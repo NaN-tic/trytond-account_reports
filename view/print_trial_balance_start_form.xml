@@ -33,7 +33,7 @@ copyright notices and license terms. -->
     <label name="end_date"/>
     <field name="end_date"/>
 
-    <group id="second_balance" string="Comparison Period" colspan="7" cols="4">
+    <group id="second_balance" string="Comparison Period" colspan="7" col="4">
         <label name="comparison_fiscalyear"/>
         <field name="comparison_fiscalyear"/>
         <newline/>
