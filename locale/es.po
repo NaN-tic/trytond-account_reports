@@ -2,9 +2,34 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
+msgctxt "field:account.configuration,account_reports_margin:"
+msgid "Account Reports Margin (px)"
+msgstr "Margen de informes contables (px)"
+
 msgctxt "field:account.configuration,default_timeout:"
 msgid "Timeout (s)"
 msgstr "Tiempo de espera (s)"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,company:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt ""
+"field:account_reports.print_abreviated_journal.start,display_account:"
+msgid "Display Accounts"
+msgstr "Mostrar cuentas"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Ejercicio fiscal"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,level:"
+msgid "Level"
+msgstr "Nivel"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,output_format:"
+msgid "Output Format"
+msgstr "Tipo de fichero"
 
 msgctxt "field:account_reports.print_general_ledger.start,accounts:"
 msgid "Accounts"
@@ -54,6 +79,40 @@ msgctxt "field:account_reports.print_general_ledger.start,timeout:"
 msgid "Timeout (s)"
 msgstr "Tiempo de espera (s)"
 
+msgctxt "field:account_reports.print_invoice_payment_dates.start,company:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,end_date:"
+msgid "Final invoice date"
+msgstr "Fecha final de factura"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Ejercicio fiscal"
+
+msgctxt ""
+"field:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Invoice Type"
+msgstr "Tipo de factura"
+
+msgctxt ""
+"field:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "Output Format"
+msgstr "Tipo de fichero"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,periods:"
+msgid "Periods"
+msgstr "Períodos"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,start_date:"
+msgid "Initial invoice date"
+msgstr "Fecha inicial de factura"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,timeout:"
+msgid "Timeout"
+msgstr "Tiempo de espera"
+
 msgctxt "field:account_reports.print_journal.start,close_move_description:"
 msgid "Close Move Description"
 msgstr "Cerrar Mover Descripción"
@@ -61,74 +120,6 @@ msgstr "Cerrar Mover Descripción"
 msgctxt "field:account_reports.print_journal.start,company:"
 msgid "Company"
 msgstr "Empresa"
-
-msgctxt "field:account_reports.print_open_move_lines.start,accounts:"
-msgid "Accounts"
-msgstr "Cuentas"
-
-msgctxt "field:account_reports.print_open_move_lines.start,company:"
-msgid "Company"
-msgstr "Empresa"
-
-msgctxt "field:account_reports.print_open_move_lines.start,date:"
-msgid "Cut-off Date"
-msgstr "Fecha de corte"
-
-msgctxt "field:account_reports.print_open_move_lines.start,output_format:"
-msgid "Output Format"
-msgstr "Tipo de fichero"
-
-msgctxt "field:account_reports.print_open_move_lines.start,parties:"
-msgid "Parties"
-msgstr "Terceros"
-
-msgctxt "field:account_reports.print_open_move_lines.start,show_description:"
-msgid "Show Description"
-msgstr "Mostrar descripción"
-
-msgctxt "field:account_reports.print_open_move_lines.start,timeout:"
-msgid "Timeout (s)"
-msgstr "Tiempo de espera (s)"
-
-msgctxt "help:account_reports.print_open_move_lines.start,show_description:"
-msgid "If checked show description from Account Move Line"
-msgstr "Si está marcado, muestra la descripción del apunte contable"
-
-msgctxt "help:account_reports.print_open_move_lines.start,timeout:"
-msgid ""
-"If report calculation should take more than the specified timeout (in "
-"seconds) the process will be stopped automatically."
-msgstr ""
-"Si el cálculo del informe dura más del tiempo indicado (en segundos), el "
-"proceso se detendrá automáticamente."
-
-msgctxt "model:ir.action,name:report_open_move_lines"
-msgid "Open Move Lines"
-msgstr "Apuntes abiertos"
-
-msgctxt "model:ir.action,name:report_open_move_lines_xlsx"
-msgid "Open Move Lines"
-msgstr "Apuntes abiertos"
-
-msgctxt "model:ir.action,name:wizard_print_open_move_lines"
-msgid "Print Open Move Lines"
-msgstr "Imprimir apuntes abiertos"
-
-msgctxt "model:ir.action.wizard,name:wizard_print_open_move_lines"
-msgid "Print Open Move Lines"
-msgstr "Imprimir apuntes abiertos"
-
-msgctxt "model:ir.ui.menu,name:menu_print_open_move_lines"
-msgid "Print Open Move Lines"
-msgstr "Imprimir apuntes abiertos"
-
-msgctxt "view:account_reports.print_open_move_lines.start:"
-msgid "Leave empty to select all accounts"
-msgstr "Dejar vacío para seleccionar todas las cuentas"
-
-msgctxt "view:account_reports.print_open_move_lines.start:"
-msgid "Leave empty to select all parties"
-msgstr "Dejar vacío para seleccionar todos los terceros"
 
 msgctxt "field:account_reports.print_journal.start,end_period:"
 msgid "End Period"
@@ -157,6 +148,34 @@ msgstr "Formato de salida"
 msgctxt "field:account_reports.print_journal.start,start_period:"
 msgid "Start Period"
 msgstr "Periodo de inicio"
+
+msgctxt "field:account_reports.print_open_move_lines.start,accounts:"
+msgid "Accounts"
+msgstr "Cuentas"
+
+msgctxt "field:account_reports.print_open_move_lines.start,company:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "field:account_reports.print_open_move_lines.start,date:"
+msgid "Cut-off Date"
+msgstr "Fecha de corte"
+
+msgctxt "field:account_reports.print_open_move_lines.start,output_format:"
+msgid "Output Format"
+msgstr "Tipo de fichero"
+
+msgctxt "field:account_reports.print_open_move_lines.start,parties:"
+msgid "Parties"
+msgstr "Terceros"
+
+msgctxt "field:account_reports.print_open_move_lines.start,show_description:"
+msgid "Show Description"
+msgstr "Mostrar descripción"
+
+msgctxt "field:account_reports.print_open_move_lines.start,timeout:"
+msgid "Timeout (s)"
+msgstr "Tiempo de espera (s)"
 
 msgctxt "field:account_reports.print_taxes_by_invoice.start,company:"
 msgid "Company"
@@ -226,6 +245,10 @@ msgctxt "field:account_reports.print_trial_balance.start,company:"
 msgid "Company"
 msgstr "Empresa"
 
+msgctxt "field:account_reports.print_trial_balance.start,comparison_end_date:"
+msgid "Final Posting Date"
+msgstr "Fecha de contabilización final"
+
 msgctxt ""
 "field:account_reports.print_trial_balance.start,comparison_end_period:"
 msgid "End Period"
@@ -237,9 +260,18 @@ msgid "Fiscal Year"
 msgstr "Ejercicio fiscal"
 
 msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_start_date:"
+msgid "Initial Posting Date"
+msgstr "Fecha de contabilización inicial"
+
+msgctxt ""
 "field:account_reports.print_trial_balance.start,comparison_start_period:"
 msgid "Start Period"
 msgstr "Período inicial"
+
+msgctxt "field:account_reports.print_trial_balance.start,end_date:"
+msgid "Final Posting Date"
+msgstr "Fecha de contabilización final"
 
 msgctxt "field:account_reports.print_trial_balance.start,end_period:"
 msgid "End Period"
@@ -277,6 +309,10 @@ msgctxt "field:account_reports.print_trial_balance.start,split_parties:"
 msgid "Split Parties"
 msgstr "Separar terceros"
 
+msgctxt "field:account_reports.print_trial_balance.start,start_date:"
+msgid "Initial Posting Date"
+msgstr "Fecha de contabilización inicial"
+
 msgctxt "field:account_reports.print_trial_balance.start,start_period:"
 msgid "Start Period"
 msgstr "Período inicial"
@@ -284,6 +320,10 @@ msgstr "Período inicial"
 msgctxt "field:account_reports.print_trial_balance.start,timeout:"
 msgid "Timeout (s)"
 msgstr "Tiempo de espera (s)"
+
+msgctxt "help:account_reports.print_abreviated_journal.start,level:"
+msgid "Display accounts of this level"
+msgstr "Muestra las cuentas de este nivel."
 
 msgctxt "help:account_reports.print_general_ledger.start,all_accounts:"
 msgid ""
@@ -305,6 +345,18 @@ msgstr ""
 "Si el cálculo del informe tarda más que el tiempo de espera especificado (en"
 " segundos), el proceso se detendrá automáticamente."
 
+msgctxt "help:account_reports.print_invoice_payment_dates.start,periods:"
+msgid "Leave empty to select all periods"
+msgstr "Déjelo en blanco para seleccionar todos los períodos."
+
+msgctxt "help:account_reports.print_invoice_payment_dates.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"Si el cálculo del informe tarda más que el tiempo de espera especificado (en"
+" segundos), el proceso se detendrá automáticamente."
+
 msgctxt "help:account_reports.print_journal.start,open_close_account_moves:"
 msgid ""
 "If this field is checked and Start Period is 01 and the fiscal year before "
@@ -316,6 +368,18 @@ msgstr ""
 "anterior está cerrado, se creará un movimiento abierto de este año. Si el "
 "Período de Fin es 12 y el año fiscal está cerrado, se creará un movimiento "
 "de cierre del año. Se utilizarán todos los diarios."
+
+msgctxt "help:account_reports.print_open_move_lines.start,show_description:"
+msgid "If checked show description from Account Move Line"
+msgstr "Si está marcado, muestra la descripción del apunte contable"
+
+msgctxt "help:account_reports.print_open_move_lines.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"Si el cálculo del informe dura más del tiempo indicado (en segundos), el "
+"proceso se detendrá automáticamente."
 
 msgctxt "help:account_reports.print_taxes_by_invoice.start,parties:"
 msgid "Leave empty to select all parties"
@@ -345,268 +409,25 @@ msgstr ""
 "Si el cálculo del informe demora más que el tiempo de espera especificado "
 "(en segundos), el proceso se detendrá automáticamente."
 
-msgctxt "xgettext:x:"
-msgid "Account"
-msgstr "Cuenta"
-
-msgctxt "xgettext:x:"
-msgid "Account / Party"
-msgstr "Cuenta / Tercero"
-
-msgctxt "xgettext:x:"
-msgid "Accounts: %s"
-msgstr "Cuentas: %s"
-
-msgctxt "xgettext:x:"
-msgid "All Accounts"
-msgstr "Todas las cuentas"
-
-msgctxt "xgettext:x:"
-msgid "All Parties"
-msgstr "Todos los terceros"
-
-msgctxt "xgettext:x:"
-msgid "All Periods"
-msgstr "Todos los periodos"
-
-msgctxt "xgettext:x:"
-msgid "Balance"
-msgstr "Saldo"
-
-msgctxt "xgettext:x:"
-msgid "Base"
-msgstr "Base"
-
-msgctxt "xgettext:x:"
-msgid "Base + Tax"
-msgstr "Base + Impuesto"
-
-msgctxt "xgettext:x:"
-msgid ""
-"Cancelled invoices are shown in %(marker)s. Invoices without a cancelled "
-"move or a cancelled move not related to an invoice are not added to the "
-"total."
-msgstr ""
-"Las facturas anuladas se muestran en %(marker)s. Las facturas sin asiento de"
-" anulación o con un asiento de anulación no relacionado con una factura no "
-"se añaden al total."
-
-msgctxt "xgettext:x:"
-msgid ""
-"Cancelled invoices are shown in grey. Invoices without a cancelled move or a"
-" cancelled move not related to an invoice are not added to the total."
-msgstr ""
-"Las facturas canceladas se muestran en gris. Las facturas que no tienen un "
-"movimiento de cancelación, o un movimiento de cancelación no relacionado con"
-" una factura, no se suman al total."
-
-msgctxt "xgettext:x:"
-msgid "Code"
-msgstr "Código"
-
-msgctxt "xgettext:x:"
-msgid "Comparision Balance %s"
-msgstr "Balance de comparación %s"
-
-msgctxt "xgettext:x:"
-msgid "Comparision Balance %s: From: %s To: %s"
-msgstr "Balance de comparación %s: Desde: %s Hasta: %s"
-
-msgctxt "xgettext:x:"
-msgid "Credit"
-msgstr "Haber"
-
-msgctxt "xgettext:x:"
-msgid "Cut-off Date: %s"
-msgstr "Fecha de corte: %s"
-
-msgctxt "xgettext:x:"
-msgid "Date"
-msgstr "Fecha"
-
-msgctxt "xgettext:x:"
-msgid "Debit"
-msgstr "Debe"
-
-msgctxt "xgettext:x:"
-msgid "Description"
-msgstr "Descripción"
-
-msgctxt "xgettext:x:"
-msgid "From %s To %s"
-msgstr "De %s a %s"
-
-msgctxt "xgettext:x:"
-msgid "Final posting date: %(end_date)s"
-msgstr "Fecha de contabilización final: %(end_date)s"
-
-msgctxt "xgettext:x:"
-msgid "Fiscal Year: %(fiscal_year)s %(periods)s"
-msgstr "Ejercicio: %(fiscal_year)s %(periods)s"
-
-msgctxt "xgettext:x:"
-msgid "Fiscal Year: %s Start Period: %s End Period: %s"
-msgstr "Ejercicio: %s Periodo inicio: %s Periodo fin: %s"
-
-msgctxt "xgettext:x:"
-msgid "General Ledger"
-msgstr "Libro mayor"
-
-msgctxt "xgettext:x:"
-msgid "Abreviated Journal"
-msgstr "Diario abreviado"
-
-msgctxt "xgettext:x:"
-msgid "Journal"
-msgstr "Diario"
-
-msgctxt "xgettext:x:"
-msgid "Fiscal Year"
-msgstr "Ejercicio fiscal"
-
-msgctxt "xgettext:x:"
-msgid "VAT"
-msgstr "NIF"
-
-msgctxt "xgettext:x:"
-msgid "Total Period"
-msgstr "Total período"
-
-msgctxt "xgettext:x:"
-msgid "Initial"
-msgstr "Inicial"
-
-msgctxt "xgettext:x:"
-msgid "Initial posting date: %(start_date)s"
-msgstr "Fecha de contabilización inicial: %(start_date)s"
-
-msgctxt "xgettext:x:"
-msgid "Invoice"
-msgstr "Factura"
-
-msgctxt "xgettext:x:"
-msgid "Main Balance %s"
-msgstr "Balance principal %s"
-
-msgctxt "xgettext:x:"
-msgid "Main Balance %s: From: %s To: %s"
-msgstr "Balance principal %s: Desde: %s Hasta: %s"
-
-msgctxt "xgettext:x:"
-msgid "Move Date"
-msgstr "Fecha del asiento"
-
-msgctxt "xgettext:x:"
-msgid "Move"
-msgstr "Asiento"
-
-msgctxt "xgettext:x:"
-msgid "Maturity Date"
-msgstr "Fecha de vencimiento"
-
-msgctxt "xgettext:x:"
-msgid "NIF"
-msgstr "NIF"
-
-msgctxt "xgettext:x:"
-msgid "No records found"
-msgstr "No se encontraron registros"
-
-msgctxt "xgettext:x:"
-msgid "Number"
-msgstr "Número"
-
-msgctxt "xgettext:x:"
-msgid "Parties: %(parties)s"
-msgstr "Terceros: %(parties)s"
-
-msgctxt "xgettext:x:"
-msgid "Parties: %s"
-msgstr "Partes: %s"
-
-msgctxt "xgettext:x:"
-msgid "Periods: %(periods)s"
-msgstr "Periodos: %(periods)s"
-
-msgctxt "xgettext:x:"
-msgid "Company:"
-msgstr "Empresa:"
-
-msgctxt "xgettext:x:"
-msgid "Previous balance"
-msgstr "Saldo anterior"
-
-msgctxt "xgettext:x:"
-msgid "Previous balance..."
-msgstr "Saldo anterior..."
-
-msgctxt "xgettext:x:"
-msgid "Reference // Description"
-msgstr "Referencia // Descripción"
-
-msgctxt "xgettext:x:"
-msgid "Reconciliation Date"
-msgstr "Fecha de conciliación"
-
-msgctxt "xgettext:x:"
-msgid "Start Date: %s End Date: %s"
-msgstr "Fecha inicio: %s Fecha fin: %s"
-
-msgctxt "xgettext:x:"
-msgid "Open Move Lines"
-msgstr "Apuntes abiertos"
-
-msgctxt "xgettext:x:"
-msgid "Tax"
-msgstr "Impuesto"
-
-msgctxt "xgettext:x:"
-msgid "Taxes By Invoice"
-msgstr "Impuestos por factura"
-
-msgctxt "xgettext:x:"
-msgid "Taxes By Invoice and Period"
-msgstr "Impuestos por factura y periodo"
-
-msgctxt "xgettext:x:"
-msgid "Total"
-msgstr "Total"
-
-msgctxt "xgettext:x:"
-msgid "Total month %s"
-msgstr "Total mes %s"
-
-msgctxt "xgettext:x:"
-msgid "Total Fiscal Year"
-msgstr "Total ejercicio"
-
-msgctxt "xgettext:x:"
-msgid "Total Invoice"
-msgstr "Total factura"
-
-msgctxt "xgettext:x:"
-msgid "Trial Balance"
-msgstr "Balance de sumas y saldos"
-
-msgctxt "xgettext:x:"
-msgid "Journals"
-msgstr "Diarios"
-
-msgctxt "xgettext:x:"
-msgid ""
-"When move number is between parentheses it means that it has no post number "
-"and the number shown is the provisional one."
-msgstr ""
-"Cuando el número de asiento está entre paréntesis significa que no tiene "
-"número de contabilización y el número mostrado es el provisional."
+msgctxt "model:account_reports.print_abreviated_journal.start,string:"
+msgid "Account Reports Print Abreviated Journal Start"
+msgstr "Informes de cuenta - Imprimir asiento abreviado - Inicio"
 
 msgctxt "model:account_reports.print_general_ledger.start,string:"
 msgid "Account Reports Print General Ledger Start"
 msgstr "Informes de cuenta Imprimir Libro mayor Iniciar"
 
+msgctxt "model:account_reports.print_invoice_payment_dates.start,string:"
+msgid "Account Reports Print Invoice Payment Dates Start"
+msgstr "Informes de cuenta - Imprimir factura Fechas de pago - Inicio"
+
 msgctxt "model:account_reports.print_journal.start,string:"
 msgid "Account Reports Print Journal Start"
 msgstr "Informes de cuenta Imprimir Diario Iniciar"
+
+msgctxt "model:account_reports.print_open_move_lines.start,string:"
+msgid "Account Reports Print Open Move Lines Start"
+msgstr "Informes de cuenta - Imprimir apuntes abiertos - Iniciar"
 
 msgctxt "model:account_reports.print_taxes_by_invoice.start,string:"
 msgid "Account Reports Print Taxes By Invoice Start"
@@ -616,6 +437,14 @@ msgctxt "model:account_reports.print_trial_balance.start,string:"
 msgid "Account Reports Print Trial Balance Start"
 msgstr "Informes de cuenta Imprimir Balance de prueba Iniciar"
 
+msgctxt "model:ir.action,name:report_abreviated_journal"
+msgid "Abreviated Journal"
+msgstr "Diario abreviado"
+
+msgctxt "model:ir.action,name:report_abreviated_journal_xlsx"
+msgid "Abreviated Journal"
+msgstr "Diario abreviado"
+
 msgctxt "model:ir.action,name:report_general_ledger"
 msgid "General Ledger"
 msgstr "Libro mayor"
@@ -624,6 +453,10 @@ msgctxt "model:ir.action,name:report_general_ledger_xlsx"
 msgid "General Ledger"
 msgstr "Libro mayor"
 
+msgctxt "model:ir.action,name:report_invoice_payment_dates"
+msgid "Invoice Payment Dates"
+msgstr "Fechas de pago de facturas"
+
 msgctxt "model:ir.action,name:report_journal"
 msgid "Journal"
 msgstr "Diario"
@@ -631,6 +464,14 @@ msgstr "Diario"
 msgctxt "model:ir.action,name:report_journal_xlsx"
 msgid "Journal"
 msgstr "Diario"
+
+msgctxt "model:ir.action,name:report_open_move_lines"
+msgid "Open Move Lines"
+msgstr "Apuntes abiertos"
+
+msgctxt "model:ir.action,name:report_open_move_lines_xlsx"
+msgid "Open Move Lines"
+msgstr "Apuntes abiertos"
 
 msgctxt "model:ir.action,name:report_taxes_by_invoice"
 msgid "Taxes by Invoice"
@@ -648,13 +489,25 @@ msgctxt "model:ir.action,name:report_trial_balance_xlsx"
 msgid "Trial Balance"
 msgstr "Balance de comprobación"
 
+msgctxt "model:ir.action,name:wizard_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "Imprimir diario abreviado"
+
 msgctxt "model:ir.action,name:wizard_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimir libro mayor"
 
+msgctxt "model:ir.action,name:wizard_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "Imprimir fechas de pago de facturas"
+
 msgctxt "model:ir.action,name:wizard_print_journal"
 msgid "Print Journal"
 msgstr "Imprimir diario"
+
+msgctxt "model:ir.action,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimir apuntes abiertos"
 
 msgctxt "model:ir.action,name:wizard_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
@@ -664,9 +517,21 @@ msgctxt "model:ir.action,name:wizard_print_trial_balance"
 msgid "Print Trial Balance"
 msgstr "Imprimir balance de sumas y saldos"
 
+msgctxt "model:ir.action.wizard,name:wizard_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "Imprimir diario abreviado"
+
 msgctxt "model:ir.action.wizard,name:wizard_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimir libro mayor"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "Imprimir fechas de pago de facturas"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimir apuntes abiertos"
 
 msgctxt "model:ir.action.wizard,name:wizard_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
@@ -685,21 +550,32 @@ msgstr ""
 "La fecha de contabilización inicial no coincide con el año fiscal "
 "\"%(fiscalyear)s\"."
 
-msgctxt "model:ir.message,text:msg_missing_fiscalyear"
-msgid "The fiscalyear selected it is not valid."
-msgstr "El año fiscal seleccionado no es válido."
-
-msgctxt "model:ir.message,text:msg_invalid_date_range"
-msgid "The initial posting date must be before or equal to the final posting date."
-msgstr "La fecha de contabilización inicial debe ser anterior o igual a la fecha de contabilización final."
-
 msgctxt "model:ir.message,text:msg_all_parties"
 msgid "All"
 msgstr "Todos"
 
+msgctxt "model:ir.message,text:msg_invalid_date_range"
+msgid ""
+"The initial posting date must be before or equal to the final posting date."
+msgstr ""
+"La fecha de contabilización inicial debe ser anterior o igual a la fecha de "
+"contabilización final."
+
+msgctxt "model:ir.message,text:msg_missing_fiscalyear"
+msgid "The fiscalyear selected it is not valid."
+msgstr "El año fiscal seleccionado no es válido."
+
 msgctxt "model:ir.message,text:msg_not_deductible_tax"
 msgid "Not Deductible VAT"
 msgstr "IVA No deducible"
+
+msgctxt "model:ir.message,text:msg_renumber_move"
+msgid ""
+"We have noticed that the sequence \"%(sequence)s\" pattern does not match the post number of \"%(move)s\".\n"
+"Please proceed to renumber the records before consulting the journal report."
+msgstr ""
+"Hemos detectado que el patrón de la secuencia \"%(sequence)s\" no concuerda con la numeración del asiento \"%(move)s\".\n"
+"Proceda a renumerar los asientos antes de consultar el diario."
 
 msgctxt "model:ir.message,text:msg_timeout_exception"
 msgid ""
@@ -710,6 +586,10 @@ msgstr ""
 "aumentar el tiempo de espera de los informes de la cuenta o exportarlos al "
 "formato XLS."
 
+msgctxt "model:ir.ui.menu,name:menu_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "Imprimir diario abreviado"
+
 msgctxt "model:ir.ui.menu,name:menu_print_general_journal"
 msgid "Print Journal"
 msgstr "Imprimir diario"
@@ -717,6 +597,14 @@ msgstr "Imprimir diario"
 msgctxt "model:ir.ui.menu,name:menu_print_general_ledger"
 msgid "Print General Ledger"
 msgstr "Imprimir libro mayor"
+
+msgctxt "model:ir.ui.menu,name:menu_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "Imprimir fechas de pago de facturas"
+
+msgctxt "model:ir.ui.menu,name:menu_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Imprimir apuntes abiertos"
 
 msgctxt "model:ir.ui.menu,name:menu_print_taxes_by_invoice"
 msgid "Print Taxes by Invoice and Period"
@@ -874,6 +762,34 @@ msgctxt "report:account.trial_balance:"
 msgid "at"
 msgstr "en"
 
+msgctxt "report:account_reports.abreviated_journal:"
+msgid "Abreviated Journal"
+msgstr "Diario abreviado"
+
+msgctxt "report:account_reports.abreviated_journal:"
+msgid "Account"
+msgstr "Cuenta"
+
+msgctxt "report:account_reports.abreviated_journal:"
+msgid "Credit"
+msgstr "Haber"
+
+msgctxt "report:account_reports.abreviated_journal:"
+msgid "Debit"
+msgstr "Debe"
+
+msgctxt "report:account_reports.abreviated_journal:"
+msgid "Fiscal Year: "
+msgstr "Ejercicio fiscal: "
+
+msgctxt "report:account_reports.abreviated_journal:"
+msgid "Total Period: "
+msgstr "Total período:"
+
+msgctxt "report:account_reports.abreviated_journal:"
+msgid "VAT"
+msgstr "NIF"
+
 msgctxt "report:account_reports.general_ledger:"
 msgid " From"
 msgstr "De"
@@ -966,6 +882,66 @@ msgstr ""
 "Si el número de asiento aparece entre paréntesis indica que no tiene número "
 "confirmado y el número que se muestra es el provisional."
 
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Customer Invoices"
+msgstr "Facturas de cliente"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Description"
+msgstr "Descripción"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Due Amount"
+msgstr "Importe a vencimiento"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Due Date"
+msgstr "Fecha de vencimiento"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Invoice Date"
+msgstr "Fecha factura"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Invoice Payment Dates"
+msgstr "Fechas de pago de facturas"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "No invoices found"
+msgstr "No se han encontrado facturas"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Number"
+msgstr "Número"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Party"
+msgstr "Tercero"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Payment Date"
+msgstr "Fecha de pago"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Payment Days"
+msgstr "Días de pago"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Payment Type"
+msgstr "Tipo de pago"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Reference"
+msgstr "Referencia"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "State"
+msgstr "Estado"
+
+msgctxt "report:account_reports.invoice_payment_dates:"
+msgid "Supplier Invoices"
+msgstr "Facturas de proveedor"
+
 msgctxt "report:account_reports.taxes_by_invoice:"
 msgid "Account"
 msgstr "Cuenta"
@@ -1042,6 +1018,31 @@ msgctxt "report:account_reports.taxes_by_invoice:"
 msgid "Without taxes"
 msgstr "Sin impuestos"
 
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,display_account:"
+msgid "All"
+msgstr "Todos"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,display_account:"
+msgid "With movements"
+msgstr "Con movimientos"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
 msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
 msgid "Excel"
 msgstr "Excel"
@@ -1054,6 +1055,31 @@ msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
 msgid "PDF"
 msgstr "PDF"
 
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Customer Invoices"
+msgstr "Facturas de cliente"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Supplier Invoices"
+msgstr "Facturas de proveedor"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
 msgctxt "selection:account_reports.print_journal.start,output_format:"
 msgid "Excel"
 msgstr "Excel"
@@ -1063,6 +1089,18 @@ msgid "HTML"
 msgstr "HTML"
 
 msgctxt "selection:account_reports.print_journal.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
 msgid "PDF"
 msgstr "PDF"
 
@@ -1125,6 +1163,10 @@ msgctxt "view:account.configuration:"
 msgid "Report"
 msgstr "Informe"
 
+msgctxt "view:account_reports.print_abreviated_journal.start:"
+msgid "Print Abreviated Journal"
+msgstr "Imprimir diario abreviado"
+
 msgctxt "view:account_reports.print_general_ledger.start:"
 msgid "Leave empty to select all accounts"
 msgstr "Dejar en blanco para seleccionar todas las cuentas"
@@ -1135,8 +1177,15 @@ msgstr "Dejar en blanco para seleccionar todos los terceros"
 
 msgctxt "view:account_reports.print_journal.start:"
 msgid "Left empty to select all journals by default"
-msgstr ""
-"Dejar vacío para seleccionar todos los diarios"
+msgstr "Dejar vacío para seleccionar todos los diarios"
+
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all accounts"
+msgstr "Dejar vacío para seleccionar todas las cuentas"
+
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all parties"
+msgstr "Dejar vacío para seleccionar todos los terceros"
 
 msgctxt "view:account_reports.print_taxes_by_invoice.start:"
 msgid "Left empty to select all parties"
@@ -1162,20 +1211,28 @@ msgctxt "view:account_reports.print_trial_balance.start:"
 msgid "Comparison Period"
 msgstr "Período de comparación"
 
-#, python-format
-msgctxt "model:ir.message,text:msg_renumber_move"
-msgid ""
-"We have noticed that the sequence \"%(sequence)s\" pattern does not match the post number of \"%(move)s\".\n"
-"Please proceed to renumber the records before consulting the journal report."
-msgstr ""
-"Hemos detectado que el patrón de la secuencia \"%(sequence)s\" no concuerda con la numeración del asiento \"%(move)s\".\n"
-"Proceda a renumerar los asientos antes de consultar el diario."
+msgctxt "wizard_button:account_reports.print_abreviated_journal,start,end:"
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgctxt "wizard_button:account_reports.print_abreviated_journal,start,print_:"
+msgid "Print"
+msgstr "Imprimir"
 
 msgctxt "wizard_button:account_reports.print_general_ledger,start,end:"
 msgid "Cancel"
 msgstr "Cancelar"
 
 msgctxt "wizard_button:account_reports.print_general_ledger,start,print_:"
+msgid "Print"
+msgstr "Imprimir"
+
+msgctxt "wizard_button:account_reports.print_invoice_payment_dates,start,end:"
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgctxt ""
+"wizard_button:account_reports.print_invoice_payment_dates,start,print_:"
 msgid "Print"
 msgstr "Imprimir"
 
@@ -1211,243 +1268,257 @@ msgctxt "wizard_button:account_reports.print_trial_balance,start,print_:"
 msgid "Print"
 msgstr "Imprimir"
 
-msgctxt "field:account_reports.print_abreviated_journal.start,company:"
-msgid "Company"
-msgstr "Empresa"
-
-msgctxt ""
-"field:account_reports.print_abreviated_journal.start,display_account:"
-msgid "Display Accounts"
-msgstr "Mostrar cuentas"
-
-msgctxt "field:account_reports.print_abreviated_journal.start,fiscalyear:"
-msgid "Fiscal Year"
-msgstr "Ejercicio fiscal"
-
-msgctxt "field:account_reports.print_abreviated_journal.start,level:"
-msgid "Level"
-msgstr "Nivel"
-
-msgctxt "field:account_reports.print_abreviated_journal.start,output_format:"
-msgid "Output Format"
-msgstr "Tipo de fichero"
-
-msgctxt "help:account_reports.print_abreviated_journal.start,level:"
-msgid "Display accounts of this level"
-msgstr "Muestra las cuentas de este nivel."
-
-msgctxt "model:account_reports.print_abreviated_journal.start,name:"
-msgid "Print Abreviated Journal"
-msgstr "Imprimir diario abreviado"
-
-msgctxt "model:ir.action,name:report_abreviated_journal"
+msgctxt "xgettext:x:"
 msgid "Abreviated Journal"
 msgstr "Diario abreviado"
 
-msgctxt "model:ir.action,name:report_abreviated_journal_xlsx"
-msgid "Abreviated Journal"
-msgstr "Diario abreviado"
-
-msgctxt "model:ir.action,name:wizard_print_abreviated_journal"
-msgid "Print Abreviated Journal"
-msgstr "Imprimir diario abreviado"
-
-msgctxt "model:ir.action.wizard,name:wizard_print_abreviated_journal"
-msgid "Print Abreviated Journal"
-msgstr "Imprimir diario abreviado"
-
-msgctxt "model:ir.ui.menu,name:menu_print_abreviated_journal"
-msgid "Print Abreviated Journal"
-msgstr "Imprimir diario abreviado"
-
-msgctxt "report:account_reports.abreviated_journal:"
-msgid "Abreviated Journal"
-msgstr "Diario abreviado"
-
-msgctxt "report:account_reports.abreviated_journal:"
+msgctxt "xgettext:x:"
 msgid "Account"
 msgstr "Cuenta"
 
-msgctxt "report:account_reports.abreviated_journal:"
+msgctxt "xgettext:x:"
+msgid "Account / Party"
+msgstr "Cuenta / Tercero"
+
+msgctxt "xgettext:x:"
+msgid "Accounts: %s"
+msgstr "Cuentas: %s"
+
+msgctxt "xgettext:x:"
+msgid "All Accounts"
+msgstr "Todas las cuentas"
+
+msgctxt "xgettext:x:"
+msgid "All Parties"
+msgstr "Todos los terceros"
+
+msgctxt "xgettext:x:"
+msgid "All Periods"
+msgstr "Todos los periodos"
+
+msgctxt "xgettext:x:"
+msgid "Balance"
+msgstr "Saldo"
+
+msgctxt "xgettext:x:"
+msgid "Base"
+msgstr "Base"
+
+msgctxt "xgettext:x:"
+msgid "Base + Tax"
+msgstr "Base + Impuesto"
+
+msgctxt "xgettext:x:"
+msgid ""
+"Cancelled invoices are shown in %(marker)s. Invoices without a cancelled "
+"move or a cancelled move not related to an invoice are not added to the "
+"total."
+msgstr ""
+"Las facturas anuladas se muestran en %(marker)s. Las facturas sin asiento de"
+" anulación o con un asiento de anulación no relacionado con una factura no "
+"se añaden al total."
+
+msgctxt "xgettext:x:"
+msgid ""
+"Cancelled invoices are shown in grey. Invoices without a cancelled move or a"
+" cancelled move not related to an invoice are not added to the total."
+msgstr ""
+"Las facturas canceladas se muestran en gris. Las facturas que no tienen un "
+"movimiento de cancelación, o un movimiento de cancelación no relacionado con"
+" una factura, no se suman al total."
+
+msgctxt "xgettext:x:"
+msgid "Code"
+msgstr "Código"
+
+msgctxt "xgettext:x:"
+msgid "Company:"
+msgstr "Empresa:"
+
+msgctxt "xgettext:x:"
+msgid "Comparision Balance %s"
+msgstr "Balance de comparación %s"
+
+msgctxt "xgettext:x:"
+msgid "Comparision Balance %s: From: %s To: %s"
+msgstr "Balance de comparación %s: Desde: %s Hasta: %s"
+
+msgctxt "xgettext:x:"
 msgid "Credit"
 msgstr "Haber"
 
-msgctxt "report:account_reports.abreviated_journal:"
+msgctxt "xgettext:x:"
+msgid "Cut-off Date: %s"
+msgstr "Fecha de corte: %s"
+
+msgctxt "xgettext:x:"
+msgid "Date"
+msgstr "Fecha"
+
+msgctxt "xgettext:x:"
 msgid "Debit"
 msgstr "Debe"
 
-msgctxt "report:account_reports.abreviated_journal:"
-msgid "Fiscal Year: "
-msgstr "Ejercicio fiscal: "
-
-msgctxt "report:account_reports.abreviated_journal:"
-msgid "Total Period: "
-msgstr "Total período:"
-
-msgctxt "report:account_reports.abreviated_journal:"
-msgid "VAT"
-msgstr "NIF"
-
-msgctxt ""
-"selection:account_reports.print_abreviated_journal.start,display_account:"
-msgid "All"
-msgstr "Todos"
-
-msgctxt ""
-"selection:account_reports.print_abreviated_journal.start,display_account:"
-msgid "With movements"
-msgstr "Con movimientos"
-
-msgctxt "view:account_reports.print_abreviated_journal.start:"
-msgid "Print Abreviated Journal"
-msgstr "Imprimir diario abreviado"
-
-msgctxt ""
-"wizard_button:account_reports.print_abreviated_journal,start,end:"
-msgid "Cancel"
-msgstr "Cancelar"
-
-msgctxt ""
-"wizard_button:account_reports.print_abreviated_journal,start,print_:"
-msgid "Print"
-msgstr "Imprimir"
-
-msgctxt "field:account_reports.print_invoice_payment_dates.start,company:"
-msgid "Company"
-msgstr "Empresa"
-
-msgctxt "field:account_reports.print_invoice_payment_dates.start,end_date:"
-msgid "Final invoice date"
-msgstr "Fecha final de factura"
-
-msgctxt "field:account_reports.print_invoice_payment_dates.start,fiscalyear:"
-msgid "Fiscal Year"
-msgstr "Ejercicio fiscal"
-
-msgctxt "field:account_reports.print_invoice_payment_dates.start,invoice_type:"
-msgid "Invoice Type"
-msgstr "Tipo de factura"
-
-msgctxt "field:account_reports.print_invoice_payment_dates.start,output_format:"
-msgid "Output Format"
-msgstr "Tipo de fichero"
-
-msgctxt "field:account_reports.print_invoice_payment_dates.start,periods:"
-msgid "Periods"
-msgstr "Períodos"
-
-msgctxt "field:account_reports.print_invoice_payment_dates.start,start_date:"
-msgid "Initial invoice date"
-msgstr "Fecha inicial de factura"
-
-msgctxt "field:account_reports.print_invoice_payment_dates.start,timeout:"
-msgid "Timeout"
-msgstr "Tiempo de espera"
-
-msgctxt "help:account_reports.print_invoice_payment_dates.start,timeout:"
-msgid ""
-"If report calculation should take more than the specified timeout (in "
-"seconds) the process will be stopped automatically."
-msgstr ""
-"Si el cálculo del informe tarda más que el tiempo de espera especificado "
-"(en segundos), el proceso se detendrá automáticamente."
-
-msgctxt "model:account_reports.print_invoice_payment_dates.start,name:"
-msgid "Print Invoice Payment Dates"
-msgstr "Imprimir fechas de pago de facturas"
-
-msgctxt "model:ir.action,name:report_invoice_payment_dates"
-msgid "Invoice Payment Dates"
-msgstr "Fechas de pago de facturas"
-
-msgctxt "model:ir.action,name:wizard_print_invoice_payment_dates"
-msgid "Print Invoice Payment Dates"
-msgstr "Imprimir fechas de pago de facturas"
-
-msgctxt "model:ir.action.wizard,name:wizard_print_invoice_payment_dates"
-msgid "Print Invoice Payment Dates"
-msgstr "Imprimir fechas de pago de facturas"
-
-msgctxt "model:ir.ui.menu,name:menu_print_invoice_payment_dates"
-msgid "Print Invoice Payment Dates"
-msgstr "Imprimir fechas de pago de facturas"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
+msgctxt "xgettext:x:"
 msgid "Description"
 msgstr "Descripción"
 
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Due Amount"
-msgstr "Importe a vencimiento"
+msgctxt "xgettext:x:"
+msgid "Final posting date: %(end_date)s"
+msgstr "Fecha de contabilización final: %(end_date)s"
 
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Due Date"
+msgctxt "xgettext:x:"
+msgid "Fiscal Year"
+msgstr "Ejercicio fiscal"
+
+msgctxt "xgettext:x:"
+msgid "Fiscal Year: %(fiscal_year)s %(periods)s"
+msgstr "Ejercicio: %(fiscal_year)s %(periods)s"
+
+msgctxt "xgettext:x:"
+msgid "Fiscal Year: %s Start Period: %s End Period: %s"
+msgstr "Ejercicio: %s Periodo inicio: %s Periodo fin: %s"
+
+msgctxt "xgettext:x:"
+msgid "From %s To %s"
+msgstr "De %s a %s"
+
+msgctxt "xgettext:x:"
+msgid "General Ledger"
+msgstr "Libro mayor"
+
+msgctxt "xgettext:x:"
+msgid "Initial"
+msgstr "Inicial"
+
+msgctxt "xgettext:x:"
+msgid "Initial posting date: %(start_date)s"
+msgstr "Fecha de contabilización inicial: %(start_date)s"
+
+msgctxt "xgettext:x:"
+msgid "Invoice"
+msgstr "Factura"
+
+msgctxt "xgettext:x:"
+msgid "Journal"
+msgstr "Diario"
+
+msgctxt "xgettext:x:"
+msgid "Journals"
+msgstr "Diarios"
+
+msgctxt "xgettext:x:"
+msgid "Main Balance %s"
+msgstr "Balance principal %s"
+
+msgctxt "xgettext:x:"
+msgid "Main Balance %s: From: %s To: %s"
+msgstr "Balance principal %s: Desde: %s Hasta: %s"
+
+msgctxt "xgettext:x:"
+msgid "Maturity Date"
 msgstr "Fecha de vencimiento"
 
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Invoice Date"
-msgstr "Fecha factura"
+msgctxt "xgettext:x:"
+msgid "Move"
+msgstr "Asiento"
 
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Invoice Payment Dates"
-msgstr "Fechas de pago de facturas"
+msgctxt "xgettext:x:"
+msgid "Move Date"
+msgstr "Fecha del asiento"
 
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "No invoices found"
-msgstr "No se han encontrado facturas"
+msgctxt "xgettext:x:"
+msgid "NIF"
+msgstr "NIF"
 
-msgctxt "report:account_reports.invoice_payment_dates:"
+msgctxt "xgettext:x:"
+msgid "No records found"
+msgstr "No se encontraron registros"
+
+msgctxt "xgettext:x:"
 msgid "Number"
 msgstr "Número"
 
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Party"
-msgstr "Tercero"
+msgctxt "xgettext:x:"
+msgid "Open Move Lines"
+msgstr "Apuntes abiertos"
 
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Payment Date"
-msgstr "Fecha de pago"
+msgctxt "xgettext:x:"
+msgid "Parties: %(parties)s"
+msgstr "Terceros: %(parties)s"
 
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Payment Days"
-msgstr "Días de pago"
+msgctxt "xgettext:x:"
+msgid "Parties: %s"
+msgstr "Partes: %s"
 
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Payment Type"
-msgstr "Tipo de pago"
+msgctxt "xgettext:x:"
+msgid "Periods: %(periods)s"
+msgstr "Periodos: %(periods)s"
 
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Reference"
-msgstr "Referencia"
+msgctxt "xgettext:x:"
+msgid "Previous balance"
+msgstr "Saldo anterior"
 
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "State"
-msgstr "Estado"
+msgctxt "xgettext:x:"
+msgid "Previous balance..."
+msgstr "Saldo anterior..."
 
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Supplier Invoices"
-msgstr "Facturas de proveedor"
+msgctxt "xgettext:x:"
+msgid "Reconciliation Date"
+msgstr "Fecha de conciliación"
 
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Customer Invoices"
-msgstr "Facturas de cliente"
+msgctxt "xgettext:x:"
+msgid "Reference // Description"
+msgstr "Referencia // Descripción"
 
-msgctxt "selection:account_reports.print_invoice_payment_dates.start,invoice_type:"
-msgid "Customer Invoices"
-msgstr "Facturas de cliente"
+msgctxt "xgettext:x:"
+msgid "Start Date: %s End Date: %s"
+msgstr "Fecha inicio: %s Fecha fin: %s"
 
-msgctxt "selection:account_reports.print_invoice_payment_dates.start,invoice_type:"
-msgid "Supplier Invoices"
-msgstr "Facturas de proveedor"
+msgctxt "xgettext:x:"
+msgid "Tax"
+msgstr "Impuesto"
 
-msgctxt "selection:account_reports.print_invoice_payment_dates.start,output_format:"
-msgid "Excel"
-msgstr "Excel"
+msgctxt "xgettext:x:"
+msgid "Taxes By Invoice"
+msgstr "Impuestos por factura"
 
-msgctxt "selection:account_reports.print_invoice_payment_dates.start,output_format:"
-msgid "HTML"
-msgstr "HTML"
+msgctxt "xgettext:x:"
+msgid "Taxes By Invoice and Period"
+msgstr "Impuestos por factura y periodo"
 
-msgctxt "selection:account_reports.print_invoice_payment_dates.start,output_format:"
-msgid "PDF"
-msgstr "PDF"
+msgctxt "xgettext:x:"
+msgid "Total"
+msgstr "Total"
+
+msgctxt "xgettext:x:"
+msgid "Total Fiscal Year"
+msgstr "Total ejercicio"
+
+msgctxt "xgettext:x:"
+msgid "Total Invoice"
+msgstr "Total factura"
+
+msgctxt "xgettext:x:"
+msgid "Total Period"
+msgstr "Total período"
+
+msgctxt "xgettext:x:"
+msgid "Total month %s"
+msgstr "Total mes %s"
+
+msgctxt "xgettext:x:"
+msgid "Trial Balance"
+msgstr "Balance de sumas y saldos"
+
+msgctxt "xgettext:x:"
+msgid "VAT"
+msgstr "NIF"
+
+msgctxt "xgettext:x:"
+msgid ""
+"When move number is between parentheses it means that it has no post number "
+"and the number shown is the provisional one."
+msgstr ""
+"Cuando el número de asiento está entre paréntesis significa que no tiene "
+"número de contabilización y el número mostrado es el provisional."
