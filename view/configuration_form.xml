@@ -4,5 +4,7 @@
         <separator id="report" string="Report" colspan="4"/>
         <label name="default_timeout"/>
         <field name="default_timeout"/>
+        <label name="account_reports_margin"/>
+        <field name="account_reports_margin"/>
     </xpath>
 </data>

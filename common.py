@@ -19,7 +19,44 @@ class TimeoutException(Exception):
 
 def css(orientation='portrait'):
     with file_open('account_reports/base.css') as f:
-        return '@page { size: A4 %s; }\n%s' % (orientation, f.read())
+        css = '@page { size: A4 %s; }\n%s' % (orientation, f.read())
+    margin = report_margin()
+    if margin is not None:
+        css += (
+            '\n@page { @bottom-right { padding-right: %spx; '
+            'padding-bottom: %spx; } }\n'
+            'body#base { padding-left: %spx; padding-right: %spx; '
+            'box-sizing: border-box; }\n' % (margin, margin, margin, margin))
+    return css
+
+
+def report_margin():
+    Configuration = Pool().get('account.configuration')
+    return Configuration(1).account_reports_margin
+
+
+def header_css(orientation, action, side_margin):
+    margin = report_margin()
+    base_margin = (action.html_side_margin
+        if action and action.html_side_margin is not None
+        else side_margin)
+    if margin is None:
+        top_margin = side_margin = '%scm' % base_margin
+    else:
+        margin = float(base_margin) * 96 / 2.54 + margin
+        top_margin = side_margin = '%.2fpx' % margin
+    return (
+        '%s\nbody { margin: 0; }\n'
+        'header { position: static; padding-top: %s; padding-left: %s; '
+        'padding-right: %s; box-sizing: border-box; }\n'
+        % (css(orientation), top_margin, side_margin, side_margin))
+
+
+class AccountReportsReportMixin:
+
+    @classmethod
+    def get_page_margin(cls, action):
+        return report_margin()
 
 
 
@@ -42,6 +79,7 @@ class TimeoutChecker:
 class Configuration(metaclass=PoolMeta):
     __name__ = 'account.configuration'
     default_timeout = fields.Integer('Timeout (s)')
+    account_reports_margin = fields.Integer('Account Reports Margin (px)')
 
 
 class FiscalYear(metaclass=PoolMeta):
