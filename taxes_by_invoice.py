@@ -13,7 +13,8 @@ from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.html_report.engine import DualRecord, render as html_render
 from trytond.modules.xgettext import _
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
-from trytond.modules.account_reports.common import css as common_css
+from trytond.modules.account_reports.common import (
+    AccountReportsReportMixin, css as common_css, header_css)
 from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
@@ -204,7 +205,7 @@ class PrintTaxesByInvoiceAndPeriod(Wizard):
             }
 
 
-class TaxesByInvoiceReport(DominateReport):
+class TaxesByInvoiceReport(AccountReportsReportMixin, DominateReport):
     __name__ = 'account_reports.taxes_by_invoice'
     side_margin = 0
     page_orientation = 'landscape'
@@ -231,16 +232,7 @@ class TaxesByInvoiceReport(DominateReport):
 
     @classmethod
     def css_header(cls, action, data, records):
-        side_margin = (action.html_side_margin
-            if action and action.html_side_margin is not None
-            else cls.side_margin)
-        return (
-            '%s\nbody { margin: 0; }\n'
-            'header { position: static; padding-top: %scm; padding-left: %scm; '
-            'padding-right: %scm; box-sizing: border-box; }\n'
-            % (common_css(cls.page_orientation), side_margin, side_margin,
-                side_margin)
-        )
+        return header_css(cls.page_orientation, action, cls.side_margin)
 
     @classmethod
     def prepare(cls, data):

@@ -12,7 +12,8 @@ from trytond.tools import grouped_slice
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.modules.account_reports.common import (
-    TimeoutException, TimeoutChecker, css as common_css)
+    AccountReportsReportMixin, TimeoutException, TimeoutChecker,
+    css as common_css, header_css)
 from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
@@ -208,7 +209,7 @@ class PrintGeneralLedger(Wizard):
             }
 
 
-class GeneralLedgerReport(DominateReport):
+class GeneralLedgerReport(AccountReportsReportMixin, DominateReport):
     __name__ = 'account_reports.general_ledger'
     page_orientation = 'landscape'
 
@@ -234,16 +235,7 @@ class GeneralLedgerReport(DominateReport):
 
     @classmethod
     def css_header(cls, action, data, records):
-        side_margin = (action.html_side_margin
-            if action and action.html_side_margin is not None
-            else cls.side_margin)
-        return (
-            '%s\nbody { margin: 0; }\n'
-            'header { position: static; padding-top: %scm; padding-left: %scm; '
-            'padding-right: %scm; box-sizing: border-box; }\n'
-            % (common_css(cls.page_orientation), side_margin, side_margin,
-                side_margin)
-        )
+        return header_css(cls.page_orientation, action, cls.side_margin)
 
     @classmethod
     def _ref_origin_invoice_line(cls, line):
