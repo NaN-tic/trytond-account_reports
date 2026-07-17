@@ -11,7 +11,9 @@ from openpyxl import Workbook
 from trytond.exceptions import UserError
 from trytond.i18n import gettext
 from trytond.model import ModelView, fields
-from trytond.modules.account_reports.common import TimeoutChecker, TimeoutException, css as common_css
+from trytond.modules.account_reports.common import (
+    AccountReportsReportMixin, TimeoutChecker, TimeoutException,
+    css as common_css, header_css)
 from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import XlsxReport, convert_str_to_float, save_workbook
 from trytond.modules.html_report.dominate_report import DominateReport
@@ -127,7 +129,8 @@ class PrintOpenMoveLines(Wizard):
             'parties': party_ids,
             }
 
-class OpenMoveLinesReport(DominateReport):
+
+class OpenMoveLinesReport(AccountReportsReportMixin, DominateReport):
     __name__ = 'account_reports.open_move_lines'
 
     @classmethod
@@ -139,6 +142,10 @@ class OpenMoveLinesReport(DominateReport):
     @classmethod
     def css(cls, action, data, records):
         return common_css('landscape')
+
+    @classmethod
+    def css_header(cls, action, data, records):
+        return header_css('landscape', action, cls.side_margin)
 
     @classmethod
     def _ref_origin_invoice_line(cls, line):

@@ -26,7 +26,7 @@ from trytond.transaction import Transaction
 from trytond.wizard import Button, StateReport, StateView, Wizard
 from openpyxl import Workbook
 
-from .common import css as common_css
+from .common import AccountReportsReportMixin, css as common_css, header_css
 
 class PrintAbreviatedJournalStart(ModelView):
     'Print Abreviated Journal'
@@ -103,7 +103,8 @@ class PrintAbreviatedJournal(Wizard):
     def transition_print_(self):
         return 'end'
 
-class AbreviatedJournalReport(DominateReport):
+
+class AbreviatedJournalReport(AccountReportsReportMixin, DominateReport):
     __name__ = 'account_reports.abreviated_journal'
     page_orientation = 'portrait'
     side_margin = 0.3
@@ -133,16 +134,7 @@ class AbreviatedJournalReport(DominateReport):
 
     @classmethod
     def css_header(cls, action, data, records):
-        side_margin = (action.html_side_margin
-            if action and action.html_side_margin is not None
-            else cls.side_margin)
-        return (
-            '%s\nbody { margin: 0; }\n'
-            'header { position: static; padding-top: %scm; padding-left: %scm; '
-            'padding-right: %scm; box-sizing: border-box; }\n'
-            % (common_css(cls.page_orientation), side_margin, side_margin,
-                side_margin)
-        )
+        return header_css(cls.page_orientation, action, cls.side_margin)
 
     @classmethod
     def prepare(cls, data):
