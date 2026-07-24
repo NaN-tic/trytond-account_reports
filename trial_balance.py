@@ -654,23 +654,38 @@ class TrialBalanceReport(DominateReport):
 
         # Only need the registers with init balance
         init_main_tree = remove_registers(init_main_tree, initial=True)
-        for code, value in init_party_tree.items():
-            init_party_tree[code] = remove_registers(value, initial=True)
+        for code, value in list(init_party_tree.items()):
+            value = remove_registers(value, initial=True)
+            if value:
+                init_party_tree[code] = value
+            else:
+                del init_party_tree[code]
         if comparison_fiscalyear:
             init_comparison_tree = (
                 remove_registers(init_comparison_tree, initial=True))
-            for code, value in init_comparison_party_tree.items():
-                init_comparison_party_tree[code] = remove_registers(value,
-                    initial=True)
+            for code, value in list(init_comparison_party_tree.items()):
+                value = remove_registers(value, initial=True)
+                if value:
+                    init_comparison_party_tree[code] = value
+                else:
+                    del init_comparison_party_tree[code]
         if with_moves:
             main_tree = remove_registers(main_tree)
-            for code, value in party_tree.items():
-                party_tree[code] = remove_registers(value)
+            for code, value in list(party_tree.items()):
+                value = remove_registers(value)
+                if value:
+                    party_tree[code] = value
+                else:
+                    del party_tree[code]
             if comparison_fiscalyear:
                 comparison_tree = (
                     remove_registers(comparison_tree))
-                comparison_party_tree = (
-                    remove_registers(comparison_party_tree))
+                for code, value in list(comparison_party_tree.items()):
+                    value = remove_registers(value)
+                    if value:
+                        comparison_party_tree[code] = value
+                    else:
+                        del comparison_party_tree[code]
 
         # Get all the account codes to print in the report.
         all_codes = set(init_main_tree.keys()).union(main_tree.keys())
