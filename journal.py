@@ -12,6 +12,7 @@ from trytond.exceptions import UserError
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
 from trytond.modules.html_report.dominate_report import DominateReport
+from trytond.modules.html_report.engine import render as html_render
 from trytond.modules.xgettext import _
 
 from datetime import timedelta
@@ -163,6 +164,10 @@ class JournalReport(AccountReportsReportMixin, DominateReport):
         return header_css(cls.page_orientation, action, cls.side_margin)
 
     @classmethod
+    def get_party_name(cls, party):
+        return party.name or ''
+
+    @classmethod
     def _get_open_close_moves(cls, _type, description, fiscalyear, accounts,
             init_values, init_party_values, line):
         pool = Pool()
@@ -249,7 +254,8 @@ class JournalReport(AccountReportsReportMixin, DominateReport):
                         else:
                             value['debit'] = -balance if balance < 0 else 0
                             value['credit'] = balance if balance >= 0 else 0
-                        value['party_name'] = Party(party_id).rec_name
+                        value['party_name'] = cls.get_party_name(
+                            Party(party_id))
                         moves.append(value)
         return moves
 
@@ -406,7 +412,8 @@ class JournalReport(AccountReportsReportMixin, DominateReport):
                     'move_line_description': line.description,
                     'debit': line.debit,
                     'credit': line.credit,
-                    'party_name': line.party and line.party.name or '',
+                    'party_name': (cls.get_party_name(line.party)
+                        if line.party else ''),
                     'account_kind': account_type,
                     })
         records.extend(close_moves)
@@ -460,8 +467,8 @@ class JournalReport(AccountReportsReportMixin, DominateReport):
                             if current_month is not None:
                                 tr(td("", colspan="3"),
                                     td(_('Total month %s') % current_month),
-                                    td("{:.2f}".format(month_debit), style='text-align: right'),
-                                    td("{:.2f}".format(month_credit), style='text-align: right'),
+                                    td(html_render(month_debit).replace('\u00A0', '.'), style='text-align: right'),
+                                    td(html_render(month_credit).replace('\u00A0', '.'), style='text-align: right'),
                                     cls="month-total")
                             current_month = record['month']
                             month_debit = ZERO
@@ -473,8 +480,8 @@ class JournalReport(AccountReportsReportMixin, DominateReport):
                             td(record['move_number']),
                             td(account_party),
                             td(record.get('move_line_description') or ''),
-                            td("{:.2f}".format(record['debit']), style='text-align: right'),
-                            td("{:.2f}".format(record['credit']), style='text-align: right'))
+                            td(html_render(record['debit']).replace('\u00A0', '.'), style='text-align: right'),
+                            td(html_render(record['credit']).replace('\u00A0', '.'), style='text-align: right'))
                         month_debit += record['debit']
                         month_credit += record['credit']
                         next_record = (
@@ -486,14 +493,14 @@ class JournalReport(AccountReportsReportMixin, DominateReport):
                     if current_month is not None:
                         tr(td("", colspan="3"),
                             td(_('Total month %s') % current_month),
-                            td("{:.2f}".format(month_debit), style='text-align: right'),
-                            td("{:.2f}".format(month_credit), style='text-align: right'),
+                            td(html_render(month_debit).replace('\u00A0', '.'), style='text-align: right'),
+                            td(html_render(month_credit).replace('\u00A0', '.'), style='text-align: right'),
                             cls="month-total")
                     total_debit = sum(r['debit'] for r in records)
                     total_credit = sum(r['credit'] for r in records)
                     tr(td("", colspan="3"), td(_('Total')),
-                        td("{:.2f}".format(total_debit), style='text-align: right'),
-                        td("{:.2f}".format(total_credit), style='text-align: right'),
+                        td(html_render(total_debit).replace('\u00A0', '.'), style='text-align: right'),
+                        td(html_render(total_credit).replace('\u00A0', '.'), style='text-align: right'),
                         cls="summary")
             with div(cls="footer"):
                 p(_("When move number is between parentheses it means that it "
@@ -537,8 +544,8 @@ class JournalXlsxReport(XlsxReport, metaclass=PoolMeta):
             if record['month'] != current_month:
                 if current_month is not None:
                     ws.append(["", "", "", _('Total month %s') % current_month,
-                        convert_str_to_float("{:.2f}".format(month_debit)),
-                        convert_str_to_float("{:.2f}".format(month_credit))])
+                        convert_str_to_float(html_render(month_debit)),
+                        convert_str_to_float(html_render(month_credit))])
                 current_month = record['month']
                 month_debit = ZERO
                 month_credit = ZERO
@@ -550,18 +557,18 @@ class JournalXlsxReport(XlsxReport, metaclass=PoolMeta):
                 record['move_number'],
                 account_party,
                 record['move_line_description'],
-                convert_str_to_float("{:.2f}".format(record['debit'])),
-                convert_str_to_float("{:.2f}".format(record['credit'])),
+                convert_str_to_float(html_render(record['debit'])),
+                convert_str_to_float(html_render(record['credit'])),
                 ])
             month_debit += record['debit']
             month_credit += record['credit']
         if current_month is not None:
             ws.append(["", "", "", _('Total month %s') % current_month,
-                convert_str_to_float("{:.2f}".format(month_debit)),
-                convert_str_to_float("{:.2f}".format(month_credit))])
+                convert_str_to_float(html_render(month_debit)),
+                convert_str_to_float(html_render(month_credit))])
         total_debit = sum(r['debit'] for r in records)
         total_credit = sum(r['credit'] for r in records)
         ws.append(["", "", "", _('Total'),
-            convert_str_to_float("{:.2f}".format(total_debit)),
-            convert_str_to_float("{:.2f}".format(total_credit))])
+            convert_str_to_float(html_render(total_debit)),
+            convert_str_to_float(html_render(total_credit))])
         return save_workbook(wb)
