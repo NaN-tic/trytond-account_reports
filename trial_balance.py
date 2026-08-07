@@ -370,6 +370,14 @@ class TrialBalanceReport(AccountReportsReportMixin, DominateReport):
         return header_css(cls.page_orientation, action, cls.side_margin)
 
     @classmethod
+    def get_party_name(cls, party):
+        return party.name or ''
+
+    @classmethod
+    def format_number(cls, value):
+        return html_render(value).replace('\xa0', '.').replace(' ', '.')
+
+    @classmethod
     def prepare(cls, data, checker):
         pool = Pool()
         Company = pool.get('company.company')
@@ -469,7 +477,8 @@ class TrialBalanceReport(AccountReportsReportMixin, DominateReport):
                 party_tree = {}
                 for party_id, value in account_values.items():
                     party = Party(party_id)
-                    key = (party.name or '') + (" [" + party.tax_identifier.code + "]"
+                    key = cls.get_party_name(party) + (
+                        " [" + party.tax_identifier.code + "]"
                         if party.tax_identifier else '')
                     if key in party_tree:
                         party_tree[key]['debit'] += value.get('debit')
@@ -1156,22 +1165,22 @@ class TrialBalanceReport(AccountReportsReportMixin, DominateReport):
                 with tr():
                     td(record['code'])
                     td(record['name'])
-                    td(html_render(record['period_initial_balance']),
+                    td(cls.format_number(record['period_initial_balance']),
                         style='text-align: right;')
-                    td(html_render(record['period_debit']),
+                    td(cls.format_number(record['period_debit']),
                         style='text-align: right;')
-                    td(html_render(record['period_credit']),
+                    td(cls.format_number(record['period_credit']),
                         style='text-align: right;')
-                    td(html_render(record['period_balance']),
+                    td(cls.format_number(record['period_balance']),
                         style='text-align: right;')
                     if comparison:
-                        td(html_render(record['initial_balance']),
+                        td(cls.format_number(record['initial_balance']),
                             style='text-align: right;')
-                        td(html_render(record['debit']),
+                        td(cls.format_number(record['debit']),
                             style='text-align: right;')
-                        td(html_render(record['credit']),
+                        td(cls.format_number(record['credit']),
                             style='text-align: right;')
-                        td(html_render(record['balance']),
+                        td(cls.format_number(record['balance']),
                             style='text-align: right;')
 
             if not parameters['show_summary_lines']:
@@ -1180,22 +1189,23 @@ class TrialBalanceReport(AccountReportsReportMixin, DominateReport):
             with tr():
                 td('')
                 td('')
-                td(html_render(parameters['total_period_initial_balance']),
+                td(cls.format_number(
+                        parameters['total_period_initial_balance']),
                     style='text-align: right;')
-                td(html_render(parameters['total_period_debit']),
+                td(cls.format_number(parameters['total_period_debit']),
                     style='text-align: right;')
-                td(html_render(parameters['total_period_credit']),
+                td(cls.format_number(parameters['total_period_credit']),
                     style='text-align: right;')
-                td(html_render(parameters['total_period_balance']),
+                td(cls.format_number(parameters['total_period_balance']),
                     style='text-align: right;')
                 if comparison:
-                    td(html_render(parameters['total_initial_balance']),
+                    td(cls.format_number(parameters['total_initial_balance']),
                         style='text-align: right;')
-                    td(html_render(parameters['total_debit']),
+                    td(cls.format_number(parameters['total_debit']),
                         style='text-align: right;')
-                    td(html_render(parameters['total_credit']),
+                    td(cls.format_number(parameters['total_credit']),
                         style='text-align: right;')
-                    td(html_render(parameters['total_balance']),
+                    td(cls.format_number(parameters['total_balance']),
                         style='text-align: right;')
         return detail_table
 
