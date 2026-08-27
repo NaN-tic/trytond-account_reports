@@ -70,8 +70,15 @@ class TestTrialBalanceSplitParties(unittest.TestCase):
             move.save()
             move.click('post')
 
-        payable.party_required = False
-        payable.save()
+        with Transaction().start(self.config.database_name, self.config.user):
+            Account = Pool().get('account.account')
+            # Simulate legacy data at server level: old lines with party and
+            # new lines on the same account after party_required was disabled.
+            Account.write([Account(payable.id)], {
+                    'party_required': False,
+                    })
+        payable.reload()
+
         move = Move()
         move.company = company
         move.period = second_period
