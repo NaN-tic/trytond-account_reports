@@ -217,3 +217,8 @@ class Party(metaclass=PoolMeta):
                 'balance': balance,
                 }
         return res
+
+    @classmethod
+    def get_account_values_by_party(cls, parties, accounts, company):
+        return cls.html_get_account_values_by_party(
+            parties, accounts, company)
