@@ -120,6 +120,16 @@ class Account(metaclass=PoolMeta):
         cls.general_ledger_balance.states['invisible'] = True
 
     @classmethod
+    def _html_account_descendants_query(cls, account_ids):
+        account = cls.__table__()
+        descendant = cls.__table__()
+        return account.join(descendant,
+            condition=(descendant.left >= account.left)
+            & (descendant.right <= account.right)).select(
+                account.id.as_('root'), descendant.id,
+                where=reduce_ids(account.id, account_ids))
+
+    @classmethod
     def html_read_account_vals(cls, accounts, company, with_moves=False,
             exclude_party_moves=False):
         pool = Pool()
@@ -129,7 +139,6 @@ class Account(metaclass=PoolMeta):
         line = MoveLine.__table__()
         move = Move.__table__()
         table_a = Account.__table__()
-        table_c = Account.__table__()
 
         in_max = 3000
         values = {}
@@ -148,6 +157,7 @@ class Account(metaclass=PoolMeta):
                     Sum(Coalesce(line.credit, 0))).as_('balance')))
         for i in range(0, len(account_ids), in_max):
             sub_ids = account_ids[i:i + in_max]
+            descendants = cls._html_account_descendants_query(sub_ids)
             red_sql = reduce_ids(table_a.id, sub_ids)
             where = red_sql
             periods = transaction.context.get('periods', False)
@@ -167,11 +177,10 @@ class Account(metaclass=PoolMeta):
                 # the kind equal to 'other'
                 where = (where & (line.party == None))
 
-            cursor.execute(*table_a.join(table_c,
-                    condition=(table_c.left >= table_a.left)
-                    & (table_c.right <= table_a.right)
+            cursor.execute(*table_a.join(descendants,
+                    condition=descendants.root == table_a.id
                     ).join(line, move_join,
-                        condition=line.account == table_c.id
+                        condition=line.account == descendants.id
                     ).join(move, move_join,
                         condition=move.id == line.move
                     ).select(*columns, where=where, group_by=group_by))
