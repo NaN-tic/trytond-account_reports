@@ -4,30 +4,30 @@
 # license terms.
 from datetime import timedelta, datetime
 from decimal import Decimal
+from pathlib import Path
+
+from fpdf import FPDF
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 from trytond.model import ModelView, fields
 from trytond.wizard import Wizard, StateView, StateReport, Button
 from trytond.pyson import Eval, Bool, If
-from trytond.tools import grouped_slice
+from trytond.tools import grouped_slice, slugify
+from trytond.report import Report
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.modules.account_reports.common import (
-    AccountReportsReportMixin, TimeoutException, TimeoutChecker,
-    css as common_css, header_css)
+    AccountReportsReportMixin, TimeoutException, TimeoutChecker)
 from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
-from trytond.modules.html_report.dominate_report import DominateReport
-from trytond.modules.html_report.engine import render as html_render
+from trytond.modules.html_report.engine import (
+    HTMLReportMixin, render as html_render)
 from trytond.modules.xgettext import _
 
 from trytond.rpc import RPC
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from openpyxl import Workbook
-from dominate.util import raw
-from dominate.tags import div, header as header_tag, table, thead, tbody, tr, td, th
-
 _ZERO = Decimal(0)
 
 class PrintGeneralLedgerStart(ModelView):
@@ -98,7 +98,6 @@ class PrintGeneralLedgerStart(ModelView):
         depends=['company'])
     output_format = fields.Selection([
             ('pdf', 'PDF'),
-            ('html', 'HTML'),
             ('xlsx', 'Excel'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
@@ -135,7 +134,7 @@ class PrintGeneralLedgerStart(ModelView):
     def default_timeout():
         Config = Pool().get('account.configuration')
         config = Config(1)
-        return config.default_timeout or 30
+        return config.default_timeout or 60
 
     def default_show_description():
         return False
@@ -209,33 +208,14 @@ class PrintGeneralLedger(Wizard):
             }
 
 
-class GeneralLedgerReport(AccountReportsReportMixin, DominateReport):
+class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
     __name__ = 'account_reports.general_ledger'
-    page_orientation = 'landscape'
 
     @classmethod
     def __setup__(cls):
         super(GeneralLedgerReport, cls).__setup__()
         cls.__rpc__['execute'] = RPC(False)
         cls.side_margin = 0.3
-
-    @classmethod
-    def css(cls, action, data, records):
-        return common_css(cls.page_orientation)
-
-    @classmethod
-    def css_body(cls, action, data, records):
-        css = common_css(cls.page_orientation)
-        if data.get('output_format') != 'pdf':
-            css += (
-                '\nheader { position: static; padding-top: 0; '
-                'padding-left: 0; }\n'
-            )
-        return css
-
-    @classmethod
-    def css_header(cls, action, data, records):
-        return header_css(cls.page_orientation, action, cls.side_margin)
 
     @classmethod
     def _ref_origin_invoice_line(cls, line):
@@ -665,231 +645,188 @@ class GeneralLedgerReport(AccountReportsReportMixin, DominateReport):
 
     @classmethod
     def execute(cls, ids, data):
-        Config = Pool().get('account.configuration')
-
-        config = Config(1)
-        timeout = data.get('timeout') or config.default_timeout or 300
+        pool = Pool()
+        Config = pool.get('account.configuration')
+        Lang = pool.get('ir.lang')
+        action, model = cls.get_action(data)
+        cls.check_access(action, model or 'account.account', ids)
+        timeout = data.get('timeout') or Config(1).default_timeout or 300
         checker = TimeoutChecker(timeout, cls.timeout_exception)
-
-        start_prepare = datetime.now()
-        with Transaction().set_context(active_test=False):
+        side_margin = action.html_side_margin
+        if side_margin is None:
+            side_margin = cls.side_margin
+        with Transaction().set_context(active_test=False,
+                html_report_language=Lang.get(), output_format='pdf'):
             try:
                 records, parameters = cls.prepare(data, checker)
+                content = cls._build_pdf({
+                    'records': records, 'parameters': parameters,
+                    }, action, side_margin, checker)
+                checker.check()
             except TimeoutException:
                 raise UserError(gettext('account_reports.msg_timeout_exception'))
-        end_prepare = datetime.now()
-
-        context = Transaction().context.copy()
-        if timeout:
-            context['timeout_report'] = (
-                timeout - int((end_prepare - start_prepare).total_seconds()))
-
-        with Transaction().set_context(**context):
-            return super(GeneralLedgerReport, cls).execute(ids, {
-                'name': 'account_reports.general_ledger',
-                'model': 'account.account',
-                'records': records,
-                'parameters': parameters,
-                'output_format': data.get('output_format', 'pdf'),
-                })
+        if action.html_copies and action.html_copies > 1:
+            content = cls.merge_pdfs([content] * action.html_copies)
+        filename = slugify(cls.get_name(action))
+        try:
+            Printer = pool.get('printer')
+        except KeyError:
+            Printer = None
+        if Printer:
+            return Printer.send_report('pdf', content, filename, action)
+        return 'pdf', content, cls.get_direct_print(action), filename
 
     @classmethod
-    def header(cls, action, data, records):
+    def _build_pdf(cls, data, action, side_margin, checker):
         p = data['parameters']
-        with header_tag(id='header') as container:
-            with table(cls='header-table'):
-                with thead():
-                    with tr():
-                        with td():
-                            with div():
-                                raw('<span class="company-name">%s</span><br/>' % p['company'])
-                                raw('%s: %s' % (p['company_vat_label'], p['company_vat']))
-                        with td(cls='center'):
-                            raw('<span class="header-title">%s</span>'
-                                % _('General Ledger'))
-                        with td(cls='right'):
-                            raw(html_render(datetime.now()))
-            with table():
-                with tbody():
-                    with tr():
-                        if p['start_date']:
-                            td(_('Start Date: %s End Date: %s') % (
-                                p['start_date'], p['end_date']))
-                        else:
-                            start_period = (p['start_period'].name
-                                if p['start_period'] else '')
-                            end_period = (p['end_period'].name
-                                if p['end_period'] else '')
-                            td(_('Fiscal Year: %s Start Period: %s End Period: %s')
-                                % (p['fiscal_year'], start_period, end_period))
-                    with tr():
-                        if p['parties']:
-                            td(_('Parties: %s') % p['parties'])
-                        else:
-                            td(_('All Parties'))
-                    with tr():
-                        if p['accounts']:
-                            td(_('Accounts: %s') % p['accounts'])
-                        else:
-                            td(_('All Accounts'))
-                    with tr():
-                        td(_(
-                            "When move number is between parentheses it means that "
-                            "it has no post number and the number shown is the "
-                            "provisional one."))
-        return container
-
-    @classmethod
-    def _add_cell(cls, row, value='', cls_name='', style_value='',
-            colspan=1):
-        cell = td(value)
-        if cls_name:
-            cell['class'] = cls_name
-        if style_value:
-            cell['style'] = style_value
-        if colspan != 1:
-            cell['colspan'] = str(colspan)
-        row.add(cell)
-
-    @classmethod
-    def show_detail_lines(cls, record, show_description):
-        rows = []
-        if record['lines']:
-            for line_info in record['lines']:
-                row = tr()
-                if line_info['line']:
-                    line = line_info['line']
-                    number = ''
-                    if line.move and line.move.number:
-                        number = line.move.number
-                    else:
-                        number = (line.move and line.move.number or '')
-                        number += (line.party and line.party.name or '')
-                    description = ''
-                    if line_info['ref']:
-                        description += line_info['ref']
-                    if (line_info['ref'] and show_description
-                            and line and (line.description or line.move_description_used)):
-                        description += ' // '
-                    if show_description and line and line.description:
-                        description += ' %s ' % line.description
-                    elif show_description and line and line.move_description_used:
-                        description += ' %s ' % line.move_description_used
-
-                    cls._add_cell(row, html_render(line.date))
-                    cls._add_cell(row, number)
-                    cls._add_cell(row, description)
-                    cls._add_cell(row, html_render(line_info['debit']),
-                        style_value='text-align: right;',
-                        cls_name='no-wrap')
-                    cls._add_cell(row, html_render(line_info['credit']),
-                        style_value='text-align: right;',
-                        cls_name='no-wrap')
-                    cls._add_cell(row, html_render(line_info['balance']),
-                        style_value='text-align: right;',
-                        cls_name='no-wrap')
-                else:
-                    cls._add_cell(row, '')
-                    cls._add_cell(row, '-')
-                    cls._add_cell(row, _('Previous balance'))
-                    cls._add_cell(row, html_render(line_info['debit']),
-                        style_value='text-align: right;',
-                        cls_name='no-wrap')
-                    cls._add_cell(row, html_render(line_info['credit']),
-                        style_value='text-align: right;',
-                        cls_name='no-wrap')
-                    cls._add_cell(row, html_render(line_info['balance']),
-                        style_value='text-align: right;',
-                        cls_name='no-wrap')
-                rows.append(row)
+        filters = ['%s: %s' % (p['company_vat_label'], p['company_vat'])]
+        if p['start_date']:
+            filters.append(_('Start Date: %s End Date: %s') % (
+                p['start_date'], p['end_date']))
         else:
-            row = tr()
-            cls._add_cell(row, '')
-            cls._add_cell(row, '-')
-            cls._add_cell(row, _('Previous balance'))
-            cls._add_cell(row, html_render(record['total_debit']),
-                style_value='text-align: right;',
-                cls_name='no-wrap')
-            cls._add_cell(row, html_render(record['total_credit']),
-                style_value='text-align: right;',
-                cls_name='no-wrap')
-            cls._add_cell(row, html_render(record['total_debit'] - record['total_credit']),
-                style_value='text-align: right;',
-                cls_name='no-wrap')
-            rows.append(row)
-        return rows
+            filters.append(
+                _('Fiscal Year: %s Start Period: %s End Period: %s') % (
+                    p['fiscal_year'],
+                    p['start_period'].name if p['start_period'] else '',
+                    p['end_period'].name if p['end_period'] else ''))
+        filters.extend([
+            _('Parties: %s') % p['parties'] if p['parties'] else _('All Parties'),
+            _('Accounts: %s') % p['accounts']
+                if p['accounts'] else _('All Accounts'),
+            _("When move number is between parentheses it means that "
+                "it has no post number and the number shown is the "
+                "provisional one."),
+            ])
+        margin = cls.get_page_margin(action)
+        # The existing report configuration stores additional margins in px.
+        margin = float(side_margin) * 10 + (margin or 0) * 25.4 / 96
+        pdf = LedgerPDF(
+            '%s - %s - %s' % (
+                p['company'], _('General Ledger'), html_render(datetime.now())),
+            filters, [_('Date'), _('Number'), _('Reference // Description'),
+                _('Debit'), _('Credit'), _('Balance')], margin, checker)
+        pdf.set_title('%s - %s - %s' % (
+            _('General Ledger'), p['company'], html_render(datetime.now())))
+        pdf.add_page()
+        widths = pdf.widths
+        group_widths = [sum(widths[:2]), widths[2],
+            sum(widths[3:5]), widths[5]]
+        show_description = p.get('show_description', True)
+        for record in data['records'].values():
+            pdf.row([record['code'], record['party'] or record['account'],
+                    _('Previous balance...') if record['lines'] else '',
+                    html_render(record['previous_balance'])
+                        if record['lines'] else ''],
+                bold=True, fill=True, widths=group_widths,
+                aligns=['L', 'L', 'R', 'R'])
+            if record['lines']:
+                for info in record['lines']:
+                    line = info['line']
+                    if line:
+                        number = (line.move.number if line.move
+                            and line.move.number else
+                            (line.party.name if line.party else ''))
+                        description = info['ref'] or ''
+                        detail = (line.description
+                            or line.move_description_used)
+                        if show_description and detail:
+                            if description:
+                                description += ' // '
+                            description += ' %s ' % detail
+                        values = [html_render(line.date), number, description]
+                    else:
+                        values = ['', '-', _('Previous balance')]
+                    pdf.row(values + [html_render(info[key])
+                        for key in ('debit', 'credit', 'balance')])
+            else:
+                pdf.row(['', '-', _('Previous balance'),
+                    html_render(record['total_debit']),
+                    html_render(record['total_credit']),
+                    html_render(record['total_debit'] - record['total_credit'])])
+            pdf.row([_('Total Fiscal Year'),
+                    html_render(record['total_debit']),
+                    html_render(record['total_credit']),
+                    html_render(record['total_debit'] - record['total_credit'])],
+                bold=True, widths=[sum(widths[:3])] + widths[3:],
+                aligns=['R'] * 4)
+            pdf.row([record['code'], record['party'] or record['account'],
+                    _('Total'), html_render(record['previous_balance']
+                        + record['total_debit'] - record['total_credit'])],
+                bold=True, widths=group_widths, aligns=['L', 'L', 'L', 'R'],
+                bottom=True)
+        return bytes(pdf.output())
 
-    @classmethod
-    def show_detail(cls, records, show_description):
-        detail_table = table()
-        with detail_table:
-            with tr():
-                th(_('Date'))
-                th(_('Number'))
-                th(_('Reference // Description'))
-                th(_('Debit'), style='text-align: right;')
-                th(_('Credit'), style='text-align: right;')
-                th(_('Balance'), style='text-align: right;')
-            for _key, record in records.items():
-                with tr() as row:
-                    cls._add_cell(row, record['code'], cls_name='bold',
-                        colspan=2)
-                    cls._add_cell(row, record['party'] or record['account'],
-                        cls_name='bold')
-                    cls._add_cell(row,
-                        _('Previous balance...') if record['lines'] else '',
-                        style_value='text-align: right;', colspan=2)
-                    cls._add_cell(row,
-                        html_render(record['previous_balance']) if record['lines'] else '',
-                        style_value='text-align: right;')
 
-                cls.show_detail_lines(record, show_description)
+class LedgerPDF(FPDF):
+    """Stream ledger rows, including rows taller than a page."""
 
-                with tr(cls='bold') as total_row:
-                    cls._add_cell(total_row, _('Total Fiscal Year'),
-                        style_value='text-align: right;', colspan=3)
-                    cls._add_cell(total_row, html_render(record['total_debit']),
-                        style_value='text-align: right;',
-                        cls_name='no-wrap')
-                    cls._add_cell(total_row, html_render(record['total_credit']),
-                        style_value='text-align: right;',
-                        cls_name='no-wrap')
-                    cls._add_cell(total_row,
-                        html_render(record['total_debit'] - record['total_credit']),
-                        style_value='text-align: right;',
-                        cls_name='no-wrap')
+    def __init__(self, heading, filters, columns, margin, checker):
+        super().__init__(orientation='L', format='A4')
+        self.heading = heading
+        self.filters = filters
+        self.columns = columns
+        self.checker = checker
+        self.set_margins(margin, margin, margin)
+        self.set_auto_page_break(False, margin=max(10, margin))
+        self.widths = [self.epw * ratio for ratio in
+            (0.08, 0.12, 0.47, 0.11, 0.11, 0.11)]
+        fonts = Path(__file__).with_name('fonts')
+        self.add_font('DejaVu', fname=fonts / 'DejaVuSans.ttf')
+        self.add_font('DejaVu', style='B',
+            fname=fonts / 'DejaVuSans-Bold.ttf')
+        self.alias_nb_pages()
 
-                with tr(cls='bold bottom') as total_row:
-                    cls._add_cell(total_row, record['code'], cls_name='bold',
-                        colspan=2)
-                    cls._add_cell(total_row,
-                        record['party'] if record['party'] else record['account'],
-                        cls_name='bold')
-                    cls._add_cell(total_row, _('Total'), cls_name='left bold',
-                        colspan=2)
-                    cls._add_cell(total_row,
-                        html_render(record['previous_balance']
-                            + record['total_debit']
-                            - record['total_credit']),
-                        style_value='text-align: right;',
-                        cls_name='no-wrap')
-        return detail_table
+    def header(self):
+        self.checker.check()
+        self.set_font('DejaVu', 'B', 11)
+        self.multi_cell(0, 5, self.heading, new_x='LMARGIN', new_y='NEXT')
+        self.set_font('DejaVu', size=7)
+        for text in self.filters:
+            self.multi_cell(0, 3.5, text, new_x='LMARGIN', new_y='NEXT')
+        self.ln(2)
+        self.set_font('DejaVu', 'B', 7)
+        self.row(self.columns, bold=True, fill=True, paginate=False)
+        self.body_top = self.y
 
-    @classmethod
-    def title(cls, action, data, records):
-        return '%s - %s - %s' % (
-            _('General Ledger'), data['parameters']['company'],
-            html_render(datetime.now()))
+    def footer(self):
+        self.set_y(-8)
+        self.set_font('DejaVu', size=7)
+        self.cell(0, 4, f'{self.page_no()} / {{nb}}', align='R')
 
-    @classmethod
-    def body(cls, action, data, records):
-        container = div()
-        if data.get('output_format') != 'pdf':
-            container.add(cls.header(action, data, records))
-        container.add(cls.show_detail(
-            data['records'],
-            data['parameters'].get('show_description', True)))
-        return container
+    def row(self, values, bold=False, fill=False, widths=None,
+            aligns=None, bottom=False, paginate=True):
+        self.checker.check()
+        self.set_font('DejaVu', 'B' if bold else '', 7)
+        widths = widths or self.widths
+        aligns = aligns or ['L', 'L', 'L', 'R', 'R', 'R']
+        lines = []
+        for width, value in zip(widths, values):
+            text = str(value or '')
+            if '\n' not in text and self.get_string_width(text) <= width - 2:
+                lines.append([text])
+            else:
+                lines.append(self.multi_cell(width, 4, text,
+                    dry_run=True, output='LINES'))
+        count = max(map(len, lines), default=1)
+        # Keep normal rows together; exceptionally long descriptions may span
+        # pages without losing text or repeating monetary amounts.
+        if (paginate and self.y + count * 4 > self.h - self.b_margin
+                and count * 4 <= self.h - self.b_margin - self.body_top):
+            self.add_page()
+            self.set_font('DejaVu', 'B' if bold else '', 7)
+        for index in range(count):
+            if paginate and self.y + 4 > self.h - self.b_margin:
+                self.add_page()
+                self.set_font('DejaVu', 'B' if bold else '', 7)
+            self.set_x(self.l_margin)
+            self.set_fill_color(235, 235, 235)
+            for width, cell_lines, align in zip(widths, lines, aligns):
+                text = cell_lines[index] if index < len(cell_lines) else ''
+                self.cell(width, 4, text, align=align, fill=fill)
+            self.ln(4)
+        if bottom:
+            self.line(self.l_margin, self.y, self.w - self.r_margin, self.y)
+
 
 class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
     __name__ = 'account_reports.general_ledger_xlsx'
