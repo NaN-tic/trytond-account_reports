@@ -766,262 +766,6 @@ msgctxt "report:account.trial_balance:"
 msgid "at"
 msgstr "en"
 
-msgctxt "report:account_reports.abreviated_journal:"
-msgid "Abreviated Journal"
-msgstr "Diario abreviado"
-
-msgctxt "report:account_reports.abreviated_journal:"
-msgid "Account"
-msgstr "Cuenta"
-
-msgctxt "report:account_reports.abreviated_journal:"
-msgid "Credit"
-msgstr "Haber"
-
-msgctxt "report:account_reports.abreviated_journal:"
-msgid "Debit"
-msgstr "Debe"
-
-msgctxt "report:account_reports.abreviated_journal:"
-msgid "Fiscal Year: "
-msgstr "Ejercicio fiscal: "
-
-msgctxt "report:account_reports.abreviated_journal:"
-msgid "Total Period: "
-msgstr "Total período:"
-
-msgctxt "report:account_reports.abreviated_journal:"
-msgid "VAT"
-msgstr "NIF"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid " From"
-msgstr "De"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "Accounts"
-msgstr "Cuentas"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "All Accounts"
-msgstr "Todas las cuentas"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "All Parties"
-msgstr "Todos los terceros"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "Balance"
-msgstr "Saldo"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "Credit"
-msgstr "Haber"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "Date"
-msgstr "Fecha"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "Debit"
-msgstr "Debe"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "Description"
-msgstr "Descripción"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "Fiscal Year"
-msgstr "Ejercicio fiscal"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "General Ledger"
-msgstr "Libro mayor"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "Number"
-msgstr "Número"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "PREVIOUS BALANCE"
-msgstr "Balance anterior"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "Parties"
-msgstr "Terceros"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "Party"
-msgstr "Tercero"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "Previous balance..."
-msgstr "Balance anterior..."
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "Reference"
-msgstr "Referencia"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "To"
-msgstr "Hasta"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "Total"
-msgstr "Total"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "Total Fiscal Year"
-msgstr "Total Ejercicio fiscal"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid "VAT"
-msgstr "NIF"
-
-msgctxt "report:account_reports.general_ledger:"
-msgid ""
-"When move number is between parentheses it means that it has no post number "
-"and the number shown is the provisional one."
-msgstr ""
-"Si el número de asiento aparece entre paréntesis indica que no tiene número "
-"confirmado y el número que se muestra es el provisional."
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Customer Invoices"
-msgstr "Facturas de cliente"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Description"
-msgstr "Descripción"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Due Amount"
-msgstr "Importe a vencimiento"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Due Date"
-msgstr "Fecha de vencimiento"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Invoice Date"
-msgstr "Fecha factura"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Invoice Payment Dates"
-msgstr "Fechas de pago de facturas"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "No invoices found"
-msgstr "No se han encontrado facturas"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Number"
-msgstr "Número"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Party"
-msgstr "Tercero"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Payment Date"
-msgstr "Fecha de pago"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Payment Days"
-msgstr "Días de pago"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Payment Type"
-msgstr "Tipo de pago"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Reference"
-msgstr "Referencia"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "State"
-msgstr "Estado"
-
-msgctxt "report:account_reports.invoice_payment_dates:"
-msgid "Supplier Invoices"
-msgstr "Facturas de proveedor"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Account"
-msgstr "Cuenta"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "All Parties"
-msgstr "Todos los terceros"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "All Periods"
-msgstr "Todos los períodos"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Base"
-msgstr "Base"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Base+Tax"
-msgstr "Base+Imp."
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Final posting date"
-msgstr "Fecha de contab. final"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Fiscal Year: "
-msgstr "Ejercicio fiscal: "
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Initial posting date"
-msgstr "Fecha de contab. inicial"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Invoice"
-msgstr "Factura"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Invoice Date"
-msgstr "Fecha factura"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Invoice Total"
-msgstr "Total factura"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Move Date"
-msgstr "Fecha asiento"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Parties: "
-msgstr "Terceros:"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Periods:"
-msgstr "Períodos:"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Tax"
-msgstr "Impuestos"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Taxes By Invoice"
-msgstr "Impuestos por factura"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Total"
-msgstr "Total"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "VAT"
-msgstr "NIF"
-
-msgctxt "report:account_reports.taxes_by_invoice:"
-msgid "Without taxes"
-msgstr "Sin impuestos"
-
 msgctxt ""
 "selection:account_reports.print_abreviated_journal.start,display_account:"
 msgid "All"
@@ -1039,21 +783,12 @@ msgstr "Excel"
 
 msgctxt ""
 "selection:account_reports.print_abreviated_journal.start,output_format:"
-msgid "HTML"
-msgstr "HTML"
-
-msgctxt ""
-"selection:account_reports.print_abreviated_journal.start,output_format:"
 msgid "PDF"
 msgstr "PDF"
 
 msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
 msgid "Excel"
 msgstr "Excel"
-
-msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
-msgid "HTML"
-msgstr "HTML"
 
 msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
 msgid "PDF"
@@ -1076,11 +811,6 @@ msgstr "Excel"
 
 msgctxt ""
 "selection:account_reports.print_invoice_payment_dates.start,output_format:"
-msgid "HTML"
-msgstr "HTML"
-
-msgctxt ""
-"selection:account_reports.print_invoice_payment_dates.start,output_format:"
 msgid "PDF"
 msgstr "PDF"
 
@@ -1089,20 +819,12 @@ msgid "Excel"
 msgstr "Excel"
 
 msgctxt "selection:account_reports.print_journal.start,output_format:"
-msgid "HTML"
-msgstr "HTML"
-
-msgctxt "selection:account_reports.print_journal.start,output_format:"
 msgid "PDF"
 msgstr "PDF"
 
 msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
 msgid "Excel"
 msgstr "Excel"
-
-msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
-msgid "HTML"
-msgstr "HTML"
 
 msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
 msgid "PDF"
@@ -1120,11 +842,6 @@ msgctxt ""
 "selection:account_reports.print_taxes_by_invoice.start,output_format:"
 msgid "Excel"
 msgstr "Excel"
-
-msgctxt ""
-"selection:account_reports.print_taxes_by_invoice.start,output_format:"
-msgid "HTML"
-msgstr "HTML"
 
 msgctxt ""
 "selection:account_reports.print_taxes_by_invoice.start,output_format:"
@@ -1154,10 +871,6 @@ msgstr "Rectificado"
 msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
 msgid "Excel"
 msgstr "Excel"
-
-msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
-msgid "HTML"
-msgstr "HTML"
 
 msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
 msgid "PDF"
@@ -1526,3 +1239,51 @@ msgid ""
 msgstr ""
 "Cuando el número de asiento está entre paréntesis significa que no tiene "
 "número de contabilización y el número mostrado es el provisional."
+
+msgctxt "xgettext:x:"
+msgid "Due Amount"
+msgstr "Importe a vencimiento"
+
+msgctxt "xgettext:x:"
+msgid "Due Date"
+msgstr "Fecha de vencimiento"
+
+msgctxt "xgettext:x:"
+msgid "Invoice Date"
+msgstr "Fecha factura"
+
+msgctxt "xgettext:x:"
+msgid "Invoice Payment Dates"
+msgstr "Fechas de pago de facturas"
+
+msgctxt "xgettext:x:"
+msgid "No invoices found"
+msgstr "No se han encontrado facturas"
+
+msgctxt "xgettext:x:"
+msgid "Party"
+msgstr "Tercero"
+
+msgctxt "xgettext:x:"
+msgid "Payment Date"
+msgstr "Fecha de pago"
+
+msgctxt "xgettext:x:"
+msgid "Payment Days"
+msgstr "Días de pago"
+
+msgctxt "xgettext:x:"
+msgid "Payment Type"
+msgstr "Tipo de pago"
+
+msgctxt "xgettext:x:"
+msgid "Reference"
+msgstr "Referencia"
+
+msgctxt "xgettext:x:"
+msgid "State"
+msgstr "Estado"
+
+msgctxt "xgettext:x:"
+msgid "Untaxed"
+msgstr "Base imponible"

@@ -5,19 +5,18 @@
 from datetime import datetime
 from decimal import Decimal
 
-from dominate.tags import div, header as header_tag, table, tbody, td, th, thead, tr
 from openpyxl import Workbook
 
 from trytond.exceptions import UserError
 from trytond.i18n import gettext
 from trytond.model import ModelView, fields
 from trytond.modules.account_reports.common import (
-    AccountReportsReportMixin, TimeoutChecker, TimeoutException,
-    css as common_css, header_css)
+    TimeoutChecker, TimeoutException)
 from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import XlsxReport, convert_str_to_float, save_workbook
-from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.html_report.engine import render as html_render
+from trytond.modules.account_reports.common import (
+    AccountReportsPDF, AccountReportsPDFReport)
 from trytond.modules.xgettext import _
 
 from trytond.pool import Pool, PoolMeta
@@ -47,7 +46,6 @@ class PrintOpenMoveLinesStart(ModelView):
         depends=['company'])
     output_format = fields.Selection([
             ('pdf', 'PDF'),
-            ('html', 'HTML'),
             ('xlsx', 'Excel'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
@@ -74,7 +72,7 @@ class PrintOpenMoveLinesStart(ModelView):
     def default_timeout():
         Config = Pool().get('account.configuration')
         config = Config(1)
-        return config.default_timeout or 30
+        return config.default_timeout or 60
 
     @staticmethod
     def default_show_description():
@@ -129,8 +127,7 @@ class PrintOpenMoveLines(Wizard):
             'parties': party_ids,
             }
 
-
-class OpenMoveLinesReport(AccountReportsReportMixin, DominateReport):
+class OpenMoveLinesReport(AccountReportsPDFReport):
     __name__ = 'account_reports.open_move_lines'
 
     @classmethod
@@ -139,13 +136,6 @@ class OpenMoveLinesReport(AccountReportsReportMixin, DominateReport):
         cls.__rpc__['execute'] = RPC(False)
         cls.side_margin = 0.3
 
-    @classmethod
-    def css(cls, action, data, records):
-        return common_css('landscape')
-
-    @classmethod
-    def css_header(cls, action, data, records):
-        return header_css('landscape', action, cls.side_margin)
 
     @classmethod
     def _ref_origin_invoice_line(cls, line):
@@ -333,166 +323,51 @@ class OpenMoveLinesReport(AccountReportsReportMixin, DominateReport):
         return dict(sorted(records.items())), parameters
 
     @classmethod
-    def execute(cls, ids, data):
-        Config = Pool().get('account.configuration')
-
-        config = Config(1)
-        timeout = data.get('timeout') or config.default_timeout or 300
-        checker = TimeoutChecker(timeout, cls.timeout_exception)
-
-        start_prepare = datetime.now()
-        with Transaction().set_context(active_test=False):
-            try:
-                records, parameters = cls.prepare(data, checker)
-            except TimeoutException:
-                raise UserError(gettext('account_reports.msg_timeout_exception'))
-        end_prepare = datetime.now()
-
-        context = Transaction().context.copy()
-        if timeout:
-            context['timeout_report'] = (
-                timeout - int((end_prepare - start_prepare).total_seconds()))
-
-        with Transaction().set_context(**context):
-            return super(OpenMoveLinesReport, cls).execute(ids, {
-                    'name': 'account_reports.open_move_lines',
-                    'model': 'account.move.line',
-                    'records': records,
-                    'parameters': parameters,
-                    'output_format': data.get('output_format', 'pdf'),
-                    })
-
-    @classmethod
     def timeout_exception(cls):
         raise TimeoutException
 
-    @classmethod
-    def header(cls, action, data, records):
-        p = data['parameters']
-        with header_tag(id='header') as container:
-            with table(cls='header-table'):
-                with thead():
-                    with tr():
-                        with td():
-                            div('%s' % p['company'], cls='company-name')
-                            div('%s: %s' % (p['company_vat_label'], p['company_vat']))
-                        with td(cls='center'):
-                            div(_('Open Move Lines'), cls='header-title')
-                        with td(cls='right'):
-                            div(html_render(datetime.now()))
-            with table():
-                with tbody():
-                    with tr():
-                        td(_('Cut-off Date: %s') % p['date'])
-                    with tr():
-                        td(_('Parties: %s') % p['parties'] if p['parties']
-                            else _('All Parties'))
-                    with tr():
-                        td(_('Accounts: %s') % p['accounts'] if p['accounts']
-                            else _('All Accounts'))
-        return container
 
     @classmethod
-    def _add_cell(cls, row, value='', cls_name='', style_value='',
-            colspan=1):
-        cell = td(value)
-        if cls_name:
-            cell['class'] = cls_name
-        if style_value:
-            cell['style'] = style_value
-        if colspan != 1:
-            cell['colspan'] = str(colspan)
-        row.add(cell)
+    def _build_pdf(cls, records, p, margin, checker):
+        filters = ['%s: %s' % (p['company_vat_label'], p['company_vat']),
+            _('Cut-off Date: %s') % p['date'],
+            _('Parties: %s') % p['parties'] if p['parties'] else _('All Parties'),
+            _('Accounts: %s') % p['accounts'] if p['accounts'] else _('All Accounts')]
+        pdf = AccountReportsPDF(_('Open Move Lines'), p['company'], filters,
+            [_('Date'), _('Maturity Date'), _('Number'),
+                _('Reference // Description'), _('Reconciliation Date'),
+                _('Debit'), _('Credit'), _('Balance')],
+            [8, 8, 10, 33, 11, 10, 10, 10], ['L'] * 5 + ['R'] * 3,
+            margin, checker)
+        pdf.add_page()
+        widths = pdf.widths
+        group_widths = [sum(widths[:2]), sum(widths[2:4]),
+            sum(widths[4:7]), widths[7]]
+        show_description = p.get('show_description', True)
+        for record in records.values():
+            pdf.row([record['code'], record['party'] or record['account'], '',
+                html_render(record['total_balance'])], bold=True, fill=True,
+                widths=group_widths, aligns=['L', 'L', 'L', 'R'])
+            for info in record['lines']:
+                line = info['line']
+                number = (line.move.number or '(#%s)' % line.move.id
+                    if line.move else '')
+                description = info['ref'] or ''
+                detail = line.description or line.move_description_used
+                if show_description and detail:
+                    if description:
+                        description += ' // '
+                    description += detail
+                pdf.row([html_render(line.date), html_render(line.maturity_date),
+                    number, description,
+                    html_render(line.reconciliation.date)
+                        if line.reconciliation else '']
+                    + [html_render(info[key]) for key in ('debit', 'credit', 'balance')])
+            pdf.row([record['code'], record['party'] or record['account'],
+                _('Total'), html_render(record['total_balance'])], bold=True,
+                widths=group_widths, aligns=['L', 'L', 'L', 'R'], bottom=True)
+        return bytes(pdf.output())
 
-    @classmethod
-    def show_detail_lines(cls, record, show_description):
-        rows = []
-        for line_info in record['lines']:
-            row = tr()
-            line = line_info['line']
-            number = ''
-            if line.move and line.move.number:
-                number = line.move.number
-            elif line.move:
-                number = '(#%s)' % line.move.id
-            description = ''
-            if line_info['ref']:
-                description += line_info['ref']
-            if (line_info['ref'] and show_description
-                    and (line.description or line.move_description_used)):
-                description += ' // '
-            if show_description and line.description:
-                description += line.description
-            elif show_description and line.move_description_used:
-                description += line.move_description_used
-
-            cls._add_cell(row, html_render(line.date))
-            cls._add_cell(row, html_render(line.maturity_date)
-                if line.maturity_date else '')
-            cls._add_cell(row, number)
-            cls._add_cell(row, description)
-            cls._add_cell(row, html_render(line.reconciliation.date)
-                if line.reconciliation else '')
-            cls._add_cell(row, html_render(line_info['debit']),
-                style_value='text-align: right;', cls_name='no-wrap')
-            cls._add_cell(row, html_render(line_info['credit']),
-                style_value='text-align: right;', cls_name='no-wrap')
-            cls._add_cell(row, html_render(line_info['balance']),
-                style_value='text-align: right;', cls_name='no-wrap')
-            rows.append(row)
-        return rows
-
-    @classmethod
-    def show_detail(cls, records, show_description):
-        detail_table = table()
-        with detail_table:
-            with tr():
-                th(_('Date'))
-                th(_('Maturity Date'))
-                th(_('Number'))
-                th(_('Reference // Description'))
-                th(_('Reconciliation Date'))
-                th(_('Debit'), style='text-align: right;')
-                th(_('Credit'), style='text-align: right;')
-                th(_('Balance'), style='text-align: right;')
-            for record in records.values():
-                with tr() as row:
-                    cls._add_cell(row, record['code'], cls_name='bold', colspan=2)
-                    cls._add_cell(row, record['party'] or record['account'],
-                        cls_name='bold', colspan=2)
-                    cls._add_cell(row, '', colspan=3)
-                    cls._add_cell(row, html_render(record['total_balance']),
-                        style_value='text-align: right;',
-                        cls_name='no-wrap bold')
-
-                cls.show_detail_lines(record, show_description)
-
-                with tr(cls='bold bottom') as total_row:
-                    cls._add_cell(total_row, record['code'], cls_name='bold',
-                        colspan=2)
-                    cls._add_cell(total_row, record['party'] or record['account'],
-                        cls_name='bold', colspan=2)
-                    cls._add_cell(total_row, _('Total'), cls_name='left bold',
-                        colspan=3)
-                    cls._add_cell(total_row, html_render(record['total_balance']),
-                        style_value='text-align: right;', cls_name='no-wrap')
-        return detail_table
-
-    @classmethod
-    def title(cls, action, data, records):
-        return '%s - %s - %s' % (
-            _('Open Move Lines'), data['parameters']['company'],
-            html_render(datetime.now()))
-
-    @classmethod
-    def body(cls, action, data, records):
-        container = div()
-        if data.get('output_format') != 'pdf':
-            container.add(cls.header(action, data, records))
-        container.add(cls.show_detail(
-            data['records'],
-            data['parameters'].get('show_description', True)))
-        return container
 
 class OpenMoveLinesXlsxReport(XlsxReport, metaclass=PoolMeta):
     __name__ = 'account_reports.open_move_lines_xlsx'

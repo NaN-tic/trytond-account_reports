@@ -1,5 +1,10 @@
 import datetime
 import unittest
+import tempfile
+from io import BytesIO
+
+from openpyxl import load_workbook
+from pypdf import PdfReader
 from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
@@ -7,6 +12,7 @@ from proteus import Model
 
 from trytond.modules.account.tests.tools import (
     create_chart,
+    create_tax,
     create_fiscalyear,
     get_accounts,
     )
@@ -121,7 +127,8 @@ class TestInvoicePaymentDates(unittest.TestCase):
         customer_payment_date = today + relativedelta(days=20)
         customer_payment = Move()
         customer_payment.company = company
-        customer_payment.period = period
+        customer_payment.period = next(p for p in fiscalyear.periods
+            if p.start_date <= customer_payment_date <= p.end_date)
         customer_payment.journal = journal_cash
         customer_payment.date = customer_payment_date
         line = customer_payment.lines.new()
@@ -139,7 +146,8 @@ class TestInvoicePaymentDates(unittest.TestCase):
         supplier_payment_date = today + relativedelta(days=25)
         supplier_payment = Move()
         supplier_payment.company = company
-        supplier_payment.period = period
+        supplier_payment.period = next(p for p in fiscalyear.periods
+            if p.start_date <= supplier_payment_date <= p.end_date)
         supplier_payment.journal = journal_cash
         supplier_payment.date = supplier_payment_date
         line = supplier_payment.lines.new()
@@ -249,3 +257,81 @@ class TestInvoicePaymentDates(unittest.TestCase):
                 supplier_payment_date.strftime('%d/%m/%Y'))
             self.assertEqual(record['payment_days'], 25)
             self.assertEqual(record['due_amount'], supplier_invoice.total_amount)
+
+
+            extension, content, _, _ = InvoicePaymentDatesReport.execute([], data)
+            self.assertEqual(extension, 'pdf')
+            text = '\n'.join(page.extract_text() for page in PdfReader(BytesIO(content)).pages)
+            self.assertIn(supplier_name, text)
+            self.assertIn('75.00', text)
+            self.assertIn('25', text)
+            with tempfile.NamedTemporaryFile(prefix='invoice_payment_dates-',
+                    suffix='.pdf', delete=False) as output:
+                output.write(content)
+                print('Report PDF preview:', output.name)
+            data['output_format'] = 'xlsx'
+            extension, content, _, _ = InvoicePaymentDatesReport.execute([], data)
+            self.assertEqual(extension, 'xlsx')
+            workbook = load_workbook(BytesIO(content))
+            values = [cell.value for row in workbook.active for cell in row]
+            self.assertIn(supplier_name, values)
+            self.assertIn(75, values)
+            self.assertIn(25, values)
+
+        # A further customer invoice with two taxes exercises repeated invoice
+        # lines, per-tax totals and grouped period totals.
+        company = get_company(config=self.config)
+        Invoice = Model.get('account.invoice', config=self.config)
+        tax = create_tax(Decimal('0.10'), company, config=self.config)
+        tax.save()
+        other_tax = create_tax(Decimal('0.05'), company, config=self.config)
+        other_tax.save()
+        taxed_invoice = Invoice(company=company, currency=company.currency,
+            account=receivable, type='out', party=customer,
+            invoice_date=today, payment_term=payment_term)
+        line = taxed_invoice.lines.new()
+        line.account = revenue
+        line.quantity = 1
+        line.unit_price = Decimal('200')
+        line.taxes.extend([tax, other_tax])
+        taxed_invoice.click('post')
+        invoice_number = taxed_invoice.number
+        with Transaction().start(self.config.database_name, 0,
+                context={'company': company.id, 'language': 'en'}):
+            Report = Pool().get('account_reports.taxes_by_invoice', type='report')
+            data = dict(company=company.id, fiscalyear=fiscalyear.id,
+                start_date=None, end_date=None, periods=[], parties=[customer.id],
+                excluded_parties=[], partner_type='customers', grouping='invoice',
+                tax_type='all', totals_only=False, taxes=[], output_format='pdf')
+            extension, content, _, _ = Report.execute([], data)
+            self.assertEqual(extension, 'pdf')
+            text = '\n'.join(page.extract_text() for page in PdfReader(BytesIO(content)).pages)
+            self.assertIn(invoice_number, text)
+            for amount in ['200.00', '20.00', '10.00', '230.00', '430.00']:
+                self.assertIn(amount, text)
+            self.assertEqual(text.count('230.00'), 1)
+            with tempfile.NamedTemporaryFile(prefix='taxes_by_invoice-',
+                    suffix='.pdf', delete=False) as output:
+                output.write(content)
+                print('Report PDF preview:', output.name)
+            data['totals_only'] = True
+            _, content, _, _ = Report.execute([], data)
+            text = '\n'.join(page.extract_text() for page in PdfReader(BytesIO(content)).pages)
+            self.assertNotIn('230.00', text)
+            self.assertIn('430.00', text)
+            data.update(totals_only=False, grouping='base_tax_code')
+            _, content, _, _ = Report.execute([], data)
+            text = '\n'.join(page.extract_text() for page in PdfReader(BytesIO(content)).pages)
+            self.assertIn(invoice_number, text)
+            self.assertIn('220.00', text)
+            self.assertIn('210.00', text)
+            Xlsx = Pool().get('account_reports.taxes_by_invoice_xlsx', type='report')
+            workbook = load_workbook(BytesIO(Xlsx.get_content([], data)))
+            values = [cell.value for row in workbook.active for cell in row]
+            self.assertIn(220, values)
+            self.assertIn(210, values)
+            data.update(start_date=datetime.date(1900, 1, 1),
+                end_date=datetime.date(1900, 1, 31))
+            _, content, _, _ = Report.execute([], data)
+            text = '\n'.join(page.extract_text() for page in PdfReader(BytesIO(content)).pages)
+            self.assertIn('No records found', text)
