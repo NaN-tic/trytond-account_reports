@@ -146,8 +146,8 @@ class OpenMoveLinesReport(AccountReportsPDFReport):
             ref.append('%s' % line.origin.invoice.number)
         if line.origin.invoice.reference:
             ref.append('[%s]' % line.origin.invoice.reference)
-        if line.origin.invoice.party.rec_name:
-            ref.append('%s' % line.origin.invoice.party.rec_name)
+        if line.origin.invoice.party.accounting_name:
+            ref.append('%s' % line.origin.invoice.party.accounting_name)
         return ' '.join(ref)
 
     @classmethod
@@ -157,8 +157,8 @@ class OpenMoveLinesReport(AccountReportsPDFReport):
             ref.append('%s' % line.move_origin.number)
         if line.move_origin.reference:
             ref.append('[%s]' % line.move_origin.reference)
-        if line.move_origin.party.rec_name:
-            ref.append('%s' % line.move_origin.party.rec_name)
+        if line.move_origin.party.accounting_name:
+            ref.append('%s' % line.move_origin.party.accounting_name)
         return ' '.join(ref)
 
     @classmethod
@@ -227,7 +227,7 @@ class OpenMoveLinesReport(AccountReportsPDFReport):
                     if len(parties_subtitle) > 4:
                         parties_subtitle.append('...')
                         break
-                    parties_subtitle.append(party.name)
+                    parties_subtitle.append(party.accounting_name)
                 parties_subtitle = '; '.join(parties_subtitle)
             else:
                 parties_subtitle = ''
@@ -298,12 +298,12 @@ class OpenMoveLinesReport(AccountReportsPDFReport):
 
                 key = (
                     line.account.code or str(line.account.id),
-                    party.name if party else '',
+                    party.accounting_name if party else '',
                     )
                 record = records.setdefault(key, {
                         'account': line.account.name,
                         'code': line.account.code or str(line.account.id),
-                        'party': party.name if party else '',
+                        'party': party.accounting_name if party else '',
                         'lines': [],
                         'total_debit': _ZERO,
                         'total_credit': _ZERO,

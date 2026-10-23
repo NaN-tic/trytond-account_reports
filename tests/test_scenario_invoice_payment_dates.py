@@ -1,6 +1,7 @@
 import datetime
 import unittest
 import tempfile
+from unittest.mock import patch
 from io import BytesIO
 
 from openpyxl import load_workbook
@@ -70,8 +71,10 @@ class TestInvoicePaymentDates(unittest.TestCase):
         supplier = Party(name='Supplier')
         supplier.addresses.new()
         supplier.save()
-        customer_name = customer.rec_name
-        supplier_name = supplier.rec_name
+        self.assertEqual(customer.accounting_name, customer.rec_name)
+        self.assertEqual(supplier.accounting_name, supplier.rec_name)
+        customer_name = 'Accounting ' + customer.rec_name
+        supplier_name = 'Accounting ' + supplier.rec_name
 
         payment_term = PaymentTerm(name='15 days')
         line = payment_term.lines.new(type='remainder')
@@ -162,7 +165,9 @@ class TestInvoicePaymentDates(unittest.TestCase):
         supplier_payable = next(
                 line for line in supplier_payment.lines if line.account == payable)
 
-        with Transaction().start(self.config.database_name, 0):
+        with Transaction().start(self.config.database_name, 0), patch.object(
+                Pool().get('party.party'), 'get_accounting_name',
+                lambda self, name: 'Accounting ' + self.rec_name):
             Company = Pool().get('company.company')
             FiscalYear = Pool().get('account.fiscalyear')
             Period = Pool().get('account.period')
@@ -297,7 +302,9 @@ class TestInvoicePaymentDates(unittest.TestCase):
         taxed_invoice.click('post')
         invoice_number = taxed_invoice.number
         with Transaction().start(self.config.database_name, 0,
-                context={'company': company.id, 'language': 'en'}):
+                context={'company': company.id, 'language': 'en'}), patch.object(
+                    Pool().get('party.party'), 'get_accounting_name',
+                    lambda self, name: 'Accounting ' + self.rec_name):
             Report = Pool().get('account_reports.taxes_by_invoice', type='report')
             data = dict(company=company.id, fiscalyear=fiscalyear.id,
                 start_date=None, end_date=None, periods=[], parties=[customer.id],
@@ -307,6 +314,7 @@ class TestInvoicePaymentDates(unittest.TestCase):
             self.assertEqual(extension, 'pdf')
             text = '\n'.join(page.extract_text() for page in PdfReader(BytesIO(content)).pages)
             self.assertIn(invoice_number, text)
+            self.assertIn(customer_name, text)
             for amount in ['200.00', '20.00', '10.00', '230.00', '430.00']:
                 self.assertIn(amount, text)
             self.assertEqual(text.count('230.00'), 1)
@@ -323,11 +331,13 @@ class TestInvoicePaymentDates(unittest.TestCase):
             _, content, _, _ = Report.execute([], data)
             text = '\n'.join(page.extract_text() for page in PdfReader(BytesIO(content)).pages)
             self.assertIn(invoice_number, text)
+            self.assertIn(customer_name, text)
             self.assertIn('220.00', text)
             self.assertIn('210.00', text)
             Xlsx = Pool().get('account_reports.taxes_by_invoice_xlsx', type='report')
             workbook = load_workbook(BytesIO(Xlsx.get_content([], data)))
             values = [cell.value for row in workbook.active for cell in row]
+            self.assertIn(customer_name, values)
             self.assertIn(220, values)
             self.assertIn(210, values)
             data.update(start_date=datetime.date(1900, 1, 1),

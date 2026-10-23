@@ -142,7 +142,7 @@ class JournalReport(AccountReportsPDFReport):
 
     @classmethod
     def get_party_name(cls, party):
-        return party.name or ''
+        return party.accounting_name or ''
 
     @classmethod
     def _get_open_close_moves(cls, _type, description, fiscalyear, accounts,
