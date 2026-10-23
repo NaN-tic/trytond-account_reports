@@ -18,7 +18,7 @@ from trytond.modules.account_reports.common import (
     AccountReportsPDF, AccountReportsPDFReport)
 from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import (
-    XlsxReport, save_workbook, convert_str_to_float)
+    XlsxReport, save_workbook)
 from openpyxl import Workbook
 
 _ZERO = Decimal(0)
@@ -577,9 +577,6 @@ class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
         ws = wb.active
         ws.title = title_prefix[:31]
 
-        def xls(value, **kwargs):
-            return convert_str_to_float(html_render(value, **kwargs))
-
         ws.append([company_name, title_prefix, html_render(datetime.now())])
         ws.append(['%s: %s' % (
             parameters['company_vat_label'], parameters['company_vat'])])
@@ -642,16 +639,13 @@ class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
             ws.append(headers)
             key_name = key.name if hasattr(key, 'name') else key.rec_name
             ws.append([key_name] + [''] * 10)
-            currency_digits = key.company.currency.digits
 
             if not parameters['totals_only']:
                 before_invoice_id = None
                 for line in record_lines:
                     total = line.raw.company_base + line.raw.company_amount
-                    base = (line.raw.company_base
-                        if line.render.base else 0.0)
-                    amount = (line.raw.company_amount
-                        if line.render.amount else 0.0)
+                    base = line.raw.company_base
+                    amount = line.raw.company_amount
                     if before_invoice_id != line.invoice.raw.id:
                         tax_id = (line.invoice.party_tax_identifier
                             and line.invoice.party_tax_identifier.render.code) or (
@@ -667,21 +661,20 @@ class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
                             tax_id,
                             number,
                             line.invoice.render.invoice_date,
-                            xls(base, digits=currency_digits),
+                            base,
                             line.tax.raw.name if line.tax else ' --- ',
-                            xls(amount, digits=currency_digits),
-                            xls(total, digits=currency_digits),
-                            xls(line.invoice.raw.company_total_amount,
-                                digits=currency_digits),
+                            amount,
+                            total,
+                            line.invoice.raw.company_total_amount,
                             ])
                     else:
                         ws.append(
                             [''] * 6
                             + [
-                                xls(base, digits=currency_digits),
+                                base,
                                 line.tax.raw.name if line.tax else ' --- ',
-                                xls(amount, digits=currency_digits),
-                                xls(total, digits=currency_digits),
+                                amount,
+                                total,
                                 '',
                                 ])
                     before_invoice_id = line.invoice.raw.id
@@ -692,26 +685,20 @@ class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
                 ws.append(
                     [total_label] + [''] * 5
                     + [
-                        xls(parameters['tax_totals'][key]['total_untaxed'],
-                            digits=currency_digits),
+                        parameters['tax_totals'][key]['total_untaxed'],
                         '',
-                        xls(parameters['tax_totals'][key]['total_tax'],
-                            digits=currency_digits),
-                        xls(parameters['tax_totals'][key]['total'],
-                            digits=currency_digits),
+                        parameters['tax_totals'][key]['total_tax'],
+                        parameters['tax_totals'][key]['total'],
                         '',
                         ])
             if parameters['grouping'] and index == len(items) - 1:
                 ws.append(
                     ['Total'] + [''] * 5
                     + [
-                        xls(parameters['totals']['total_untaxed'],
-                            digits=currency_digits),
+                        parameters['totals']['total_untaxed'],
                         '',
-                        xls(parameters['totals']['total_tax'],
-                            digits=currency_digits),
-                        xls(parameters['totals']['total'],
-                            digits=currency_digits),
+                        parameters['totals']['total_tax'],
+                        parameters['totals']['total'],
                         '',
                         ])
             ws.append([])

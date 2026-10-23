@@ -219,3 +219,20 @@ class TestGeneralLedgerPDF(unittest.TestCase):
                     Xlsx._build_workbook(records, parameters)))
                 self.assertIn(812.34, [cell.value
                     for row in workbook.active for cell in row])
+
+            # Excel must receive numeric values without locale formatting or
+            # rounding them to the PDF's display precision.
+            amounts = [Decimal('1234567.891234'), Decimal('-9876.54321'),
+                Decimal('0')]
+            for info, amount in zip(record['lines'], amounts):
+                info['debit'] = amount
+            record['code'] = '00123'
+            workbook = load_workbook(BytesIO(
+                Xlsx._build_workbook(records, parameters)))
+            cells = [cell for row in workbook.active for cell in row]
+            for amount in amounts:
+                matches = [cell for cell in cells if cell.value == float(amount)]
+                self.assertTrue(matches)
+                self.assertTrue(all(cell.data_type == 'n' for cell in matches))
+            code_cell = next(cell for cell in cells if cell.value == '00123')
+            self.assertEqual(code_cell.data_type, 's')
