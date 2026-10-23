@@ -23,7 +23,7 @@ copyright notices and license terms. -->
         <field name="only_moves"/>
     </group>
     <notebook colspan="8">
-        <page string="Periods">
+        <page id="periods" string="Periods">
             <label name="fiscalyear"/>
             <field name="fiscalyear"/>
             <newline/>
