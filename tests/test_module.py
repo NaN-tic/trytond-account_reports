@@ -315,8 +315,8 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(data['output_format'], 'pdf')
         records, parameters = GeneralLedgerReport.prepare(data, checker)
         self.assertEqual(len(records), 6)
-        self.assertEqual(parameters['start_period'].name, period.name)
-        self.assertEqual(parameters['end_period'].name, last_period.name)
+        self.assertEqual(parameters['start_period'], period.name)
+        self.assertEqual(parameters['end_period'], last_period.name)
         self.assertEqual(parameters['fiscal_year'], fiscalyear.name)
         self.assertEqual(parameters['accounts'], '')
         self.assertEqual(parameters['parties'], '')
@@ -324,9 +324,9 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
         self.assertEqual(credit, debit)
         self.assertEqual(credit, Decimal('730.0'))
-        with_party = [line for k, m in records.items() for line in m['lines'] if not line['line'].party]
+        with_party = [line for k, m in records.items() for line in m['lines'] if not m['party']]
         self.assertEqual(len(with_party), 6)
-        dates = sorted(set([line['line'].date for k, m in records.items() for line in m['lines']]))
+        dates = sorted(set([line['date'] for k, m in records.items() for line in m['lines']]))
         for date, expected_value in zip(dates, [period.start_date,
                     last_period.end_date]):
             self.assertEqual(date, expected_value)
@@ -354,7 +354,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
         self.assertEqual(credit, debit)
         self.assertEqual(credit, Decimal('380.0'))
-        dates = sorted(set([line['line'].date for k, m in records.items() for line in m['lines']]))
+        dates = sorted(set([line['date'] for k, m in records.items() for line in m['lines']]))
         for date in dates:
             self.assertEqual(date, period.start_date)
 
@@ -381,7 +381,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines']])
         self.assertEqual(credit, debit)
         self.assertEqual(credit, Decimal('380.0'))
-        dates = sorted(set([line['line'].date for k, m in records.items() for line in m['lines']]))
+        dates = sorted(set([line['date'] for k, m in records.items() for line in m['lines']]))
         for date in dates:
             self.assertEqual(date, period.start_date)
 
@@ -443,7 +443,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         debit = sum([line['debit'] for k, m in records.items() for line in m['lines'] if m['party'] == ''])
         self.assertEqual(credit, Decimal(0))
         self.assertEqual(debit, Decimal(0))
-        parties = [line for k, m in records.items() for line in m['lines'] if not line['line'].party]
+        parties = [line for k, m in records.items() for line in m['lines'] if not m['party']]
         self.assertEqual(len(parties), 0)
 
         # Filter by parties and accounts
@@ -472,7 +472,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(parameters['accounts'], ', '.join([r.code for r in receivables]))
         self.assertEqual(len(records), 1)
         credit = sum([line['credit'] for k, m in records.items() for line in m['lines']])
-        self.assertEqual(True, all([line for k, m in records.items() for line in m['lines'] if line['line'].party]))
+        self.assertEqual(True, all([line for k, m in records.items() for line in m['lines'] if m['party']]))
 
     @with_transaction()
     def test_trial_balance_render(self):
