@@ -1,6 +1,11 @@
 import datetime
 import unittest
 from decimal import Decimal
+from io import BytesIO
+from unittest.mock import patch
+
+from openpyxl import load_workbook
+from pypdf import PdfReader
 
 from proteus import Model
 
@@ -50,6 +55,11 @@ class TestTrialBalanceSplitParties(unittest.TestCase):
         journal, = Journal.find([('code', '=', 'EXP')])
         party = Party(name='Party')
         party.save()
+        self.assertEqual(party.accounting_name, party.rec_name)
+        unnamed = Party()
+        unnamed.save()
+        self.assertNotEqual(unnamed.name, unnamed.rec_name)
+        self.assertEqual(unnamed.accounting_name, unnamed.rec_name)
 
         for debit, credit in ((Decimal('100'), Decimal('0')),
                 (Decimal('0'), Decimal('100'))):
@@ -119,6 +129,51 @@ class TestTrialBalanceSplitParties(unittest.TestCase):
             _, data = wizard.do_print_(None)
             checker = TimeoutChecker(30, TrialBalanceReport.timeout_exception)
             records, _ = TrialBalanceReport.prepare(data, checker)
+
+            # A client override must reach the body of both output formats,
+            # even without selecting parties in the report filters.
+            with Transaction().set_context(company=company.id, language='en'), \
+                    patch.object(Pool().get('party.party'),
+                        'get_accounting_name',
+                        lambda self, name: 'Accounting ' + self.rec_name):
+                ledger_data = dict(company=company.id,
+                    fiscalyear=fiscalyear.id,
+                    start_period=first_period.id, end_period=first_period.id,
+                    start_date=None, end_date=None,
+                    accounts=[payable.id], parties=[], all_accounts=True,
+                    show_description=True, output_format='pdf', timeout=30)
+                cases = [
+                    ('trial_balance', dict(data,
+                        start_period=first_period.id,
+                        end_period=first_period.id, only_moves=True)),
+                    ('general_ledger', ledger_data),
+                    ('open_move_lines', dict(company=company.id,
+                        date=first_period.end_date, accounts=[payable.id],
+                        parties=[], show_description=True, output_format='pdf',
+                        timeout=30)),
+                    ('journal', dict(ledger_data, journals=[],
+                        open_close_account_moves=False,
+                        open_move_description='Open',
+                        close_move_description='Close')),
+                    ]
+                for report_name, report_data in cases:
+                    with self.subTest(report=report_name):
+                        Report = Pool().get('account_reports.' + report_name,
+                            type='report')
+                        extension, content, _, _ = Report.execute([], report_data)
+                        self.assertEqual(extension, 'pdf')
+                        text = '\n'.join(page.extract_text()
+                            for page in PdfReader(BytesIO(content)).pages)
+                        self.assertIn('Accounting Party', text)
+                        Xlsx = Pool().get(
+                            'account_reports.' + report_name + '_xlsx',
+                            type='report')
+                        workbook = load_workbook(BytesIO(
+                            Xlsx.get_content([], report_data)))
+                        values = [cell.value
+                            for row in workbook.active for cell in row]
+                        self.assertTrue(any('Accounting Party' in str(value)
+                            for value in values))
 
         record = next(record for record in records
             if record['code'] == payable.code)

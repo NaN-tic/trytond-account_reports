@@ -179,6 +179,12 @@ class Account(metaclass=PoolMeta):
 class Party(metaclass=PoolMeta):
     __name__ = 'party.party'
 
+    accounting_name = fields.Function(
+        fields.Char('Accounting Name'), 'get_accounting_name')
+
+    def get_accounting_name(self, name):
+        return self.rec_name
+
     @classmethod
     def html_get_account_values_by_party(cls, parties, accounts, company):
         '''
