@@ -1287,3 +1287,7 @@ msgstr "Estado"
 msgctxt "xgettext:x:"
 msgid "Untaxed"
 msgstr "Base imponible"
+
+msgctxt "field:party.party,accounting_name:"
+msgid "Accounting Name"
+msgstr "Nombre contable"

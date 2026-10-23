@@ -252,7 +252,7 @@ class TaxesByInvoiceReport(AccountReportsPDFReport):
                 if len(parties_subtitle) > 4:
                     parties_subtitle.append('...')
                     break
-                parties_subtitle.append(x.rec_name)
+                parties_subtitle.append(x.accounting_name)
             parties_subtitle = '; '.join(parties_subtitle)
         else:
             parties_subtitle = ''
@@ -517,7 +517,7 @@ class TaxesByInvoiceReport(AccountReportsPDFReport):
                         tax_identifier = (invoice.party_tax_identifier
                             or invoice.party.tax_identifier)
                         values = [html_render(invoice.move.date), line.account.raw.code,
-                            invoice.party.rec_name,
+                            invoice.party.accounting_name,
                             tax_identifier.code if tax_identifier else '',
                             ('*' if invoice.state == 'cancelled' else '') + (invoice.number or ''),
                             html_render(invoice.invoice_date)]
@@ -663,7 +663,7 @@ class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):
                         ws.append([
                             line.invoice.move.render.date,
                             line.account.render.code,
-                            line.invoice.party.render.rec_name,
+                            line.invoice.party.render.accounting_name,
                             tax_id,
                             number,
                             line.invoice.render.invoice_date,

@@ -212,7 +212,6 @@ class InvoicePaymentDatesReport(AccountReportsPDFReport):
         invoice = Invoice.__table__()
         line = MoveLine.__table__()
         additional_move = AdditionalMove.__table__()
-        party = Party.__table__()
         payment_term = PaymentTerm.__table__()
         currency = Currency.__table__()
         reconciliation = Reconciliation.__table__()
@@ -250,7 +249,6 @@ class InvoicePaymentDatesReport(AccountReportsPDFReport):
                     & (invoice.account == line.account)))
                 .join(payment_term, type_='LEFT',
                     condition=(payment_term.id == invoice.payment_term))
-                .join(party, type_='LEFT', condition=(party.id == invoice.party))
                 .join(currency, condition=(currency.id == invoice.currency))
                 .join(reconciliation, type_='LEFT',
                     condition=(reconciliation.id == line.reconciliation))
@@ -272,7 +270,7 @@ class InvoicePaymentDatesReport(AccountReportsPDFReport):
                     invoice.tax_amount_cache.as_('tax_amount'),
                     invoice.total_amount_cache.as_('total_amount'),
                     invoice.description.as_('description'),
-                    party.name.as_('party'),
+                    invoice.party.as_('party'),
                     payment_term.name.as_('payment_type'),
                     currency.digits.as_('currency_digits'),
                     where=base_where))
@@ -285,7 +283,6 @@ class InvoicePaymentDatesReport(AccountReportsPDFReport):
                 & (invoice.account == line.account)))
             .join(payment_term, type_='LEFT',
                 condition=(payment_term.id == invoice.payment_term))
-            .join(party, type_='LEFT', condition=(party.id == invoice.party))
             .join(currency, condition=(currency.id == invoice.currency))
             .join(reconciliation, type_='LEFT',
                 condition=(reconciliation.id == line.reconciliation))
@@ -307,7 +304,7 @@ class InvoicePaymentDatesReport(AccountReportsPDFReport):
                 invoice.tax_amount_cache.as_('tax_amount'),
                 invoice.total_amount_cache.as_('total_amount'),
                 invoice.description.as_('description'),
-                party.name.as_('party'),
+                invoice.party.as_('party'),
                 payment_term.name.as_('payment_type'),
                 currency.digits.as_('currency_digits'),
                 where=base_where))
@@ -325,12 +322,15 @@ class InvoicePaymentDatesReport(AccountReportsPDFReport):
                 order_by=(
                     query.invoice_date, query.number, query.invoice,
                     query.maturity_date.nulls_last, query.line)))
+        rows = cursor.fetchall()
+        party_names = {party.id: party.accounting_name
+            for party in Party.browse({row[17] for row in rows if row[17]})}
         for (
                 _invoice_id, _line_id, maturity_date, debit, credit,
                 second_currency, amount_second_currency, payment_date,
                 number, reference, invoice_date, state, invoice_currency,
                 untaxed_amount, tax_amount, total_amount, description,
-                party_name, payment_type, currency_digits) in cursor:
+                party_id, payment_type, currency_digits) in rows:
             amount = debit - credit
             if (second_currency
                     and second_currency == invoice_currency
@@ -345,7 +345,7 @@ class InvoicePaymentDatesReport(AccountReportsPDFReport):
                     'invoice_date': (invoice_date
                         and invoice_date.strftime('%d/%m/%Y')
                         or ''),
-                    'party': party_name or '',
+                    'party': party_names.get(party_id) or '',
                     'state': state or '',
                     'payment_type': payment_type or '',
                     'untaxed_amount': untaxed_amount,

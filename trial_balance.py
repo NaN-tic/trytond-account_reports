@@ -350,7 +350,7 @@ class TrialBalanceReport(AccountReportsPDFReport):
 
     @classmethod
     def get_party_name(cls, party):
-        return party.name or ''
+        return party.accounting_name or ''
 
     @classmethod
     def format_number(cls, value):
@@ -641,7 +641,7 @@ class TrialBalanceReport(AccountReportsPDFReport):
                         if len(parties_name) > 1:
                             parties_name.append('...')
                             break
-                        parties_name.append(x.name)
+                        parties_name.append(x.accounting_name)
                     parties_subtitle = ', '.join(parties_name)
                 else:
                     parties_subtitle = gettext(

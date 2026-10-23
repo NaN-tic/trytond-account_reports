@@ -226,8 +226,8 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
             ref.append('%s' % line.origin.invoice.number)
         if line.origin.invoice.reference:
             ref.append('[%s]' % line.origin.invoice.reference)
-        if line.origin.invoice.party.rec_name:
-            ref.append('%s' % line.origin.invoice.party.rec_name)
+        if line.origin.invoice.party.accounting_name:
+            ref.append('%s' % line.origin.invoice.party.accounting_name)
         return ' '.join(ref)
 
     @classmethod
@@ -237,8 +237,8 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
             ref.append('%s' % line.move_origin.number)
         if line.move_origin.reference:
             ref.append('[%s]' % line.move_origin.reference)
-        if line.move_origin.party.rec_name:
-            ref.append('%s' % line.move_origin.party.rec_name)
+        if line.move_origin.party.accounting_name:
+            ref.append('%s' % line.move_origin.party.accounting_name)
         return ' '.join(ref)
 
     @classmethod
@@ -291,7 +291,7 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
             BankLine = None
 
         def _get_key(currentKey):
-            party = (currentKey[1].name if len(currentKey) > 1
+            party = (currentKey[1].accounting_name if len(currentKey) > 1
                 and currentKey[1] else 'None')
             return (currentKey[0].code, party or 'None')
 
@@ -325,7 +325,7 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
                     if len(parties_subtitle) > 4:
                         parties_subtitle.append('...')
                         break
-                    parties_subtitle.append(x.name)
+                    parties_subtitle.append(x.accounting_name)
                 parties_subtitle = '; '.join(parties_subtitle)
             else:
                 parties_subtitle = ''
@@ -512,7 +512,7 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
                     records[key] = {
                         'account': line.account.name,
                         'code': line.account.code or str(line.account.id),
-                        'party': line.party.name if line.party else None,
+                        'party': line.party.accounting_name if line.party else None,
                         'party_required': line.account.party_required,
                         'lines': [rline],
                         'previous_balance': previous_balance,
@@ -560,7 +560,7 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
                         records[key] = {
                             'account': account.name,
                             'code': account.code or str(account.id),
-                            'party': party.name if party else None,
+                            'party': party.accounting_name if party else None,
                             'party_required': account.party_required,
                             'lines': [rline],
                             'previous_balance': (balance + credit - debit),
@@ -629,7 +629,7 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
                             'account': account.name,
                             'code': account.code or str(account.id),
                             'lines': [],
-                            'party': party.name if party else None,
+                            'party': party.accounting_name if party else None,
                             'party_required': account.party_required,
                             'previous_balance': (balance + credit - debit),
                             'total_debit': debit,
@@ -725,7 +725,7 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
                     if line:
                         number = (line.move.number if line.move
                             and line.move.number else
-                            (line.party.name if line.party else ''))
+                            (line.party.accounting_name if line.party else ''))
                         description = info['ref'] or ''
                         detail = (line.description
                             or line.move_description_used)
@@ -920,7 +920,7 @@ class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
                         if line.move and line.move.number:
                             number = line.move.number
                         else:
-                            number = line.party and line.party.name or ''
+                            number = line.party and line.party.accounting_name or ''
                         description = ''
                         if line_info['ref']:
                             description += line_info['ref']
