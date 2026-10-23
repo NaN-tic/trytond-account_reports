@@ -1,9 +1,9 @@
 import datetime
 import tempfile
-import time
 import unittest
 from decimal import Decimal
 from io import BytesIO
+from unittest.mock import patch
 
 from openpyxl import load_workbook
 from proteus import Model
@@ -13,6 +13,7 @@ from trytond.modules.account.tests.tools import (
     create_chart, create_fiscalyear, get_accounts)
 from trytond.modules.account_invoice.tests.tools import (
     set_fiscalyear_invoice_sequences)
+from trytond.modules.account_reports.common import TimeoutChecker
 from trytond.modules.company.tests.tools import create_company, get_company
 from trytond.pool import Pool
 from trytond.tests.test_tryton import drop_db
@@ -73,9 +74,7 @@ class TestGeneralLedgerPDF(unittest.TestCase):
                 accounts=[accounts['expense'].id], parties=[],
                 all_accounts=True, show_description=True,
                 output_format='pdf', timeout=300)
-            started = time.monotonic()
             extension, content, _, filename = Report.execute([], data)
-            print('Ledger PDF seconds:', time.monotonic() - started)
             self.assertEqual(extension, 'pdf')
             self.assertTrue(filename)
             reader = PdfReader(BytesIO(content))
@@ -166,3 +165,57 @@ class TestGeneralLedgerPDF(unittest.TestCase):
                     Xlsx = Pool().get('account_reports.' + name + '_xlsx', type='report')
                     workbook = load_workbook(BytesIO(Xlsx.get_content([], report_data)))
                     self.assertGreater(workbook.active.max_row, 5)
+
+        # Reuse the posted entries to check balances and ordering across
+        # small ORM batches without creating a high-volume fixture.
+        with Transaction().start(config.database_name, 0,
+                context={'company': company.id, 'language': 'en',
+                    '_record_cache_size': 20}):
+            Report = Pool().get('account_reports.general_ledger', type='report')
+            data.update(start_date=None, end_date=None,
+                start_period=second.id, end_period=second.id,
+                show_description=True)
+            records, parameters = Report.prepare(data,
+                TimeoutChecker(300, Report.timeout_exception))
+            record, = records.values()
+            self.assertEqual(record['previous_balance'], Decimal('12.34'))
+            self.assertEqual(record['total_debit'], Decimal('800.00'))
+            self.assertEqual(record['total_credit'], Decimal(0))
+            self.assertEqual(len(record['lines']), 80)
+            balance = Decimal('12.34')
+            for sequence, info in enumerate(record['lines'], 1):
+                balance += info['debit'] - info['credit']
+                self.assertEqual(info['balance'], balance)
+                self.assertEqual(info['sequence'], sequence)
+            self.assertEqual(balance, Decimal('812.34'))
+
+            # Rendering must work entirely from the prepared values, without
+            # reading move lines, moves or parties again.
+            for info in record['lines']:
+                for value in info.values():
+                    self.assertIsInstance(value,
+                        (str, int, Decimal, datetime.date, type(None)))
+            self.assertEqual(record['lines'][0]['date'],
+                datetime.date(2025, 2, 1))
+            self.assertIn('Apunt-000', record['lines'][0]['description'])
+            action, _ = Report.get_action(data)
+            Xlsx = Pool().get('account_reports.general_ledger_xlsx',
+                type='report')
+            with patch.object(Pool().get('account.move.line'), 'read',
+                    side_effect=AssertionError('Reloaded move lines')), \
+                    patch.object(Pool().get('account.move'), 'read',
+                        side_effect=AssertionError('Reloaded moves')), \
+                    patch.object(Pool().get('party.party'), 'read',
+                        side_effect=AssertionError('Reloaded parties')):
+                content = Report._build_pdf(
+                    {'records': records, 'parameters': parameters},
+                    action, Report.side_margin,
+                    TimeoutChecker(300, Report.timeout_exception))
+                text = '\n'.join(page.extract_text()
+                    for page in PdfReader(BytesIO(content)).pages)
+                self.assertIn('Apunt-079', text)
+                self.assertIn('812.34', text)
+                workbook = load_workbook(BytesIO(
+                    Xlsx._build_workbook(records, parameters)))
+                self.assertIn(812.34, [cell.value
+                    for row in workbook.active for cell in row])
