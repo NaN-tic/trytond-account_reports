@@ -17,7 +17,7 @@ from trytond.modules.account_reports.common import (
     TimeoutException, TimeoutChecker)
 from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import (
-    XlsxReport, save_workbook, convert_str_to_float)
+    XlsxReport, save_workbook)
 from collections import defaultdict
 from trytond.modules.html_report.engine import render as html_render
 from trytond.modules.account_reports.common import (
@@ -1103,9 +1103,6 @@ class TrialBalanceXlsxReport(XlsxReport, metaclass=PoolMeta):
         ws.title = _('Trial Balance')[:31]
         comparison = parameters['comparison_fiscalyear'] != ''
 
-        def xls(value, **kwargs):
-            return convert_str_to_float(html_render(value, **kwargs))
-
         ws.append([parameters['company_rec_name'], _('Trial Balance'),
             html_render(datetime.now())])
         ws.append(['%s: %s' % (
@@ -1150,17 +1147,17 @@ class TrialBalanceXlsxReport(XlsxReport, metaclass=PoolMeta):
             row = [
                 record['code'],
                 record['name'],
-                xls(record['period_initial_balance']),
-                xls(record['period_debit']),
-                xls(record['period_credit']),
-                xls(record['period_balance']),
+                record['period_initial_balance'],
+                record['period_debit'],
+                record['period_credit'],
+                record['period_balance'],
                 ]
             if comparison:
                 row += [
-                    xls(record['initial_balance']),
-                    xls(record['debit']),
-                    xls(record['credit']),
-                    xls(record['balance']),
+                    record['initial_balance'],
+                    record['debit'],
+                    record['credit'],
+                    record['balance'],
                     ]
             ws.append(row)
 
@@ -1170,17 +1167,17 @@ class TrialBalanceXlsxReport(XlsxReport, metaclass=PoolMeta):
         total_row = [
             '',
             '',
-            xls(parameters['total_period_initial_balance']),
-            xls(parameters['total_period_debit']),
-            xls(parameters['total_period_credit']),
-            xls(parameters['total_period_balance']),
+            parameters['total_period_initial_balance'],
+            parameters['total_period_debit'],
+            parameters['total_period_credit'],
+            parameters['total_period_balance'],
             ]
         if comparison:
             total_row += [
-                xls(parameters['total_initial_balance']),
-                xls(parameters['total_debit']),
-                xls(parameters['total_credit']),
-                xls(parameters['total_balance']),
+                parameters['total_initial_balance'],
+                parameters['total_debit'],
+                parameters['total_credit'],
+                parameters['total_balance'],
                 ]
         ws.append(total_row)
 

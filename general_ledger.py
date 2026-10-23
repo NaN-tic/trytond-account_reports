@@ -20,7 +20,7 @@ from trytond.modules.account_reports.common import (
     AccountReportsReportMixin, TimeoutException, TimeoutChecker)
 from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import (
-    XlsxReport, save_workbook, convert_str_to_float)
+    XlsxReport, save_workbook)
 from trytond.modules.html_report.engine import (
     HTMLReportMixin, render as html_render)
 from trytond.modules.xgettext import _
@@ -843,9 +843,6 @@ class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
         ws = wb.active
         ws.title = _('General Ledger')[:31]
 
-        def xls(value, **kwargs):
-            return convert_str_to_float(html_render(value, **kwargs))
-
         ws.append([parameters['company'], _('General Ledger'),
             html_render(datetime.now())])
         ws.append(['%s: %s' % (
@@ -888,7 +885,7 @@ class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
                 record['party'] or record['account'],
                 _('Previous balance...') if record['lines'] else '',
                 '',
-                xls(record['previous_balance']) if record['lines'] else '',
+                record['previous_balance'] if record['lines'] else '',
                 ])
 
             if record['lines']:
@@ -897,27 +894,27 @@ class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
                         html_render(line_info['date']) if line_info['date'] else '',
                         line_info['number'],
                         line_info['description'],
-                        xls(line_info['debit']),
-                        xls(line_info['credit']),
-                        xls(line_info['balance']),
+                        line_info['debit'],
+                        line_info['credit'],
+                        line_info['balance'],
                         ])
             else:
                 ws.append([
                     '',
                     '-',
                     _('Previous balance'),
-                    xls(record['total_debit']),
-                    xls(record['total_credit']),
-                    xls(record['total_debit'] - record['total_credit']),
+                    record['total_debit'],
+                    record['total_credit'],
+                    record['total_debit'] - record['total_credit'],
                     ])
 
             ws.append([
                 '',
                 '',
                 _('Total Fiscal Year'),
-                xls(record['total_debit']),
-                xls(record['total_credit']),
-                xls(record['total_debit'] - record['total_credit']),
+                record['total_debit'],
+                record['total_credit'],
+                record['total_debit'] - record['total_credit'],
                 ])
             ws.append([
                 record['code'],
@@ -925,9 +922,9 @@ class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
                 record['party'] if record['party'] else record['account'],
                 _('Total'),
                 '',
-                xls(record['previous_balance']
+                record['previous_balance']
                     + record['total_debit']
-                    - record['total_credit']),
+                    - record['total_credit'],
                 ])
             ws.append([])
 

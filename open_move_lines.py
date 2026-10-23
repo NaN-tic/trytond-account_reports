@@ -13,7 +13,7 @@ from trytond.model import ModelView, fields
 from trytond.modules.account_reports.common import (
     TimeoutChecker, TimeoutException)
 from trytond.modules.account_reports.tools import vat_label
-from trytond.modules.account_reports.xlsx import XlsxReport, convert_str_to_float, save_workbook
+from trytond.modules.account_reports.xlsx import XlsxReport, save_workbook
 from trytond.modules.html_report.engine import render as html_render
 from trytond.modules.account_reports.common import (
     AccountReportsPDF, AccountReportsPDFReport)
@@ -403,9 +403,6 @@ class OpenMoveLinesXlsxReport(XlsxReport, metaclass=PoolMeta):
         ws = wb.active
         ws.title = _('Open Move Lines')[:31]
 
-        def xls(value, **kwargs):
-            return convert_str_to_float(html_render(value, **kwargs))
-
         ws.append([parameters['company'], _('Open Move Lines'),
             html_render(datetime.now())])
         ws.append(['%s: %s' % (
@@ -442,7 +439,7 @@ class OpenMoveLinesXlsxReport(XlsxReport, metaclass=PoolMeta):
                 '',
                 '',
                 '',
-                xls(record['total_balance']),
+                record['total_balance'],
                 ])
             for line_info in record['lines']:
                 line = line_info['line']
@@ -469,9 +466,9 @@ class OpenMoveLinesXlsxReport(XlsxReport, metaclass=PoolMeta):
                     description,
                     (html_render(line.reconciliation.date)
                         if line.reconciliation else ''),
-                    xls(line_info['debit']),
-                    xls(line_info['credit']),
-                    xls(line_info['balance']),
+                    line_info['debit'],
+                    line_info['credit'],
+                    line_info['balance'],
                     ])
             ws.append([
                 record['code'],
@@ -481,7 +478,7 @@ class OpenMoveLinesXlsxReport(XlsxReport, metaclass=PoolMeta):
                 _('Total'),
                 '',
                 '',
-                xls(record['total_balance']),
+                record['total_balance'],
                 ])
             ws.append([])
         return save_workbook(wb)

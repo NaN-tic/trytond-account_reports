@@ -340,6 +340,16 @@ class TestInvoicePaymentDates(unittest.TestCase):
             self.assertIn(customer_name, values)
             self.assertIn(220, values)
             self.assertIn(210, values)
+            records, parameters = Report.prepare(data)
+            total = next(iter(parameters['tax_totals'].values()))
+            total['total_untaxed'] = Decimal('1234567.891234')
+            total['total_tax'] = Decimal('-9876.54321')
+            workbook = load_workbook(BytesIO(
+                Xlsx._build_workbook(records, parameters)))
+            cells = [cell for row in workbook.active for cell in row]
+            for value in [1234567.891234, -9876.54321]:
+                cell = next(cell for cell in cells if cell.value == value)
+                self.assertEqual(cell.data_type, 'n')
             data.update(start_date=datetime.date(1900, 1, 1),
                 end_date=datetime.date(1900, 1, 31))
             _, content, _, _ = Report.execute([], data)
