@@ -10,7 +10,7 @@ from trytond.pyson import Eval, If, Bool
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.modules.account_reports.xlsx import (
-    XlsxReport, save_workbook, convert_str_to_float)
+    XlsxReport, save_workbook)
 from trytond.modules.html_report.engine import render as html_render
 from trytond.modules.account_reports.common import (
     AccountReportsPDF, AccountReportsPDFReport)
@@ -480,8 +480,8 @@ class JournalXlsxReport(XlsxReport, metaclass=PoolMeta):
             if record['month'] != current_month:
                 if current_month is not None:
                     ws.append(["", "", "", _('Total month %s') % current_month,
-                        convert_str_to_float(html_render(month_debit)),
-                        convert_str_to_float(html_render(month_credit))])
+                        month_debit,
+                        month_credit])
                 current_month = record['month']
                 month_debit = ZERO
                 month_credit = ZERO
@@ -493,18 +493,18 @@ class JournalXlsxReport(XlsxReport, metaclass=PoolMeta):
                 record['move_number'],
                 account_party,
                 record['move_line_description'],
-                convert_str_to_float(html_render(record['debit'])),
-                convert_str_to_float(html_render(record['credit'])),
+                record['debit'],
+                record['credit'],
                 ])
             month_debit += record['debit']
             month_credit += record['credit']
         if current_month is not None:
             ws.append(["", "", "", _('Total month %s') % current_month,
-                convert_str_to_float(html_render(month_debit)),
-                convert_str_to_float(html_render(month_credit))])
+                month_debit,
+                month_credit])
         total_debit = sum(r['debit'] for r in records)
         total_credit = sum(r['credit'] for r in records)
         ws.append(["", "", "", _('Total'),
-            convert_str_to_float(html_render(total_debit)),
-            convert_str_to_float(html_render(total_credit))])
+            total_debit,
+            total_credit])
         return save_workbook(wb)

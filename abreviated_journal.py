@@ -17,7 +17,7 @@ from trytond.modules.account_reports.common import (
 from trytond.modules.xgettext import _
 
 from trytond.modules.account_reports.xlsx import (
-    XlsxReport, save_workbook, convert_str_to_float)
+    XlsxReport, save_workbook)
 from trytond.pool import Pool, PoolMeta
 from trytond.tools import grouped_slice, reduce_ids
 from trytond.transaction import Transaction
@@ -282,8 +282,8 @@ class AbreviatedJournalXlsxReport(XlsxReport, metaclass=PoolMeta):
                     ws.append([
                         '%s: %s' % (_('Total Period'), current_month),
                         '',
-                        convert_str_to_float(html_render(month_debit)),
-                        convert_str_to_float(html_render(month_credit)),
+                        month_debit,
+                        month_credit,
                         ])
                 current_month = record['month']
                 month_debit = Decimal(0)
@@ -291,8 +291,8 @@ class AbreviatedJournalXlsxReport(XlsxReport, metaclass=PoolMeta):
             ws.append([
                 record['code'],
                 record['name'],
-                convert_str_to_float(html_render(record['debit'])),
-                convert_str_to_float(html_render(record['credit'])),
+                record['debit'],
+                record['credit'],
                 ])
             month_debit += record['debit']
             month_credit += record['credit']
@@ -302,13 +302,13 @@ class AbreviatedJournalXlsxReport(XlsxReport, metaclass=PoolMeta):
             ws.append([
                 '%s: %s' % (_('Total Period'), current_month),
                 '',
-                convert_str_to_float(html_render(month_debit)),
-                convert_str_to_float(html_render(month_credit)),
+                month_debit,
+                month_credit,
                 ])
         ws.append([
             '',
             _('Total'),
-            convert_str_to_float(html_render(total_debit)),
-            convert_str_to_float(html_render(total_credit)),
+            total_debit,
+            total_credit,
             ])
         return save_workbook(wb)
