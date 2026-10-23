@@ -8,7 +8,7 @@ from pathlib import Path
 
 from fpdf import FPDF
 from trytond.pool import Pool, PoolMeta
-from trytond.transaction import Transaction
+from trytond.transaction import Transaction, record_cache_size
 from trytond.model import ModelView, fields
 from trytond.wizard import Wizard, StateView, StateReport, Button
 from trytond.pyson import Eval, Bool, If
@@ -343,8 +343,8 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
             and company.party.tax_identifier.code) or ''
         parameters['company_vat_label'] = (company.party.tax_identifier
             and vat_label(company.party.tax_identifier) or '')
-        parameters['start_period'] = start_period and start_period or ''
-        parameters['end_period'] = end_period and end_period or ''
+        parameters['start_period'] = start_period.name if start_period else ''
+        parameters['end_period'] = end_period.name if end_period else ''
         parameters['start_date'] = (start_date.strftime('%d/%m/%Y')
             if start_date else '')
         parameters['end_date'] = (end_date.strftime('%d/%m/%Y')
@@ -419,16 +419,19 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
         parties_general_ledger = set() # (account_id, party_id)
         lastKey = None
         sequence = 0
-        accounts_w_moves = []
+        accounts_w_moves = set()
         balance = _ZERO
         # Add the asked period/date lines in records
-        for group_lines in grouped_slice(line_ids):
+        # Explicit batches let browse prefetch fields for multiple lines.
+        # grouped_slice without a size yields one record per batch.
+        for group_lines in grouped_slice(
+                line_ids, record_cache_size(Transaction())):
+
             checker.check()
             init_balance = _ZERO
             init_party_balance = _ZERO
             for line in Line.browse(group_lines):
-                if line.account not in accounts_w_moves:
-                    accounts_w_moves.append(line.account.id)
+                accounts_w_moves.add(line.account.id)
                 currentKey = (line.account, line.party)
                 if lastKey != currentKey:
                     balance = _ZERO
@@ -453,48 +456,41 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
                     init_balance = _ZERO
                 sequence += 1
 
-                party = None
                 ref = None
 
-                if line.origin and isinstance(line.origin, InvoiceLine):
+                if isinstance(line.origin, InvoiceLine):
                     ref = cls._ref_origin_invoice_line(line)
-
-                    # If the account have the check "party_required", try to
-                    # get from the invoice
-                    if line.account.party_required:
-                        party = line.origin.invoice.party
-                elif (line.move_origin
-                        and isinstance(line.move_origin, Invoice)):
+                elif isinstance(line.move_origin, Invoice):
                     ref = cls._ref_origin_invoice(line)
-
-                    # If the account have the check "party_required", try to
-                    # get from the invoice
-                    if line.account.party_required:
-                        party = line.move_origin.party
-                elif (line.origin and Origin
-                        and isinstance(line.origin, Origin)):
+                elif Origin and isinstance(line.origin, Origin):
                     ref = cls._ref_origin_bank_line(line)
-                elif (line.origin and BankLine
-                        and isinstance(line.origin, BankLine)):
+                elif BankLine and isinstance(line.origin, BankLine):
                     ref = cls._ref_origin_bank_line(line)
                 elif line.origin:
                     ref = cls._ref_origin(line)
                 if not ref:
                     ref = cls._ref(line)
 
-                # If we don't fill the party in a party_required account, try
-                # get the party field in the line
-                if line.account.party_required and not party:
-                    party = line.party
+                # Resolve presentation values while this batch is cached.
+                # Renderers must not retain or reload move line records.
+                number = (line.move.number if line.move and line.move.number
+                    else (line.party.accounting_name if line.party else ''))
+                description = ref or ''
+                if parameters['show_description']:
+                    detail = line.description or line.move_description_used
+                    if detail:
+                        if description:
+                            description += ' // '
+                        description += ' %s ' % detail
 
                 rline = {
                     'sequence': sequence,
-                    'line': line,
-                    'ref': ref,
+                    'date': line.date,
+                    'number': number,
+                    'description': description,
                     'credit': credit,
                     'debit': debit,
                     'balance': balance,
-                    'party': party
                     }
 
                 key = _get_key(currentKey)
@@ -544,12 +540,12 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
                     sequence += 1
                     rline = {
                         'sequence': sequence,
-                        'line': None,
-                        'ref': None,
+                        'date': None,
+                        'number': '-',
+                        'description': _('Previous balance'),
                         'credit': credit,
                         'debit': debit,
                         'balance': balance,
-                        'party': party
                         }
                     key = _get_key(currentKey)
                     if records.get(key):
@@ -687,8 +683,7 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
             filters.append(
                 _('Fiscal Year: %s Start Period: %s End Period: %s') % (
                     p['fiscal_year'],
-                    p['start_period'].name if p['start_period'] else '',
-                    p['end_period'].name if p['end_period'] else ''))
+                    p['start_period'], p['end_period']))
         filters.extend([
             _('Parties: %s') % p['parties'] if p['parties'] else _('All Parties'),
             _('Accounts: %s') % p['accounts']
@@ -711,7 +706,6 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
         widths = pdf.widths
         group_widths = [sum(widths[:2]), widths[2],
             sum(widths[3:5]), widths[5]]
-        show_description = p.get('show_description', True)
         for record in data['records'].values():
             pdf.row([record['code'], record['party'] or record['account'],
                     _('Previous balance...') if record['lines'] else '',
@@ -721,21 +715,8 @@ class GeneralLedgerReport(AccountReportsReportMixin, HTMLReportMixin, Report):
                 aligns=['L', 'L', 'R', 'R'])
             if record['lines']:
                 for info in record['lines']:
-                    line = info['line']
-                    if line:
-                        number = (line.move.number if line.move
-                            and line.move.number else
-                            (line.party.accounting_name if line.party else ''))
-                        description = info['ref'] or ''
-                        detail = (line.description
-                            or line.move_description_used)
-                        if show_description and detail:
-                            if description:
-                                description += ' // '
-                            description += ' %s ' % detail
-                        values = [html_render(line.date), number, description]
-                    else:
-                        values = ['', '-', _('Previous balance')]
+                    values = [html_render(info['date']) if info['date'] else '',
+                        info['number'], info['description']]
                     pdf.row(values + [html_render(info[key])
                         for key in ('debit', 'credit', 'balance')])
             else:
@@ -873,10 +854,8 @@ class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
             ws.append([_('Start Date: %s End Date: %s') % (
                 parameters['start_date'], parameters['end_date'])])
         else:
-            start_period = (parameters['start_period'].name
-                if parameters['start_period'] else '')
-            end_period = (parameters['end_period'].name
-                if parameters['end_period'] else '')
+            start_period = parameters['start_period']
+            end_period = parameters['end_period']
             ws.append([_('Fiscal Year: %s Start Period: %s End Period: %s')
                 % (parameters['fiscal_year'], start_period, end_period)])
         if parameters['parties']:
@@ -902,7 +881,6 @@ class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
             _('Balance'),
             ])
 
-        show_description = parameters.get('show_description', True)
         for record in records.values():
             ws.append([
                 record['code'],
@@ -915,41 +893,14 @@ class GeneralLedgerXlsxReport(XlsxReport, metaclass=PoolMeta):
 
             if record['lines']:
                 for line_info in record['lines']:
-                    if line_info['line']:
-                        line = line_info['line']
-                        if line.move and line.move.number:
-                            number = line.move.number
-                        else:
-                            number = line.party and line.party.accounting_name or ''
-                        description = ''
-                        if line_info['ref']:
-                            description += line_info['ref']
-                        if (line_info['ref'] and show_description
-                                and line and (line.description
-                                    or line.move_description_used)):
-                            description += ' // '
-                        if show_description and line and line.description:
-                            description += ' %s ' % line.description
-                        elif (show_description and line
-                                and line.move_description_used):
-                            description += ' %s ' % line.move_description_used
-                        ws.append([
-                            html_render(line.date),
-                            number,
-                            description,
-                            xls(line_info['debit']),
-                            xls(line_info['credit']),
-                            xls(line_info['balance']),
-                            ])
-                    else:
-                        ws.append([
-                            '',
-                            '-',
-                            _('Previous balance'),
-                            xls(line_info['debit']),
-                            xls(line_info['credit']),
-                            xls(line_info['balance']),
-                            ])
+                    ws.append([
+                        html_render(line_info['date']) if line_info['date'] else '',
+                        line_info['number'],
+                        line_info['description'],
+                        xls(line_info['debit']),
+                        xls(line_info['credit']),
+                        xls(line_info['balance']),
+                        ])
             else:
                 ws.append([
                     '',
