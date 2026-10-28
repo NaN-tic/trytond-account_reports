@@ -71,6 +71,9 @@ class PrintJournalStart(ModelView):
             ('xlsx', 'Excel'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
+    timeout = fields.Integer('Timeout (s)', required=True, help='If report '
+        'calculation should take more than the specified timeout (in seconds) '
+        'the process will be stopped automatically.')
 
     @staticmethod
     def default_fiscalyear():
@@ -90,6 +93,11 @@ class PrintJournalStart(ModelView):
     @staticmethod
     def default_output_format():
         return 'pdf'
+
+    @staticmethod
+    def default_timeout():
+        Config = Pool().get('account.configuration')
+        return Config(1).default_timeout or 600
 
     @fields.depends('fiscalyear')
     def on_change_fiscalyear(self):
@@ -124,6 +132,7 @@ class PrintJournal(Wizard):
             'end_period': end_period,
             'journals': [x.id for x in self.start.journals],
             'output_format': self.start.output_format,
+            'timeout': self.start.timeout,
             }
         if self.start.output_format == 'xlsx':
             ActionReport = Pool().get('ir.action.report')
