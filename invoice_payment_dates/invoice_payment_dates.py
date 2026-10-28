@@ -1,17 +1,19 @@
 # This file is part of account_reports for tryton.  The COPYRIGHT file
 # at the top level of this repository contains the full copyright notices and
 # license terms.
-from datetime import datetime
+from openpyxl import Workbook
 
-from dominate.tags import div, header as header_tag, table, tbody, td, th, thead, tr
+from trytond.tools import slugify
+from trytond.modules.account_reports.xlsx import save_workbook
 
 from trytond.exceptions import UserError
 from trytond.i18n import gettext
 from trytond.model import ModelView, fields
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from trytond.modules.account_reports.common import TimeoutChecker, TimeoutException
-from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.html_report.engine import render as html_render
+from trytond.modules.account_reports.common import (
+    AccountReportsPDF, AccountReportsPDFReport)
 from trytond.modules.xgettext import _
 from trytond.pool import Pool
 from trytond.pyson import Bool, Eval, If
@@ -63,7 +65,6 @@ class PrintInvoicePaymentDatesStart(ModelView):
             ], 'Invoice Type', required=True)
     output_format = fields.Selection([
             ('pdf', 'PDF'),
-            ('html', 'HTML'),
             ('xlsx', 'Excel'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
@@ -137,10 +138,8 @@ class PrintInvoicePaymentDates(Wizard):
     def transition_print_(self):
         return 'end'
 
-
-class InvoicePaymentDatesReport(DominateReport):
+class InvoicePaymentDatesReport(AccountReportsPDFReport):
     __name__ = 'account_reports.invoice_payment_dates'
-    page_orientation = 'portrait'
     side_margin = 0.3
 
     @classmethod
@@ -152,129 +151,6 @@ class InvoicePaymentDatesReport(DominateReport):
     def timeout_exception(cls):
         raise TimeoutException
 
-    @classmethod
-    def title(cls, action, data, records):
-        return '%s - %s - %s' % (
-            _('Invoice Payment Dates'),
-            data['parameters']['company'],
-            html_render(datetime.now()))
-
-    @classmethod
-    def css_body(cls, action, data, records):
-        css = super().css_body(action, data, records)
-        css += '''
-table.invoice-payment-dates {
-    table-layout: fixed;
-    width: 100%;
-}
-table.invoice-payment-dates th,
-table.invoice-payment-dates td {
-    word-wrap: break-word;
-}
-table.invoice-payment-dates .col-number { width: 7%; }
-table.invoice-payment-dates .col-reference { width: 6%; }
-table.invoice-payment-dates .col-invoice-date { width: 7%; }
-table.invoice-payment-dates .col-party { width: 12%; }
-table.invoice-payment-dates .col-state { width: 5%; }
-table.invoice-payment-dates .col-payment-type { width: 7%; }
-table.invoice-payment-dates .col-description { width: 15%; }
-table.invoice-payment-dates .col-amount { width: 6%; }
-table.invoice-payment-dates .col-due-date { width: 7%; }
-table.invoice-payment-dates .col-due-amount { width: 7%; }
-table.invoice-payment-dates .col-payment-date { width: 7%; }
-table.invoice-payment-dates .col-payment-days { width: 6%; }
-'''
-        return css
-
-    @classmethod
-    def header(cls, action, data, records):
-        parameters = data['parameters']
-        with header_tag(id='header') as container:
-            with div(style=(
-                    'padding-top:1cm;padding-left:2cm;text-align:left;'
-                    'font-size:9px;width:100%;font-family:"Arial";')):
-                div(_('Invoice Payment Dates'), cls='bold')
-                div(parameters['company'])
-                div(parameters['invoice_type'])
-                if parameters['periods']:
-                    div(parameters['periods'])
-                else:
-                    period_range = parameters['start_date']
-                    if parameters['start_date'] and parameters['end_date']:
-                        period_range += ' - '
-                    period_range += parameters['end_date']
-                    div(period_range)
-        return container
-
-    @classmethod
-    def body(cls, action, data, records):
-        container = div()
-        if data.get('output_format') != 'pdf':
-            container.add(cls.header(action, data, records))
-        container.add(cls.show_detail(data['records'], data['parameters']))
-        return container
-
-    @classmethod
-    def show_detail(cls, records, parameters):
-        detail_table = table(cls='border invoice-payment-dates')
-        with detail_table:
-            with thead():
-                with tr():
-                    th(_('Number'), cls='col-number')
-                    th(_('Reference'), cls='col-reference')
-                    th(_('Invoice Date'), cls='col-invoice-date')
-                    th(_('Party'), cls='col-party')
-                    th(_('State'), cls='col-state')
-                    th(_('Payment Type'), cls='col-payment-type')
-                    th(_('Description'), cls='col-description')
-                    th(_('Untaxed'), cls='col-amount',
-                        style='text-align: right;')
-                    th(_('Tax'), cls='col-amount', style='text-align: right;')
-                    th(_('Total'), cls='col-amount',
-                        style='text-align: right;')
-                    th(_('Due Date'), cls='col-due-date')
-                    th(_('Due Amount'), cls='col-due-amount',
-                        style='text-align: right;')
-                    th(_('Payment Date'), cls='col-payment-date')
-                    th(_('Payment Days'), cls='col-payment-days',
-                        style='text-align: right;')
-            with tbody():
-                if parameters['records_found']:
-                    for record in records:
-                        with tr():
-                            td(record['number'], cls='col-number no-wrap')
-                            td(record['reference'],
-                                cls='col-reference no-wrap')
-                            td(record['invoice_date'],
-                                cls='col-invoice-date no-wrap')
-                            td(record['party'], cls='col-party')
-                            td(record['state'], cls='col-state')
-                            td(record['payment_type'],
-                                cls='col-payment-type')
-                            td(record['description'],
-                                cls='col-description')
-                            td(html_render(record['untaxed_amount'],
-                                digits=record['currency_digits']),
-                                cls='col-amount right')
-                            td(html_render(record['tax_amount'],
-                                digits=record['currency_digits']),
-                                cls='col-amount right')
-                            td(html_render(record['total_amount'],
-                                digits=record['currency_digits']),
-                                cls='col-amount right')
-                            td(record['due_date'],
-                                cls='col-due-date no-wrap')
-                            td(html_render(record['due_amount'],
-                                digits=record['currency_digits']),
-                                cls='col-due-amount right')
-                            td(record['payment_date'],
-                                cls='col-payment-date no-wrap')
-                            td(record['payment_days'],
-                                cls='col-payment-days right')
-                else:
-                    with tr():
-                        td(_('No invoices found'), colspan='14')
-        return detail_table
 
     @classmethod
     def prepare(cls, data, checker):
@@ -491,33 +367,73 @@ table.invoice-payment-dates .col-payment-days { width: 6%; }
             records = [{}]
         return records, parameters
 
+
+    report_model = 'account.invoice'
+
+    @classmethod
+    def _build_pdf(cls, records, p, margin, checker):
+        filters = [p['invoice_type'], p['periods'] or '%s - %s' % (
+            p['start_date'], p['end_date'])]
+        pdf = AccountReportsPDF(_('Invoice Payment Dates'), p['company'], filters,
+            [_('Number'), _('Reference'), _('Invoice Date'), _('Party'), _('State'),
+                _('Payment Type'), _('Description'), _('Untaxed'), _('Tax'),
+                _('Total'), _('Due Date'), _('Due Amount'), _('Payment Date'),
+                _('Payment Days')],
+            [6, 5, 7, 12, 6, 7, 12, 6, 6, 6, 7, 6, 7, 5],
+            ['L'] * 7 + ['R'] * 3 + ['L', 'R', 'L', 'R'],
+            margin, checker, font_size=6)
+        pdf.add_page()
+        if p['records_found']:
+            for record in records:
+                digits = record['currency_digits']
+                pdf.row([record[key] for key in ('number', 'reference',
+                    'invoice_date', 'party', 'state', 'payment_type', 'description')]
+                    + [html_render(record[key], digits=digits)
+                        for key in ('untaxed_amount', 'tax_amount', 'total_amount')]
+                    + [record['due_date'], html_render(record['due_amount'], digits=digits),
+                        record['payment_date'], record['payment_days']])
+        else:
+            pdf.row([_('No invoices found')], widths=[pdf.epw], aligns=['L'])
+        return bytes(pdf.output())
+
     @classmethod
     def execute(cls, ids, data):
-        Config = Pool().get('account.configuration')
-
-        config = Config(1)
-        timeout = data.get('timeout') or config.default_timeout or 300
-        checker = TimeoutChecker(timeout, cls.timeout_exception)
-
-        start_prepare = datetime.now()
-        with Transaction().set_context(active_test=False):
+        if data.get('output_format') != 'xlsx':
+            return super().execute(ids, data)
+        pool = Pool()
+        Config = pool.get('account.configuration')
+        Lang = pool.get('ir.lang')
+        action, model = cls.get_action(data)
+        cls.check_access(action, model or cls.report_model, ids)
+        checker = TimeoutChecker(data.get('timeout')
+            or Config(1).default_timeout or 300, cls.timeout_exception)
+        with Transaction().set_context(active_test=False,
+                html_report_language=Lang.get(), output_format='xlsx'):
             try:
                 records, parameters = cls.prepare(data, checker)
+                content = cls._build_workbook(records, parameters, checker)
+                checker.check()
             except TimeoutException:
                 raise UserError(gettext('account_reports.msg_timeout_exception'))
-        end_prepare = datetime.now()
+        return 'xlsx', content, cls.get_direct_print(action), slugify(cls.get_name(action))
 
-        context = Transaction().context.copy()
-        context['report_lang'] = Transaction().language
-        if timeout:
-            context['timeout_report'] = (
-                timeout - int((end_prepare - start_prepare).total_seconds()))
-
-        with Transaction().set_context(**context):
-            return super(InvoicePaymentDatesReport, cls).execute(ids, {
-                    'name': 'account_reports.invoice_payment_dates',
-                    'model': 'account.invoice',
-                    'records': records,
-                    'parameters': parameters,
-                    'output_format': data.get('output_format', 'pdf'),
-                    })
+    @classmethod
+    def _build_workbook(cls, records, p, checker):
+        wb = Workbook()
+        ws = wb.active
+        ws.title = _('Invoice Payment Dates')[:31]
+        ws.append([_('Invoice Payment Dates'), p['company'], p['invoice_type']])
+        ws.append([p['periods'] or '%s - %s' % (p['start_date'], p['end_date'])])
+        ws.append([_('Number'), _('Reference'), _('Invoice Date'), _('Party'), _('State'),
+            _('Payment Type'), _('Description'), _('Untaxed'), _('Tax'), _('Total'),
+            _('Due Date'), _('Due Amount'), _('Payment Date'), _('Payment Days')])
+        if p['records_found']:
+            for record in records:
+                checker.check()
+                ws.append([record[key] for key in ('number', 'reference', 'invoice_date',
+                    'party', 'state', 'payment_type', 'description', 'untaxed_amount',
+                    'tax_amount', 'total_amount', 'due_date', 'due_amount',
+                    'payment_date', 'payment_days')])
+        else:
+            ws.append([_('No invoices found')])
+        return save_workbook(wb)

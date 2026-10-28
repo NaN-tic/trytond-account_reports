@@ -1,11 +1,8 @@
 # coding=utf-8
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from datetime import datetime
 from decimal import Decimal
 
-from dominate.tags import col, colgroup, div, header as header_tag, table, tbody, td, th, thead, tr
-from dominate.util import raw
 from sql.aggregate import Sum
 from sql.conditionals import Coalesce
 
@@ -14,8 +11,9 @@ from trytond.i18n import gettext
 from trytond.model import ModelView, fields
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from trytond.modules.html_report.engine import render as html_render
+from trytond.modules.account_reports.common import (
+    AccountReportsPDF, AccountReportsPDFReport)
 from trytond.modules.xgettext import _
-from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
 from trytond.pool import Pool, PoolMeta
@@ -24,7 +22,6 @@ from trytond.transaction import Transaction
 from trytond.wizard import Button, StateReport, StateView, Wizard
 from openpyxl import Workbook
 
-from .common import AccountReportsReportMixin, css as common_css, header_css
 
 
 class PrintAbreviatedJournalStart(ModelView):
@@ -34,7 +31,6 @@ class PrintAbreviatedJournalStart(ModelView):
         required=True)
     output_format = fields.Selection([
             ('pdf', 'PDF'),
-            ('html', 'HTML'),
             ('xlsx', 'Excel'),
             ], 'Output Format', required=True)
     display_account = fields.Selection([
@@ -103,41 +99,13 @@ class PrintAbreviatedJournal(Wizard):
     def transition_print_(self):
         return 'end'
 
-
-class AbreviatedJournalReport(AccountReportsReportMixin, DominateReport):
+class AbreviatedJournalReport(AccountReportsPDFReport):
     __name__ = 'account_reports.abreviated_journal'
-    page_orientation = 'portrait'
     side_margin = 0.3
 
-    @classmethod
-    def css(cls, action, data, records):
-        return common_css(cls.page_orientation)
 
     @classmethod
-    def css_body(cls, action, data, records):
-        css = common_css(cls.page_orientation)
-        if data.get('output_format') != 'pdf':
-            css += (
-                '\nheader { position: static; padding-top: 0; '
-                'padding-left: 0; }\n'
-            )
-        css += (
-            '\n.abj-month { page-break-inside: avoid; }\n'
-            '.abj-month + .abj-month { page-break-before: always; }\n'
-            '.abj-month table, .abj-grand-total { table-layout: fixed; }\n'
-            '.abj-code { width: 10%; }\n'
-            '.abj-name { width: 58%; }\n'
-            '.abj-amount { width: 16%; }\n'
-            '.abj-subtotal td, .abj-total td { font-weight: bold; }\n'
-        )
-        return css
-
-    @classmethod
-    def css_header(cls, action, data, records):
-        return header_css(cls.page_orientation, action, cls.side_margin)
-
-    @classmethod
-    def prepare(cls, data):
+    def prepare(cls, data, checker=None):
         pool = Pool()
         Company = pool.get('company.company')
         Account = pool.get('account.account')
@@ -242,148 +210,43 @@ class AbreviatedJournalReport(AccountReportsReportMixin, DominateReport):
                             })
         return records, parameters
 
-    @classmethod
-    def execute(cls, ids, data):
-        with Transaction().set_context(active_test=False):
-            records, parameters = cls.prepare(data)
-        return super().execute(ids, {
-                'name': 'account_reports.abreviated_journal',
-                'model': 'account.move.line',
-                'records': records,
-                'parameters': parameters,
-                'output_format': data.get('output_format', 'pdf'),
-                })
 
     @classmethod
-    def title(cls, action, data, records):
-        return _('Abreviated Journal')
-
-    @classmethod
-    def header(cls, action, data, records):
-        p = data['parameters']
-        with header_tag(id='header') as container:
-            with table(cls='header-table'):
-                with thead():
-                    with tr():
-                        with td():
-                            with div():
-                                if p.get('company_rec_name'):
-                                    raw('<span class="company-name">%s</span><br/>'
-                                        % p['company_rec_name'])
-                                if p.get('company_vat'):
-                                    raw('%s: %s' % (_('VAT'), p['company_vat']))
-                        with td(cls='center'):
-                            raw('<span class="header-title">%s</span>'
-                                % _('Abreviated Journal'))
-                        with td(cls='right'):
-                            raw(html_render(datetime.now()))
-            with table():
-                with tbody():
-                    with tr():
-                        td('%s: %s' % (
-                                _('Fiscal Year'),
-                                p.get('fiscal_year', ''),
-                                ), colspan='3')
-        return container
-
-    @classmethod
-    def body(cls, action, data, records):
-        records = data.get('records', [])
-        grouped_records = []
-        current = None
+    def _build_pdf(cls, records, p, margin, checker):
+        filters = ['%s: %s' % (_('Fiscal Year'), p.get('fiscal_year', ''))]
+        if p.get('company_vat'):
+            filters.insert(0, '%s: %s' % (_('VAT'), p['company_vat']))
+        pdf = AccountReportsPDF(_('Abreviated Journal'), p.get('company_rec_name', ''),
+            filters, [_('Code'), _('Account'), _('Debit'), _('Credit')],
+            [10, 58, 16, 16], ['L', 'L', 'R', 'R'], margin, checker, orientation='P')
+        pdf.add_page()
         current_month = None
-        month_debit = Decimal(0)
-        month_credit = Decimal(0)
-        total_debit = Decimal(0)
-        total_credit = Decimal(0)
+        month_debit = month_credit = Decimal(0)
+        total_debit = total_credit = Decimal(0)
+        subtotal_widths = [sum(pdf.widths[:2])] + pdf.widths[2:]
         for record in records:
             if record['month'] != current_month:
-                if current is not None:
-                    current['debit'] = month_debit
-                    current['credit'] = month_credit
+                if current_month is not None:
+                    pdf.row(['%s: %s' % (_('Total Period'), current_month),
+                        html_render(month_debit), html_render(month_credit)],
+                        widths=subtotal_widths, aligns=['R'] * 3, bold=True)
+                    pdf.add_page()
                 current_month = record['month']
-                month_debit = Decimal(0)
-                month_credit = Decimal(0)
-                current = {
-                    'month': current_month,
-                    'records': [],
-                    'debit': Decimal(0),
-                    'credit': Decimal(0),
-                    }
-                grouped_records.append(current)
-            current['records'].append(record)
+                month_debit = month_credit = Decimal(0)
+            pdf.row([record['code'], record['name'], html_render(record['debit']),
+                html_render(record['credit'])])
             month_debit += record['debit']
             month_credit += record['credit']
             total_debit += record['debit']
             total_credit += record['credit']
-        if current is not None:
-            current['debit'] = month_debit
-            current['credit'] = month_credit
+        if current_month is not None:
+            pdf.row(['%s: %s' % (_('Total Period'), current_month),
+                html_render(month_debit), html_render(month_credit)],
+                widths=subtotal_widths, aligns=['R'] * 3, bold=True)
+            pdf.row(['', _('Total'), html_render(total_debit),
+                html_render(total_credit)], bold=True, bottom=True)
+        return bytes(pdf.output())
 
-        container = div()
-        with container:
-            if data.get('output_format') != 'pdf':
-                container.add(cls.header(action, data, records))
-            for month in grouped_records:
-                month_cls = 'abj-month'
-                with div(cls=month_cls):
-                    with table(cls='condensed'):
-                        with colgroup():
-                            col(cls='abj-code')
-                            col(cls='abj-name')
-                            col(cls='abj-amount')
-                            col(cls='abj-amount')
-                        with thead():
-                            tr(
-                                th(_('Account'), colspan='2'),
-                                th(_('Debit'), cls='text-right abj-amount'),
-                                th(_('Credit'), cls='text-right abj-amount'),
-                                )
-                        with tbody():
-                            for record in month['records']:
-                                tr(
-                                    td(record['code'], cls='abj-code no-wrap'),
-                                    td(record['name'], cls='abj-name'),
-                                    td(html_render(record['debit']),
-                                        cls='text-right abj-amount'),
-                                    td(html_render(record['credit']),
-                                        cls='text-right abj-amount'),
-                                    )
-                            tr(
-                                td('%s: %s' % (_('Total Period'),
-                                    month['month']), colspan='2',
-                                    cls='abj-subtotal text-right'),
-                                td(html_render(month['debit']),
-                                    cls='text-right abj-amount abj-subtotal'),
-                                td(html_render(month['credit']),
-                                    cls='text-right abj-amount abj-subtotal'),
-                                cls='abj-subtotal',
-                                )
-            if grouped_records:
-                with table(cls='condensed abj-grand-total'):
-                    with colgroup():
-                        col(cls='abj-code')
-                        col(cls='abj-name')
-                        col(cls='abj-amount')
-                        col(cls='abj-amount')
-                    with thead():
-                        tr(
-                            th('', cls='abj-code'),
-                            th('', cls='abj-name'),
-                            th('', cls='abj-amount'),
-                            th('', cls='abj-amount'),
-                            )
-                    with tbody():
-                        tr(
-                            td('', cls='abj-code'),
-                            td(_('Total'), cls='abj-name abj-total text-right'),
-                            td(html_render(total_debit),
-                                cls='text-right abj-amount abj-total'),
-                            td(html_render(total_credit),
-                                cls='text-right abj-amount abj-total'),
-                            cls='abj-total',
-                            )
-        return container
 
 
 class AbreviatedJournalXlsxReport(XlsxReport, metaclass=PoolMeta):

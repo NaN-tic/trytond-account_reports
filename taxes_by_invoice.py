@@ -9,18 +9,15 @@ from trytond.wizard import Wizard, StateView, StateReport, Button
 from trytond.pyson import Eval, If, Bool
 from trytond.rpc import RPC
 from trytond.i18n import gettext
-from trytond.modules.html_report.dominate_report import DominateReport
 from trytond.modules.html_report.engine import DualRecord, render as html_render
 from trytond.modules.xgettext import _
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from trytond.modules.account_reports.common import (
-    AccountReportsReportMixin, css as common_css, header_css)
+    AccountReportsPDF, AccountReportsPDFReport)
 from trytond.modules.account_reports.tools import vat_label
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
 from openpyxl import Workbook
-from dominate.util import raw
-from dominate.tags import div, header as header_tag, table, thead, tbody, tr, td, th, p, strong
 
 _ZERO = Decimal(0)
 
@@ -68,7 +65,6 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
     depends=['company'])
     output_format = fields.Selection([
             ('pdf', 'PDF'),
-            ('html', 'HTML'),
             ('xlsx', 'Excel'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
@@ -142,7 +138,7 @@ class PrintTaxesByInvoiceAndPeriodStart(ModelView):
     def default_timeout():
         Config = Pool().get('account.configuration')
         config = Config(1)
-        return config.default_timeout or 30
+        return config.default_timeout or 60
 
     @fields.depends('fiscalyear', 'periods')
     def on_change_fiscalyear(self):
@@ -204,11 +200,9 @@ class PrintTaxesByInvoiceAndPeriod(Wizard):
             'parties': party_ids,
             }
 
-
-class TaxesByInvoiceReport(AccountReportsReportMixin, DominateReport):
+class TaxesByInvoiceReport(AccountReportsPDFReport):
     __name__ = 'account_reports.taxes_by_invoice'
     side_margin = 0
-    page_orientation = 'landscape'
 
     @classmethod
     def __setup__(cls):
@@ -216,26 +210,9 @@ class TaxesByInvoiceReport(AccountReportsReportMixin, DominateReport):
         cls.__rpc__['execute'] = RPC(False)
         cls.side_margin = 0.3
 
-    @classmethod
-    def css(cls, action, data, records):
-        return common_css(cls.page_orientation)
 
     @classmethod
-    def css_body(cls, action, data, records):
-        css = common_css(cls.page_orientation)
-        if data.get('output_format') != 'pdf':
-            css += (
-                '\nheader { position: static; padding-top: 0; '
-                'padding-left: 0; }\n'
-            )
-        return css
-
-    @classmethod
-    def css_header(cls, action, data, records):
-        return header_css(cls.page_orientation, action, cls.side_margin)
-
-    @classmethod
-    def prepare(cls, data):
+    def prepare(cls, data, checker=None):
         pool = Pool()
         Company = pool.get('company.company')
         FiscalYear = pool.get('account.fiscalyear')
@@ -498,256 +475,78 @@ class TaxesByInvoiceReport(AccountReportsReportMixin, DominateReport):
         parameters['tax_totals'] = tax_totals
         return records, parameters
 
-    @classmethod
-    def execute(cls, ids, data):
-        with Transaction().set_context(active_test=False):
-            records, parameters = cls.prepare(data)
 
-        # We need the records dictionary to have at leat one record, otherwise
-        # the report will not be generated
-        if len(records) == 0:
-            parameters['records_found'] = False
-            records['no_records'] = ''
-
-        return super(TaxesByInvoiceReport, cls).execute([], {
-            'name': 'account_reports.taxes_by_invoice',
-            'model': 'account.invoice.tax',
-            'records': records,
-            'parameters': parameters,
-            'output_format': data.get('output_format', 'pdf'),
-            })
+    report_model = 'account.invoice.tax'
 
     @classmethod
-    def header(cls, action, data, records):
-        p = data['parameters']
-        title = (_('Taxes By Invoice and Period')
-            if p['grouping'] else _('Taxes By Invoice'))
-        with header_tag(id='header') as container:
-            with table(cls='header-table'):
-                with thead():
-                    with tr():
-                        with td():
-                            with div():
-                                raw('<span class="company-name">%s</span> <br/>' % p['company'])
-                                raw('%s: %s' % (p['company_vat_label'], p['company_vat']))
-                        with td(cls='center'):
-                            raw('<span class="header-title">%s</span>' % title)
-                        with td(cls='right'):
-                            raw(html_render(datetime.now()))
-            with table():
-                with tbody():
-                    if p['start_date']:
-                        with tr():
-                            td(_('Initial posting date: %(start_date)s') % {
-                                    'start_date': p['start_date'],
-                                    },
-                                colspan='2', cls='right')
-                        with tr():
-                            periods_label = (_('Periods: %(periods)s') % {
-                                    'periods': p['periods'],
-                                    } if p['periods'] else _('All Periods'))
-                            td(_('Fiscal Year: %(fiscal_year)s %(periods)s') % {
-                                    'fiscal_year': p['fiscal_year'],
-                                    'periods': periods_label,
-                                    })
-                            td(_('Final posting date: %(end_date)s') % {
-                                    'end_date': p['end_date'],
-                                    },
-                                cls='right')
+    def _build_pdf(cls, records, p, margin, checker):
+        title = _('Taxes By Invoice and Period') if p['grouping'] else _('Taxes By Invoice')
+        periods = (_('Periods: %(periods)s') % p if p['periods'] else _('All Periods'))
+        filters = ['%s: %s' % (p['company_vat_label'], p['company_vat']),
+            _('Fiscal Year: %(fiscal_year)s %(periods)s') % {
+                'fiscal_year': p['fiscal_year'], 'periods': periods}]
+        if p['start_date']:
+            filters += [_('Initial posting date: %(start_date)s') % p,
+                _('Final posting date: %(end_date)s') % p]
+        filters += [_('Parties: %(parties)s') % p if p['parties'] else _('All Parties'),
+            _('Cancelled invoices are shown in grey. Invoices '
+                'without a cancelled move or a cancelled move not '
+                'related to an invoice are not added to the total.')]
+        pdf = AccountReportsPDF(title, p['company'], filters,
+            [_('Move Date'), _('Account'), '', _('NIF'), _('Invoice'), _('Date'),
+                _('Base'), '', _('Tax'), _('Base + Tax'), _('Total Invoice')],
+            [7, 6, 19, 8, 9, 7, 9, 8, 8, 9, 10],
+            ['L'] * 6 + ['R', 'L', 'R', 'R', 'R'], margin, checker)
+        pdf.add_page()
+        if not records:
+            pdf.row([_('No records found')], widths=[pdf.epw], aligns=['L'], bold=True)
+            return bytes(pdf.output())
+        widths = pdf.widths
+        total_widths = [sum(widths[:6])] + widths[6:]
+        for index, (key, lines) in enumerate(records.items()):
+            if p['grouping'] and index:
+                pdf.add_page()
+            pdf.row([key.name if hasattr(key, 'name') else key.rec_name],
+                widths=[pdf.epw], aligns=['L'], bold=True, fill=True)
+            digits = key.company.currency.digits
+            if not p['totals_only']:
+                previous_invoice = None
+                for line in lines:
+                    invoice = line.invoice.raw
+                    if invoice.id != previous_invoice:
+                        tax_identifier = (invoice.party_tax_identifier
+                            or invoice.party.tax_identifier)
+                        values = [html_render(invoice.move.date), line.account.raw.code,
+                            invoice.party.rec_name,
+                            tax_identifier.code if tax_identifier else '',
+                            ('*' if invoice.state == 'cancelled' else '') + (invoice.number or ''),
+                            html_render(invoice.invoice_date)]
+                        invoice_total = html_render(invoice.company_total_amount, digits=digits)
                     else:
-                        with tr():
-                            periods_label = (_('Periods: %(periods)s') % {
-                                    'periods': p['periods'],
-                                    } if p['periods'] else _('All Periods'))
-                            td(_('Fiscal Year: %(fiscal_year)s %(periods)s') % {
-                                    'fiscal_year': p['fiscal_year'],
-                                    'periods': periods_label,
-                                    },
-                                colspan='2')
-                    with tr():
-                        if p['parties']:
-                            td(_('Parties: %(parties)s') % {
-                                    'parties': p['parties'],
-                                    }, colspan='2')
-                        else:
-                            td(_('All Parties'), colspan='2')
-                    with tr():
-                        td(_(
-                            'Cancelled invoices are shown in grey. Invoices '
-                            'without a cancelled move or a cancelled move not '
-                            'related to an invoice are not added to the total.'),
-                            colspan='2')
-        return container
+                        values = [''] * 6
+                        invoice_total = ''
+                    values += [html_render(line.raw.company_base, digits=digits),
+                        line.tax.raw.name if line.tax else ' --- ',
+                        html_render(line.raw.company_amount, digits=digits),
+                        html_render(line.raw.company_base + line.raw.company_amount, digits=digits),
+                        invoice_total]
+                    pdf.row(values, fill=invoice.state == 'cancelled')
+                    previous_invoice = invoice.id
+            totals = p['tax_totals'].get(key)
+            if totals:
+                pdf.row([_('Total Period') if p['grouping'] else _('Total'),
+                    html_render(totals['total_untaxed'], digits=digits), '',
+                    html_render(totals['total_tax'], digits=digits),
+                    html_render(totals['total'], digits=digits), ''],
+                    widths=total_widths, aligns=['R'] * 6, bold=True, bottom=True)
+            if p['grouping'] and index == len(records) - 1:
+                totals = p['totals']
+                pdf.row([_('Total'), html_render(totals['total_untaxed'], digits=digits), '',
+                    html_render(totals['total_tax'], digits=digits),
+                    html_render(totals['total'], digits=digits), ''],
+                    widths=total_widths, aligns=['R'] * 6, bold=True, bottom=True)
+        return bytes(pdf.output())
 
-    @classmethod
-    def _cell(cls, row, value='', cls_name='', style_value='', colspan=1):
-        cell = td(value)
-        if cls_name:
-            cell['class'] = cls_name
-        if style_value:
-            cell['style'] = style_value
-        if colspan != 1:
-            cell['colspan'] = str(colspan)
-        row.add(cell)
-
-    @classmethod
-    def show_detail_lines(cls, record_lines):
-        rows = []
-        before_invoice_id = None
-        for line in record_lines:
-            currency_digits = line.invoice.company.currency.raw.digits
-            total = line.raw.company_base + line.raw.company_amount
-            if before_invoice_id != line.invoice.raw.id:
-                row = tr(cls='grey' if line.invoice.raw.state == 'cancelled' else '')
-                cls._cell(row, line.invoice.move.render.date)
-                cls._cell(row, line.account.render.code)
-                cls._cell(row, line.invoice.party.render.rec_name,
-                    style_value='text-align: left;')
-                tax_id = (line.invoice.party_tax_identifier
-                    and line.invoice.party_tax_identifier.render.code) or (
-                    line.invoice.party.tax_identifier
-                    and line.invoice.party.tax_identifier.render.code) or ''
-                cls._cell(row, tax_id)
-                number = '%s%s' % (
-                    '*' if line.invoice.raw.state == 'cancelled' else '',
-                    line.invoice.render.number)
-                cls._cell(row, number, cls_name='no-wrap')
-                cls._cell(row, line.invoice.render.invoice_date,
-                    cls_name='no-wrap')
-                base = (line.raw.company_base
-                    if line.render.base else 0.0)
-                cls._cell(row, html_render(base, digits=currency_digits),
-                    style_value='text-align: right;')
-                cls._cell(row, line.tax.raw.name if line.tax else ' --- ',
-                    cls_name='no-wrap')
-                amount = (line.raw.company_amount
-                    if line.render.amount else 0.0)
-                cls._cell(row, html_render(amount, digits=currency_digits),
-                    style_value='text-align: right;',
-                    cls_name='no-wrap')
-                cls._cell(row, html_render(total, digits=currency_digits),
-                    style_value='text-align: right;',
-                    cls_name='no-wrap')
-                cls._cell(row,
-                    html_render(line.invoice.raw.company_total_amount,
-                        digits=currency_digits),
-                    style_value='text-align: right;',
-                    cls_name='bold no-wrap')
-            else:
-                row = tr()
-                for _idx in range(6):
-                    cls._cell(row, '')
-                base = (line.raw.company_base
-                    if line.render.base else 0.0)
-                cls._cell(row, html_render(base, digits=currency_digits))
-                cls._cell(row, line.tax.raw.name if line.tax else ' --- ')
-                amount = (line.raw.company_amount
-                    if line.render.amount else 0.0)
-                cls._cell(row, html_render(amount, digits=currency_digits),
-                    style_value='text-align: right;',
-                    cls_name='no-wrap')
-                cls._cell(row, html_render(total, digits=currency_digits),
-                    style_value='text-align: right;',
-                    cls_name='no-wrap')
-            before_invoice_id = line.invoice.raw.id
-            rows.append(row)
-        return rows
-
-    @classmethod
-    def show_detail(cls, data):
-        nodes = []
-        items = list(data['records'].items())
-        for index, (key, record_lines) in enumerate(items):
-            table_node = table()
-            with table_node:
-                with thead():
-                    with tr():
-                        th(_('Move Date'))
-                        th(_('Account'))
-                        th('')
-                        th(_('NIF'))
-                        th(_('Invoice'))
-                        th(_('Date'))
-                        th(_('Base'), style='text-align: right;')
-                        th('')
-                        th(_('Tax'), style='text-align: right;')
-                        th(_('Base + Tax'), style='text-align: right;')
-                        th(_('Total Invoice'), style='text-align: right;')
-                with tr() as key_row:
-                    cls._cell(key_row, key.name if hasattr(key, 'name') else key.rec_name,
-                        cls_name='bold',
-                        style_value='text-align: left !important;padding-left: 35px !important;',
-                        colspan=11)
-                currency_digits = key.company.currency.digits
-                if not data['parameters']['totals_only']:
-                    cls.show_detail_lines(record_lines)
-                if data['parameters']['tax_totals'].get(key):
-                    total_row = tr(cls='bold')
-                    cls._cell(total_row,
-                        'Total Period' if data['parameters']['grouping'] else 'Total',
-                        style_value='text-align: right;',
-                        colspan=6)
-                    cls._cell(total_row, html_render(
-                        data['parameters']['tax_totals'][key]['total_untaxed'],
-                        digits=currency_digits),
-                        style_value='text-align: right;')
-                    cls._cell(total_row, '')
-                    cls._cell(total_row, html_render(
-                        data['parameters']['tax_totals'][key]['total_tax'],
-                        digits=currency_digits),
-                        style_value='text-align: right;')
-                    cls._cell(total_row, html_render(
-                        data['parameters']['tax_totals'][key]['total'],
-                        digits=currency_digits),
-                        style_value='text-align: right;')
-                    cls._cell(total_row, '')
-                if data['parameters']['grouping'] and index == len(items) - 1:
-                    total_row = tr(cls='bold')
-                    cls._cell(total_row, 'Total',
-                        style_value='text-align: right;',
-                        colspan=6)
-                    cls._cell(total_row, html_render(
-                        data['parameters']['totals']['total_untaxed'],
-                        digits=currency_digits),
-                        style_value='text-align: right;')
-                    cls._cell(total_row, '')
-                    cls._cell(total_row, html_render(
-                        data['parameters']['totals']['total_tax'],
-                        digits=currency_digits),
-                        style_value='text-align: right;')
-                    cls._cell(total_row, html_render(
-                        data['parameters']['totals']['total'],
-                        digits=currency_digits),
-                        style_value='text-align: right;')
-                    cls._cell(total_row, '')
-            nodes.append(table_node)
-            if data['parameters']['grouping'] and index < len(items) - 1:
-                nodes.append(p('', style='page-break-before: always'))
-        return nodes
-
-    @classmethod
-    def title(cls, action, data, records):
-        title_prefix = (_('Taxes By Invoice and Period')
-            if data['parameters']['grouping'] else _('Taxes By Invoice'))
-        company_name = (data['parameters'].get('company_rec_name')
-            or data['parameters'].get('company')
-            or '')
-        return '%s - %s - %s' % (
-            title_prefix,
-            company_name,
-            html_render(datetime.now()))
-
-    @classmethod
-    def body(cls, action, data, records):
-        container = div()
-        if data.get('output_format') != 'pdf':
-            container.add(cls.header(action, data, records))
-        if data['parameters']['records_found']:
-            for node in cls.show_detail(data):
-                container.add(node)
-        else:
-            container.add(strong(_('No records found')))
-        return container
 
 
 class TaxesByInvoiceXlsxReport(XlsxReport, metaclass=PoolMeta):

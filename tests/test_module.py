@@ -301,9 +301,6 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         checker = TimeoutChecker(print_general_ledger.start.timeout, GeneralLedgerReport.timeout_exception)
         _, data = print_general_ledger.do_print_(None)
         self.assert_report_rendered(GeneralLedgerReport, data, 'pdf')
-        data_html = data.copy()
-        data_html['output_format'] = 'html'
-        self.assert_report_rendered(GeneralLedgerReport, data_html, 'html')
         data_xlsx = data.copy()
         data_xlsx['output_format'] = 'xlsx'
         self.assert_xlsx_report_rendered(GeneralLedgerXlsxReport, data_xlsx)
@@ -514,9 +511,6 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
 
         _, data = print_trial_balance.do_print_(None)
         self.assert_report_rendered(TrialBalanceReport, data, 'pdf')
-        data_html = data.copy()
-        data_html['output_format'] = 'html'
-        self.assert_report_rendered(TrialBalanceReport, data_html, 'html')
         data_xlsx = data.copy()
         data_xlsx['output_format'] = 'xlsx'
         self.assert_xlsx_report_rendered(TrialBalanceXlsxReport, data_xlsx)
@@ -711,9 +705,6 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
 
         _, data = print_taxes.do_print_(None)
         self.assert_report_rendered(TaxesByInvoiceReport, data, 'pdf')
-        data_html = data.copy()
-        data_html['output_format'] = 'html'
-        self.assert_report_rendered(TaxesByInvoiceReport, data_html, 'html')
         data_xlsx = data.copy()
         data_xlsx['output_format'] = 'xlsx'
         self.assert_xlsx_report_rendered(TaxesByInvoiceXlsxReport, data_xlsx)
@@ -819,9 +810,6 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         _, data = print_open_move_lines.do_print_(None)
 
         self.assert_report_rendered(OpenMoveLinesReport, data, 'pdf')
-        data_html = data.copy()
-        data_html['output_format'] = 'html'
-        self.assert_report_rendered(OpenMoveLinesReport, data_html, 'html')
         data_xlsx = data.copy()
         data_xlsx['output_format'] = 'xlsx'
         self.assert_xlsx_report_rendered(OpenMoveLinesXlsxReport, data_xlsx)
@@ -887,16 +875,13 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_journal.start.start_period = period
         print_journal.start.end_period = last_period
         print_journal.start.journals = []
-        print_journal.start.output_format = 'html'
+        print_journal.start.output_format = 'pdf'
         print_journal.start.open_close_account_moves = False
         print_journal.start.open_move_description = 'Open'
         print_journal.start.close_move_description = 'Close'
 
         _, data = print_journal.do_print_(None)
-        self.assert_report_rendered(JournalReport, data, 'html')
-        print_journal.start.output_format = 'pdf'
-        _, data_pdf = print_journal.do_print_(None)
-        self.assert_report_rendered(JournalReport, data_pdf, 'pdf')
+        self.assert_report_rendered(JournalReport, data, 'pdf')
         data_xlsx = data.copy()
         data_xlsx['output_format'] = 'xlsx'
         self.assert_xlsx_report_rendered(JournalXlsxReport, data_xlsx)
@@ -906,7 +891,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         self.assertEqual(data['start_period'], period.id)
         self.assertEqual(data['end_period'], last_period.id)
         self.assertEqual(len(data['journals']), 0)
-        self.assertEqual(data['output_format'], 'html')
+        self.assertEqual(data['output_format'], 'pdf')
         records, parameters = JournalReport.prepare(data)
         self.assertEqual(len(records), 12)
         self.assertEqual(parameters['start_period'], period.name)
@@ -927,7 +912,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_journal.start.start_period = period
         print_journal.start.end_period = period
         print_journal.start.journals = []
-        print_journal.start.output_format = 'html'
+        print_journal.start.output_format = 'pdf'
         print_journal.start.open_close_account_moves = False
         print_journal.start.open_move_description = 'Open'
         print_journal.start.close_move_description = 'Close'
@@ -950,7 +935,7 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
         print_journal.start.start_period = period
         print_journal.start.end_period = period
         print_journal.start.journals = [journal_revenue, journal_expense]
-        print_journal.start.output_format = 'html'
+        print_journal.start.output_format = 'pdf'
         print_journal.start.open_close_account_moves = False
         print_journal.start.open_move_description = 'Open'
         print_journal.start.close_move_description = 'Close'
@@ -985,9 +970,6 @@ class AccountReportsTestCase(CompanyTestMixin, ModuleTestCase):
 
         _, data = print_abreviated_journal.do_print_(None)
         self.assert_report_rendered(AbreviatedJournalReport, data, 'pdf')
-        data_html = data.copy()
-        data_html['output_format'] = 'html'
-        self.assert_report_rendered(AbreviatedJournalReport, data_html, 'html')
         data_xlsx = data.copy()
         data_xlsx['output_format'] = 'xlsx'
         self.assert_xlsx_report_rendered(

@@ -2,6 +2,9 @@
 # at the top level of this repository contains the full copyright notices and
 # license terms.
 from decimal import Decimal
+from pathlib import Path
+
+from fpdf import FPDF
 from datetime import datetime
 from sql.aggregate import Sum
 from sql.conditionals import Coalesce
@@ -9,7 +12,11 @@ from sql.operators import In
 
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
-from trytond.tools import reduce_ids, file_open
+from trytond.tools import reduce_ids, slugify
+from trytond.report import Report
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
+from trytond.modules.html_report.engine import HTMLReportMixin, render
 from trytond.transaction import Transaction
 
 
@@ -17,39 +24,9 @@ class TimeoutException(Exception):
     pass
 
 
-def css(orientation='portrait'):
-    with file_open('account_reports/base.css') as f:
-        css = '@page { size: A4 %s; }\n%s' % (orientation, f.read())
-    margin = report_margin()
-    if margin is not None:
-        css += (
-            '\n@page { @bottom-right { padding-right: %spx; '
-            'padding-bottom: %spx; } }\n'
-            'body#base { padding-left: %spx; padding-right: %spx; '
-            'box-sizing: border-box; }\n' % (margin, margin, margin, margin))
-    return css
-
-
 def report_margin():
     Configuration = Pool().get('account.configuration')
     return Configuration(1).account_reports_margin
-
-
-def header_css(orientation, action, side_margin):
-    margin = report_margin()
-    base_margin = (action.html_side_margin
-        if action and action.html_side_margin is not None
-        else side_margin)
-    if margin is None:
-        top_margin = side_margin = '%scm' % base_margin
-    else:
-        margin = float(base_margin) * 96 / 2.54 + margin
-        top_margin = side_margin = '%.2fpx' % margin
-    return (
-        '%s\nbody { margin: 0; }\n'
-        'header { position: static; padding-top: %s; padding-left: %s; '
-        'padding-right: %s; box-sizing: border-box; }\n'
-        % (css(orientation), top_margin, side_margin, side_margin))
 
 
 class AccountReportsReportMixin:
@@ -57,8 +34,6 @@ class AccountReportsReportMixin:
     @classmethod
     def get_page_margin(cls, action):
         return report_margin()
-
-
 
 
 class TimeoutChecker:
@@ -264,3 +239,123 @@ class Party(metaclass=PoolMeta):
                 'balance': balance,
                 }
         return res
+
+class AccountReportsPDF(FPDF):
+    """Print accounting tables without retaining an HTML document in memory."""
+
+    def __init__(self, title, company, filters, columns, ratios, aligns,
+            margin, checker, orientation='L', groups=None, font_size=7):
+        super().__init__(orientation=orientation, format='A4')
+        self.heading = '%s - %s - %s' % (
+            company, title, render(datetime.now()))
+        self.filters = filters
+        self.columns = columns
+        self.aligns = aligns
+        self.groups = groups or []
+        self.checker = checker
+        self.table_font_size = font_size
+        self.set_margins(margin, margin, margin)
+        self.set_auto_page_break(False, margin=max(10, margin))
+        self.widths = [self.epw * ratio / sum(ratios) for ratio in ratios]
+        fonts = Path(__file__).with_name('fonts')
+        self.add_font('DejaVu', fname=fonts / 'DejaVuSans.ttf')
+        self.add_font('DejaVu', style='B',
+            fname=fonts / 'DejaVuSans-Bold.ttf')
+        self.alias_nb_pages()
+        self.set_title(self.heading)
+
+    def header(self):
+        self.checker.check()
+        self.set_font('DejaVu', 'B', 11)
+        self.multi_cell(0, 5, self.heading, new_x='LMARGIN', new_y='NEXT')
+        self.set_font('DejaVu', size=7)
+        for text in self.filters:
+            self.multi_cell(0, 3.5, text, new_x='LMARGIN', new_y='NEXT')
+        self.ln(2)
+        if self.groups:
+            self.row([label for label, start, end in self.groups],
+                widths=[sum(self.widths[start:end])
+                    for label, start, end in self.groups],
+                aligns=['C'] * len(self.groups), bold=True, paginate=False)
+        self.row(self.columns, bold=True, fill=True, paginate=False)
+        self.body_top = self.y
+
+    def footer(self):
+        self.set_y(-8)
+        self.set_font('DejaVu', size=7)
+        self.cell(0, 4, f'{self.page_no()} / {{nb}}', align='R')
+
+    def row(self, values, bold=False, fill=False, widths=None,
+            aligns=None, bottom=False, paginate=True):
+        self.checker.check()
+        self.set_font('DejaVu', 'B' if bold else '', self.table_font_size)
+        widths = widths or self.widths
+        aligns = aligns or self.aligns
+        lines = []
+        for width, value in zip(widths, values):
+            text = '' if value is None else str(value)
+            if '\n' not in text and self.get_string_width(text) <= width - 2:
+                lines.append([text])
+            else:
+                lines.append(self.multi_cell(width, 4, text,
+                    dry_run=True, output='LINES'))
+        count = max(map(len, lines), default=1)
+        if (paginate and self.y + count * 4 > self.h - self.b_margin
+                and count * 4 <= self.h - self.b_margin - self.body_top):
+            self.add_page()
+            self.set_font('DejaVu', 'B' if bold else '', self.table_font_size)
+        for index in range(count):
+            if paginate and self.y + 4 > self.h - self.b_margin:
+                self.add_page()
+                self.set_font('DejaVu', 'B' if bold else '', self.table_font_size)
+            self.set_x(self.l_margin)
+            self.set_fill_color(235, 235, 235)
+            for width, cell_lines, align in zip(widths, lines, aligns):
+                text = cell_lines[index] if index < len(cell_lines) else ''
+                self.cell(width, 4, text, align=align, fill=fill)
+            self.ln(4)
+        if bottom:
+            self.line(self.l_margin, self.y, self.w - self.r_margin, self.y)
+
+
+class AccountReportsPDFReport(HTMLReportMixin, Report):
+    side_margin = 0.3
+    report_model = 'account.move.line'
+    default_timeout = 300
+
+    @classmethod
+    def timeout_exception(cls):
+        raise TimeoutException
+
+    @classmethod
+    def execute(cls, ids, data):
+        pool = Pool()
+        Config = pool.get('account.configuration')
+        Lang = pool.get('ir.lang')
+        action, model = cls.get_action(data)
+        cls.check_access(action, model or cls.report_model, ids)
+        timeout = (data.get('timeout') or Config(1).default_timeout
+            or cls.default_timeout)
+        checker = TimeoutChecker(timeout, cls.timeout_exception)
+        side_margin = action.html_side_margin
+        if side_margin is None:
+            side_margin = cls.side_margin
+        margin = side_margin * 10 + (report_margin() or 0) * 25.4 / 96
+        with Transaction().set_context(active_test=False,
+                html_report_language=Lang.get(), output_format='pdf'):
+            try:
+                records, parameters = cls.prepare(data, checker)
+                content = cls._build_pdf(records, parameters, margin, checker)
+                checker.check()
+            except TimeoutException:
+                raise UserError(gettext('account_reports.msg_timeout_exception'))
+        if action.html_copies and action.html_copies > 1:
+            content = cls.merge_pdfs([content] * action.html_copies)
+        filename = slugify(cls.get_name(action))
+        try:
+            Printer = pool.get('printer')
+        except KeyError:
+            Printer = None
+        if Printer:
+            return Printer.send_report('pdf', content, filename, action)
+        return 'pdf', content, cls.get_direct_print(action), filename

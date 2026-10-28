@@ -10,15 +10,15 @@ from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook, convert_str_to_float)
-from trytond.modules.html_report.dominate_report import DominateReport
+from trytond.modules.html_report.engine import render as html_render
+from trytond.modules.account_reports.common import (
+    AccountReportsPDF, AccountReportsPDFReport)
 from trytond.modules.xgettext import _
 from datetime import timedelta
 from sql import Null
 from trytond.modules.account.exceptions import FiscalYearNotFoundError
 from openpyxl import Workbook
-from dominate.tags import div, h1, p, table, thead, tbody, tr, td, th
 
-from .common import AccountReportsReportMixin, css as common_css, header_css
 
 ZERO = Decimal('0.00')
 
@@ -68,7 +68,6 @@ class PrintJournalStart(ModelView):
         depends=['company'])
     output_format = fields.Selection([
             ('pdf', 'PDF'),
-            ('html', 'HTML'),
             ('xlsx', 'Excel'),
             ], 'Output Format', required=True)
     company = fields.Many2One('company.company', 'Company', required=True)
@@ -137,30 +136,10 @@ class PrintJournal(Wizard):
     def transition_print_(self):
         return 'end'
 
-
-class JournalReport(AccountReportsReportMixin, DominateReport):
+class JournalReport(AccountReportsPDFReport):
     __name__ = 'account_reports.journal'
-    page_orientation = 'landscape'
+    default_timeout = 600
 
-    @classmethod
-    def css(cls, action, data, records):
-        return common_css(cls.page_orientation)
-
-    @classmethod
-    def css_body(cls, action, data, records):
-        css = common_css(cls.page_orientation)
-        css += (
-            '\n.move-separator td {'
-            ' border-top: 1px solid #000;'
-            ' padding: 0;'
-            ' height: 3px;'
-            '}\n'
-        )
-        return css
-
-    @classmethod
-    def css_header(cls, action, data, records):
-        return header_css(cls.page_orientation, action, cls.side_margin)
 
     @classmethod
     def _get_open_close_moves(cls, _type, description, fiscalyear, accounts,
@@ -254,7 +233,7 @@ class JournalReport(AccountReportsReportMixin, DominateReport):
         return moves
 
     @classmethod
-    def prepare(cls, data):
+    def prepare(cls, data, checker=None):
         pool = Pool()
         Company = pool.get('company.company')
         FiscalYear = pool.get('account.fiscalyear')
@@ -412,94 +391,53 @@ class JournalReport(AccountReportsReportMixin, DominateReport):
         records.extend(close_moves)
         return records, parameters
 
-    @classmethod
-    def execute(cls, ids, data):
-        with Transaction().set_context(active_test=False):
-            records, parameters = cls.prepare(data)
-        return super().execute(ids, {
-            'name': 'account_reports.journal',
-            'model': 'account.move.line',
-            'records': records,
-            'parameters': parameters,
-            'output_format': data.get('output_format', 'pdf'),
-            })
 
     @classmethod
-    def title(cls, action, data, records):
-        return _('Journal')
+    def _build_pdf(cls, records, p, margin, checker):
+        filters = []
+        if p.get('company_vat'):
+            filters.append('%s: %s' % (_('VAT'), p['company_vat']))
+        filters += ['%s: %s' % (_('Fiscal Year'), p.get('fiscal_year', '')),
+            _('From %s To %s') % (p.get('start_period', ''), p.get('end_period', ''))]
+        if p.get('journals'):
+            filters.append('%s: %s' % (_('Journals'), p['journals']))
+        filters.append(_("When move number is between parentheses it means that it "
+            "has no post number and the number shown is the provisional one."))
+        pdf = AccountReportsPDF(_('Journal'), p.get('company_rec_name', ''), filters,
+            [_('Date'), _('Move'), _('Account / Party'), _('Description'),
+                _('Debit'), _('Credit')], [9, 10, 30, 29, 11, 11],
+            ['L'] * 4 + ['R'] * 2, margin, checker)
+        pdf.add_page()
+        current_month = None
+        month_debit = month_credit = ZERO
+        total_debit = total_credit = ZERO
+        for index, record in enumerate(records):
+            if record['month'] != current_month:
+                if current_month is not None:
+                    pdf.row(['', '', '', _('Total month %s') % current_month,
+                        html_render(month_debit), html_render(month_credit)],
+                        bold=True, bottom=True)
+                current_month = record['month']
+                month_debit = month_credit = ZERO
+            account_party = record['account_name']
+            if record['party_name']:
+                account_party += ' / ' + record['party_name']
+            next_record = records[index + 1] if index + 1 < len(records) else None
+            pdf.row([str(record['date']), record['move_number'], account_party,
+                record.get('move_line_description') or '', html_render(record['debit']),
+                html_render(record['credit'])], bottom=(next_record is None
+                    or next_record['move_number'] != record['move_number']))
+            month_debit += record['debit']
+            month_credit += record['credit']
+            total_debit += record['debit']
+            total_credit += record['credit']
+        if current_month is not None:
+            pdf.row(['', '', '', _('Total month %s') % current_month,
+                html_render(month_debit), html_render(month_credit)], bold=True)
+        pdf.row(['', '', '', _('Total'), html_render(total_debit),
+            html_render(total_credit)], bold=True, bottom=True)
+        return bytes(pdf.output())
 
-    @classmethod
-    def body(cls, action, data, records):
-        parameters = data.get('parameters', {})
-        records = data.get('records', [])
-        container = div()
-        with container:
-            with div(cls="header"):
-                h1(_('Journal'))
-                p(_('Company:') + ' ' + parameters.get('company_rec_name', ''))
-                if parameters.get('company_vat'):
-                    p('%s: %s' % (_('VAT'), parameters['company_vat']))
-                p('%s: %s' % (_('Fiscal Year'),
-                    parameters.get('fiscal_year', '')))
-                p(_('From %s To %s') % (
-                    parameters.get('start_period', ''),
-                    parameters.get('end_period', '')))
-                if parameters.get('journals'):
-                    p('%s: %s' % (_('Journals'), parameters['journals']))
-            with table(cls="journal-table"):
-                with thead():
-                    tr(th(_('Date')), th(_('Move')), th(_('Account / Party')),
-                        th(_('Description')), th(_('Debit'), style='text-align: right'),
-                        th(_('Credit'), style='text-align: right'))
-                with tbody():
-                    current_month = None
-                    month_debit = ZERO
-                    month_credit = ZERO
-                    for i, record in enumerate(records):
-                        if record['month'] != current_month:
-                            if current_month is not None:
-                                tr(td("", colspan="3"),
-                                    td(_('Total month %s') % current_month),
-                                    td("{:.2f}".format(month_debit), style='text-align: right'),
-                                    td("{:.2f}".format(month_credit), style='text-align: right'),
-                                    cls="month-total")
-                            current_month = record['month']
-                            month_debit = ZERO
-                            month_credit = ZERO
-                        account_party = record['account_name']
-                        if record['party_name']:
-                            account_party += " / " + record['party_name']
-                        tr(td(str(record['date'])),
-                            td(record['move_number']),
-                            td(account_party),
-                            td(record.get('move_line_description') or ''),
-                            td("{:.2f}".format(record['debit']), style='text-align: right'),
-                            td("{:.2f}".format(record['credit']), style='text-align: right'))
-                        month_debit += record['debit']
-                        month_credit += record['credit']
-                        next_record = (
-                            records[i + 1] if i + 1 < len(records) else None)
-                        if (next_record is None
-                                or next_record['move_number']
-                                != record['move_number']):
-                            tr(td("", colspan="6"), cls="move-separator")
-                    if current_month is not None:
-                        tr(td("", colspan="3"),
-                            td(_('Total month %s') % current_month),
-                            td("{:.2f}".format(month_debit), style='text-align: right'),
-                            td("{:.2f}".format(month_credit), style='text-align: right'),
-                            cls="month-total")
-                    total_debit = sum(r['debit'] for r in records)
-                    total_credit = sum(r['credit'] for r in records)
-                    tr(td("", colspan="3"), td(_('Total')),
-                        td("{:.2f}".format(total_debit), style='text-align: right'),
-                        td("{:.2f}".format(total_credit), style='text-align: right'),
-                        cls="summary")
-            with div(cls="footer"):
-                p(_("When move number is between parentheses it means that it "
-                    "has no post number and the number shown is the "
-                    "provisional one."))
-        return container
 
 
 class JournalXlsxReport(XlsxReport, metaclass=PoolMeta):
