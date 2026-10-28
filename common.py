@@ -2,6 +2,7 @@
 # at the top level of this repository contains the full copyright notices and
 # license terms.
 from decimal import Decimal
+from collections import OrderedDict
 from pathlib import Path
 
 from fpdf import FPDF
@@ -254,6 +255,7 @@ class AccountReportsPDF(FPDF):
         self.groups = groups or []
         self.checker = checker
         self.table_font_size = font_size
+        self._cell_layout_cache = OrderedDict()
         self.set_margins(margin, margin, margin)
         self.set_auto_page_break(False, margin=max(10, margin))
         self.widths = [self.epw * ratio / sum(ratios) for ratio in ratios]
@@ -267,10 +269,10 @@ class AccountReportsPDF(FPDF):
     def header(self):
         self.checker.check()
         self.set_font('DejaVu', 'B', 11)
-        self.multi_cell(0, 5, self.heading, new_x='LMARGIN', new_y='NEXT')
+        self._header_text(self.heading, 5)
         self.set_font('DejaVu', size=7)
         for text in self.filters:
-            self.multi_cell(0, 3.5, text, new_x='LMARGIN', new_y='NEXT')
+            self._header_text(text, 3.5)
         self.ln(2)
         if self.groups:
             self.row([label for label, start, end in self.groups],
@@ -280,10 +282,44 @@ class AccountReportsPDF(FPDF):
         self.row(self.columns, bold=True, fill=True, paginate=False)
         self.body_top = self.y
 
+    def _header_text(self, text, height):
+        lines = self._cell_layout(self.epw, text)
+        if (len(lines) == 1 and lines[0][0] == text
+                and '\n' not in text and '\u00ad' not in text
+                and not (self.str_alias_nb_pages
+                    and self.str_alias_nb_pages in text)
+                and not self.text_shaping):
+            self.text(self.l_margin + self.c_margin,
+                self.y + height / 2 + 0.3 * self.font_size,
+                text.replace('\u00a0', ' '))
+            self.ln(height)
+        else:
+            self.multi_cell(0, height, text, new_x='LMARGIN', new_y='NEXT')
+
     def footer(self):
         self.set_y(-8)
         self.set_font('DejaVu', size=7)
         self.cell(0, 4, f'{self.page_no()} / {{nb}}', align='R')
+
+    def _cell_layout(self, width, text):
+        # Keep this cache local to the document and bounded for annual reports.
+        key = (self.font_family, self.font_style, self.font_size_pt,
+            self.font_stretching, self.char_spacing, self.c_margin, width, text)
+        cache = self._cell_layout_cache
+        if key in cache:
+            cache.move_to_end(key)
+            return cache[key]
+        text_width = self.get_string_width(text)
+        if '\n' not in text and text_width <= width - 2:
+            lines = ((text, text_width),)
+        else:
+            lines = tuple((line, self.get_string_width(line))
+                for line in self.multi_cell(width, 4, text,
+                    dry_run=True, output='LINES'))
+        cache[key] = lines
+        if len(cache) > 8192:
+            cache.popitem(last=False)
+        return lines
 
     def row(self, values, bold=False, fill=False, widths=None,
             aligns=None, bottom=False, paginate=True):
@@ -294,11 +330,7 @@ class AccountReportsPDF(FPDF):
         lines = []
         for width, value in zip(widths, values):
             text = '' if value is None else str(value)
-            if '\n' not in text and self.get_string_width(text) <= width - 2:
-                lines.append([text])
-            else:
-                lines.append(self.multi_cell(width, 4, text,
-                    dry_run=True, output='LINES'))
+            lines.append(self._cell_layout(width, text))
         count = max(map(len, lines), default=1)
         if (paginate and self.y + count * 4 > self.h - self.b_margin
                 and count * 4 <= self.h - self.b_margin - self.body_top):
@@ -311,8 +343,28 @@ class AccountReportsPDF(FPDF):
             self.set_x(self.l_margin)
             self.set_fill_color(235, 235, 235)
             for width, cell_lines, align in zip(widths, lines, aligns):
-                text = cell_lines[index] if index < len(cell_lines) else ''
-                self.cell(width, 4, text, align=align, fill=fill)
+                text, text_width = (cell_lines[index]
+                    if index < len(cell_lines) else ('', 0))
+                if (not fill and align in ('L', 'C', 'R')
+                        and not self.text_shaping
+                        and not (self.str_alias_nb_pages
+                            and self.str_alias_nb_pages in text)):
+                    # Layout and pagination are already computed above. Use
+                    # FPDF's public text API instead of laying out each cell
+                    # again. Match cell()'s baseline and horizontal margins.
+                    x = self.x
+                    if align == 'R':
+                        offset = width - self.c_margin - text_width
+                    elif align == 'C':
+                        offset = (width - text_width) / 2
+                    else:
+                        offset = self.c_margin
+                    if text:
+                        self.text(x + offset,
+                            self.y + 2 + 0.3 * self.font_size, text)
+                    self.set_x(x + width)
+                else:
+                    self.cell(width, 4, text, align=align, fill=fill)
             self.ln(4)
         if bottom:
             self.line(self.l_margin, self.y, self.w - self.r_margin, self.y)
