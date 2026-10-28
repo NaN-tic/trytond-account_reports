@@ -2,6 +2,7 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from decimal import Decimal
+from functools import lru_cache
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 from trytond.model import ModelView, fields
@@ -9,6 +10,7 @@ from trytond.wizard import Wizard, StateView, StateReport, Button
 from trytond.pyson import Eval, If, Bool
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
+from trytond.tools import grouped_slice
 from trytond.modules.account_reports.xlsx import (
     XlsxReport, save_workbook)
 from trytond.modules.html_report.engine import render as html_render
@@ -254,7 +256,6 @@ class JournalReport(AccountReportsPDFReport):
         Party = pool.get('party.party')
         Journal = pool.get('account.journal')
         Period = pool.get('account.period')
-        Line = pool.get('account.move.line')
 
         parameters = {}
         fiscalyear = FiscalYear(data['fiscalyear'])
@@ -301,7 +302,8 @@ class JournalReport(AccountReportsPDFReport):
         cursor = Transaction().connection.cursor()
         cursor.execute("""
             SELECT
-                aml.id
+                aml.id, am.date, am.id, am.number, aml.account,
+                aml.party, aml.description, aml.debit, aml.credit
             FROM
                 account_move am,
                 account_move_line aml
@@ -315,12 +317,14 @@ class JournalReport(AccountReportsPDFReport):
                 journals_domain,
                 periods_domain,
                 ))
-        ids = [x[0] for x in cursor.fetchall()]
+        lines = cursor.fetchall()
+        if checker:
+            checker.check()
 
         open_moves = []
         close_moves = []
         # Prepare structure for the open/close move, if it's needed.
-        if data.get('open_close_account_moves'):
+        if lines and data.get('open_close_account_moves'):
             # First check if fiscal year before are closed
             fiscalyear_before_start_date = fiscalyear.start_date.replace(
                 year = fiscalyear.start_date.year - 1)
@@ -362,7 +366,7 @@ class JournalReport(AccountReportsPDFReport):
 
                     open_moves.extend(cls._get_open_close_moves('open',
                         data.get('open_move_description'), fiscalyear,
-                        accounts, init_values, init_party_values, ids[0]))
+                        accounts, init_values, init_party_values, lines[0][0]))
 
             if fiscalyear.state =='closed':
                 # check if the last month is the same of the end month on
@@ -379,35 +383,68 @@ class JournalReport(AccountReportsPDFReport):
 
                     close_moves.extend(cls._get_open_close_moves('close',
                             data.get('close_move_description'), fiscalyear,
-                            accounts, init_values, init_party_values, ids[-1]))
+                            accounts, init_values, init_party_values, lines[-1][0]))
 
         records = []
         records.extend(open_moves)
-        for line in Line.browse(ids):
-            account_type = 'other'
-            if line.account.type.receivable:
-                account_type = 'receivable'
-            elif line.account.type.payable:
-                account_type = 'payable'
-
-            records.append({
-                    'date': line.date,
-                    'month': line.date.month,
-                    'account_name': line.account.rec_name,
-                    'move_number': line.move.number or '(#%s)' % line.move.id,
-                    'move_line_description': line.description,
-                    'debit': line.debit,
-                    'credit': line.credit,
-                    'party_name': (cls.get_party_name(line.party)
-                        if line.party else ''),
-                    'account_kind': account_type,
-                    })
+        records.extend(cls._get_line_records(lines, checker))
         records.extend(close_moves)
         return records, parameters
+
+    @classmethod
+    def _get_line_records(cls, lines, checker=None):
+        pool = Pool()
+        Account = pool.get('account.account')
+        Party = pool.get('party.party')
+        # Resolve display values through the ORM once per account or party,
+        # rather than instantiating every move line and its related move.
+        accounts = {}
+        account_ids = sorted({line[4] for line in lines})
+        for ids in grouped_slice(account_ids, 1000):
+            if checker:
+                checker.check()
+            for account in Account.browse(ids):
+                kind = 'other'
+                if account.type.receivable:
+                    kind = 'receivable'
+                elif account.type.payable:
+                    kind = 'payable'
+                accounts[account.id] = (account.rec_name, kind)
+
+        parties = {None: ''}
+        party_ids = sorted({line[5] for line in lines if line[5] is not None})
+        for ids in grouped_slice(party_ids, 1000):
+            if checker:
+                checker.check()
+            for party in Party.browse(ids):
+                parties[party.id] = cls.get_party_name(party)
+
+        for index, line in enumerate(lines):
+            if checker and index % 1000 == 0:
+                checker.check()
+            _, date, move, number, account, party, description, debit, credit = line
+            account_name, account_kind = accounts[account]
+            # SQLite may return numbers instead of Decimal values.
+            if not isinstance(debit, Decimal):
+                debit = Decimal(str(debit))
+            if not isinstance(credit, Decimal):
+                credit = Decimal(str(credit))
+            yield {
+                'date': date,
+                'month': date.month,
+                'account_name': account_name,
+                'move_number': number or '(#%s)' % move,
+                'move_line_description': description,
+                'debit': debit,
+                'credit': credit,
+                'party_name': parties[party],
+                'account_kind': account_kind,
+                }
 
 
     @classmethod
     def _build_pdf(cls, records, p, margin, checker):
+        format_amount = lru_cache(maxsize=8192, typed=True)(html_render)
         filters = []
         if p.get('company_vat'):
             filters.append('%s: %s' % (_('VAT'), p['company_vat']))
@@ -429,7 +466,7 @@ class JournalReport(AccountReportsPDFReport):
             if record['month'] != current_month:
                 if current_month is not None:
                     pdf.row(['', '', '', _('Total month %s') % current_month,
-                        html_render(month_debit), html_render(month_credit)],
+                        format_amount(month_debit), format_amount(month_credit)],
                         bold=True, bottom=True)
                 current_month = record['month']
                 month_debit = month_credit = ZERO
@@ -438,8 +475,8 @@ class JournalReport(AccountReportsPDFReport):
                 account_party += ' / ' + record['party_name']
             next_record = records[index + 1] if index + 1 < len(records) else None
             pdf.row([str(record['date']), record['move_number'], account_party,
-                record.get('move_line_description') or '', html_render(record['debit']),
-                html_render(record['credit'])], bottom=(next_record is None
+                record.get('move_line_description') or '', format_amount(record['debit']),
+                format_amount(record['credit'])], bottom=(next_record is None
                     or next_record['move_number'] != record['move_number']))
             month_debit += record['debit']
             month_credit += record['credit']
@@ -447,9 +484,9 @@ class JournalReport(AccountReportsPDFReport):
             total_credit += record['credit']
         if current_month is not None:
             pdf.row(['', '', '', _('Total month %s') % current_month,
-                html_render(month_debit), html_render(month_credit)], bold=True)
-        pdf.row(['', '', '', _('Total'), html_render(total_debit),
-            html_render(total_credit)], bold=True, bottom=True)
+                format_amount(month_debit), format_amount(month_credit)], bold=True)
+        pdf.row(['', '', '', _('Total'), format_amount(total_debit),
+            format_amount(total_credit)], bold=True, bottom=True)
         return bytes(pdf.output())
 
 
