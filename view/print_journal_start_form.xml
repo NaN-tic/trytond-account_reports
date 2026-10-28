@@ -26,6 +26,8 @@ copyright notices and license terms. -->
     <label id="select_journals" string="Left empty to select all journals by default"/>
     <field name="journals" colspan="4"/>
     <newline/>
+    <label name="timeout"/>
+    <field name="timeout"/>
     <label name="output_format"/>
     <field name="output_format"/>
 </form>
