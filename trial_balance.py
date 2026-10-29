@@ -353,7 +353,7 @@ class TrialBalanceReport(AccountReportsPDFReport):
         return party.accounting_name or ''
 
     @classmethod
-    def format_number(cls, value):
+    def format_amount(cls, value):
         return html_render(value).replace('\xa0', '.').replace(' ', '.')
 
     @classmethod
@@ -1062,9 +1062,9 @@ class TrialBalanceReport(AccountReportsPDFReport):
         pdf.add_page()
         for record in records:
             pdf.row([record['code'], record['name']]
-                + [cls.format_number(record[key]) for key in keys])
+                + [cls.format_amount(record[key]) for key in keys])
         if p['show_summary_lines']:
-            pdf.row(['', ''] + [cls.format_number(p['total_' + key])
+            pdf.row(['', ''] + [cls.format_amount(p['total_' + key])
                 for key in keys], bold=True, bottom=True)
         return bytes(pdf.output())
 
