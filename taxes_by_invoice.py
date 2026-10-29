@@ -479,6 +479,28 @@ class TaxesByInvoiceReport(AccountReportsPDFReport):
     report_model = 'account.invoice.tax'
 
     @classmethod
+    def _get_pdf_columns(cls, parameters):
+        return (
+            [_('Move Date'), _('Account'), '', _('NIF'), _('Invoice'), _('Date'),
+                _('Base'), '', _('Tax'), _('Base + Tax'), _('Total Invoice')],
+            [7, 6, 19, 8, 9, 7, 9, 8, 8, 9, 10],
+            ['L'] * 6 + ['R', 'L', 'R', 'R', 'R'])
+
+    @classmethod
+    def _get_pdf_tax_values(cls, line, parameters, digits, invoice_total):
+        return [html_render(line.raw.company_base, digits=digits),
+            line.tax.raw.name if line.tax else ' --- ',
+            html_render(line.raw.company_amount, digits=digits),
+            html_render(line.raw.company_base + line.raw.company_amount, digits=digits),
+            invoice_total]
+
+    @classmethod
+    def _get_pdf_total_values(cls, totals, parameters, digits, label):
+        return [label, html_render(totals['total_untaxed'], digits=digits), '',
+            html_render(totals['total_tax'], digits=digits),
+            html_render(totals['total'], digits=digits), '']
+
+    @classmethod
     def _build_pdf(cls, records, p, margin, checker):
         title = _('Taxes By Invoice and Period') if p['grouping'] else _('Taxes By Invoice')
         periods = (_('Periods: %(periods)s') % p if p['periods'] else _('All Periods'))
@@ -492,11 +514,9 @@ class TaxesByInvoiceReport(AccountReportsPDFReport):
             _('Cancelled invoices are shown in grey. Invoices '
                 'without a cancelled move or a cancelled move not '
                 'related to an invoice are not added to the total.')]
+        columns, ratios, aligns = cls._get_pdf_columns(p)
         pdf = AccountReportsPDF(title, p['company'], filters,
-            [_('Move Date'), _('Account'), '', _('NIF'), _('Invoice'), _('Date'),
-                _('Base'), '', _('Tax'), _('Base + Tax'), _('Total Invoice')],
-            [7, 6, 19, 8, 9, 7, 9, 8, 8, 9, 10],
-            ['L'] * 6 + ['R', 'L', 'R', 'R', 'R'], margin, checker)
+            columns, ratios, aligns, margin, checker)
         pdf.add_page()
         if not records:
             pdf.row([_('No records found')], widths=[pdf.epw], aligns=['L'], bold=True)
@@ -525,26 +545,20 @@ class TaxesByInvoiceReport(AccountReportsPDFReport):
                     else:
                         values = [''] * 6
                         invoice_total = ''
-                    values += [html_render(line.raw.company_base, digits=digits),
-                        line.tax.raw.name if line.tax else ' --- ',
-                        html_render(line.raw.company_amount, digits=digits),
-                        html_render(line.raw.company_base + line.raw.company_amount, digits=digits),
-                        invoice_total]
+                    values += cls._get_pdf_tax_values(line, p, digits, invoice_total)
                     pdf.row(values, fill=invoice.state == 'cancelled')
                     previous_invoice = invoice.id
             totals = p['tax_totals'].get(key)
             if totals:
-                pdf.row([_('Total Period') if p['grouping'] else _('Total'),
-                    html_render(totals['total_untaxed'], digits=digits), '',
-                    html_render(totals['total_tax'], digits=digits),
-                    html_render(totals['total'], digits=digits), ''],
-                    widths=total_widths, aligns=['R'] * 6, bold=True, bottom=True)
+                pdf.row(cls._get_pdf_total_values(totals, p, digits,
+                        _('Total Period') if p['grouping'] else _('Total')),
+                    widths=total_widths, aligns=['R'] * len(total_widths),
+                    bold=True, bottom=True)
             if p['grouping'] and index == len(records) - 1:
                 totals = p['totals']
-                pdf.row([_('Total'), html_render(totals['total_untaxed'], digits=digits), '',
-                    html_render(totals['total_tax'], digits=digits),
-                    html_render(totals['total'], digits=digits), ''],
-                    widths=total_widths, aligns=['R'] * 6, bold=True, bottom=True)
+                pdf.row(cls._get_pdf_total_values(totals, p, digits, _('Total')),
+                    widths=total_widths, aligns=['R'] * len(total_widths),
+                    bold=True, bottom=True)
         return bytes(pdf.output())
 
 
