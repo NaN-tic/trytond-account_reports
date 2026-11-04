@@ -1,0 +1,1338 @@
+#
+msgid ""
+msgstr ""
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgctxt "field:account.configuration,account_reports_margin:"
+msgid "Account Reports Margin (px)"
+msgstr "会计报表页边距（像素）"
+
+msgctxt "field:account.configuration,default_timeout:"
+msgid "Timeout (s)"
+msgstr "超时（秒）"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,company:"
+msgid "Company"
+msgstr "公司"
+
+msgctxt ""
+"field:account_reports.print_abreviated_journal.start,display_account:"
+msgid "Display Accounts"
+msgstr "显示科目"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "会计年度"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,level:"
+msgid "Level"
+msgstr "层级"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,output_format:"
+msgid "Output Format"
+msgstr "输出格式"
+
+msgctxt "field:account_reports.print_general_ledger.start,accounts:"
+msgid "Accounts"
+msgstr "账户"
+
+msgctxt "field:account_reports.print_general_ledger.start,all_accounts:"
+msgid "All accounts with and without balance"
+msgstr "所有有余额及无余额的科目"
+
+msgctxt "field:account_reports.print_general_ledger.start,company:"
+msgid "Company"
+msgstr "公司"
+
+msgctxt "field:account_reports.print_general_ledger.start,end_date:"
+msgid "Final Posting Date"
+msgstr "结束过账日期"
+
+msgctxt "field:account_reports.print_general_ledger.start,end_period:"
+msgid "End Period"
+msgstr "期末"
+
+msgctxt "field:account_reports.print_general_ledger.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "会计年度"
+
+msgctxt "field:account_reports.print_general_ledger.start,output_format:"
+msgid "Output Format"
+msgstr "输出格式"
+
+msgctxt "field:account_reports.print_general_ledger.start,parties:"
+msgid "Parties"
+msgstr "参与者"
+
+msgctxt "field:account_reports.print_general_ledger.start,show_description:"
+msgid "Show Description"
+msgstr "显示描述"
+
+msgctxt "field:account_reports.print_general_ledger.start,start_date:"
+msgid "Initial Posting Date"
+msgstr "开始过账日期"
+
+msgctxt "field:account_reports.print_general_ledger.start,start_period:"
+msgid "Start Period"
+msgstr "期初"
+
+msgctxt "field:account_reports.print_general_ledger.start,timeout:"
+msgid "Timeout (s)"
+msgstr "超时（秒）"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,company:"
+msgid "Company"
+msgstr "公司"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,end_date:"
+msgid "Final invoice date"
+msgstr "结束发票日期"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "会计年度"
+
+msgctxt ""
+"field:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Invoice Type"
+msgstr "原始凭证类型"
+
+msgctxt ""
+"field:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "Output Format"
+msgstr "输出格式"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,periods:"
+msgid "Periods"
+msgstr "分期"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,start_date:"
+msgid "Initial invoice date"
+msgstr "开始发票日期"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,timeout:"
+msgid "Timeout"
+msgstr "超时"
+
+msgctxt "field:account_reports.print_journal.start,close_move_description:"
+msgid "Close Move Description"
+msgstr "结账凭证描述"
+
+msgctxt "field:account_reports.print_journal.start,company:"
+msgid "Company"
+msgstr "公司"
+
+msgctxt "field:account_reports.print_journal.start,end_period:"
+msgid "End Period"
+msgstr "期末"
+
+msgctxt "field:account_reports.print_journal.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "会计年度"
+
+msgctxt "field:account_reports.print_journal.start,journals:"
+msgid "Journals"
+msgstr "日记账"
+
+msgctxt "field:account_reports.print_journal.start,open_close_account_moves:"
+msgid "Create Open/Close Moves"
+msgstr "创建开账/结账凭证"
+
+msgctxt "field:account_reports.print_journal.start,open_move_description:"
+msgid "Open Move Description"
+msgstr "开账凭证描述"
+
+msgctxt "field:account_reports.print_journal.start,output_format:"
+msgid "Output Format"
+msgstr "输出格式"
+
+msgctxt "field:account_reports.print_journal.start,start_period:"
+msgid "Start Period"
+msgstr "期初"
+
+msgctxt "field:account_reports.print_journal.start,timeout:"
+msgid "Timeout (s)"
+msgstr "超时（秒）"
+
+msgctxt "field:account_reports.print_open_move_lines.start,accounts:"
+msgid "Accounts"
+msgstr "账户"
+
+msgctxt "field:account_reports.print_open_move_lines.start,company:"
+msgid "Company"
+msgstr "公司"
+
+msgctxt "field:account_reports.print_open_move_lines.start,date:"
+msgid "Cut-off Date"
+msgstr "截止日期"
+
+msgctxt "field:account_reports.print_open_move_lines.start,output_format:"
+msgid "Output Format"
+msgstr "输出格式"
+
+msgctxt "field:account_reports.print_open_move_lines.start,parties:"
+msgid "Parties"
+msgstr "参与者"
+
+msgctxt "field:account_reports.print_open_move_lines.start,show_description:"
+msgid "Show Description"
+msgstr "显示描述"
+
+msgctxt "field:account_reports.print_open_move_lines.start,timeout:"
+msgid "Timeout (s)"
+msgstr "超时（秒）"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,company:"
+msgid "Company"
+msgstr "公司"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,end_date:"
+msgid "Final posting date"
+msgstr "结束过账日期"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,excluded_parties:"
+msgid "Excluded Parties"
+msgstr "排除的往来单位"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "会计年度"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,grouping:"
+msgid "Grouping"
+msgstr "分组"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,output_format:"
+msgid "Output Format"
+msgstr "输出格式"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,parties:"
+msgid "Parties"
+msgstr "参与者"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,partner_type:"
+msgid "Party Type"
+msgstr "往来单位类型"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,periods:"
+msgid "Periods"
+msgstr "分期"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,start_date:"
+msgid "Initial posting date"
+msgstr "开始过账日期"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,tax_type:"
+msgid "Tax Type"
+msgstr "税项类型"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,taxes:"
+msgid "Taxes"
+msgstr "税"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,timeout:"
+msgid "Timeout"
+msgstr "超时"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,totals_only:"
+msgid "Totals Only"
+msgstr "仅合计"
+
+msgctxt "field:account_reports.print_trial_balance.start,accounts:"
+msgid "Accounts"
+msgstr "账户"
+
+msgctxt "field:account_reports.print_trial_balance.start,add_initial_balance:"
+msgid "Add Initial Balance"
+msgstr "添加期初余额"
+
+msgctxt "field:account_reports.print_trial_balance.start,show_summary_lines:"
+msgid "Show Summary Lines"
+msgstr "显示汇总行"
+
+msgctxt "field:account_reports.print_trial_balance.start,company:"
+msgid "Company"
+msgstr "公司"
+
+msgctxt "field:account_reports.print_trial_balance.start,comparison_end_date:"
+msgid "Final Posting Date"
+msgstr "结束过账日期"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_end_period:"
+msgid "End Period"
+msgstr "期末"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_fiscalyear:"
+msgid "Fiscal Year"
+msgstr "会计年度"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_start_date:"
+msgid "Initial Posting Date"
+msgstr "开始过账日期"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_start_period:"
+msgid "Start Period"
+msgstr "期初"
+
+msgctxt "field:account_reports.print_trial_balance.start,end_date:"
+msgid "Final Posting Date"
+msgstr "结束过账日期"
+
+msgctxt "field:account_reports.print_trial_balance.start,end_period:"
+msgid "End Period"
+msgstr "期末"
+
+msgctxt "field:account_reports.print_trial_balance.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "会计年度"
+
+msgctxt "field:account_reports.print_trial_balance.start,hide_split_parties:"
+msgid "Hide Split Parties"
+msgstr "隐藏分列的往来单位"
+
+msgctxt "field:account_reports.print_trial_balance.start,moves_or_initial:"
+msgid "Only Accounts With Moves or Initial Balance"
+msgstr "仅包含有凭证或期初余额的科目"
+
+msgctxt "field:account_reports.print_trial_balance.start,only_moves:"
+msgid "Only Accounts With Move"
+msgstr "仅包含有凭证的科目"
+
+msgctxt "field:account_reports.print_trial_balance.start,output_format:"
+msgid "Output Format"
+msgstr "输出格式"
+
+msgctxt "field:account_reports.print_trial_balance.start,parties:"
+msgid "Parties"
+msgstr "参与者"
+
+msgctxt "field:account_reports.print_trial_balance.start,show_digits:"
+msgid "Digits"
+msgstr "数字"
+
+msgctxt "field:account_reports.print_trial_balance.start,split_parties:"
+msgid "Split Parties"
+msgstr "按往来单位分列"
+
+msgctxt "field:account_reports.print_trial_balance.start,start_date:"
+msgid "Initial Posting Date"
+msgstr "开始过账日期"
+
+msgctxt "field:account_reports.print_trial_balance.start,start_period:"
+msgid "Start Period"
+msgstr "期初"
+
+msgctxt "field:account_reports.print_trial_balance.start,timeout:"
+msgid "Timeout (s)"
+msgstr "超时（秒）"
+
+msgctxt "help:account_reports.print_abreviated_journal.start,level:"
+msgid "Display accounts of this level"
+msgstr "显示此级别的科目。"
+
+msgctxt "help:account_reports.print_general_ledger.start,all_accounts:"
+msgid ""
+"If unchecked only print accounts with previous balance different from 0 or "
+"with moves"
+msgstr "未勾选时，仅打印上期余额非零或有凭证的科目。"
+
+msgctxt "help:account_reports.print_general_ledger.start,show_description:"
+msgid "If checked show description from Account Move Line"
+msgstr "勾选后显示会计分录的描述。"
+
+msgctxt "help:account_reports.print_general_ledger.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr "如果报表计算超过指定时间（秒），将自动停止处理。"
+
+msgctxt "help:account_reports.print_invoice_payment_dates.start,periods:"
+msgid "Leave empty to select all periods"
+msgstr "留空则选择所有期间。"
+
+msgctxt "help:account_reports.print_invoice_payment_dates.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr "如果报表计算超过指定时间（秒），将自动停止处理。"
+
+msgctxt "help:account_reports.print_journal.start,open_close_account_moves:"
+msgid ""
+"If this field is checked and Start Period is 01 and the fiscal year before "
+"are closed, an open move of this year will be created. And if 12 is in End "
+"Period and the fiscal year are closed a close move of the year are created. "
+"And will use all journals."
+msgstr ""
+"勾选后，如果开始期间为 01 且上一会计年度已关闭，则创建本年度的开账凭证。如果结束期间包含 12 "
+"且本会计年度已关闭，则创建本年度的结账凭证。此时将使用所有日记账。"
+
+msgctxt "help:account_reports.print_journal.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr "如果报表计算超过指定时间（秒），将自动停止处理。"
+
+msgctxt "help:account_reports.print_open_move_lines.start,show_description:"
+msgid "If checked show description from Account Move Line"
+msgstr "勾选后显示会计分录的描述。"
+
+msgctxt "help:account_reports.print_open_move_lines.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr "如果报表计算超过指定时间（秒），将自动停止处理。"
+
+msgctxt "help:account_reports.print_taxes_by_invoice.start,parties:"
+msgid "Leave empty to select all parties"
+msgstr "留空则选择所有往来单位。"
+
+msgctxt "help:account_reports.print_taxes_by_invoice.start,periods:"
+msgid "Leave empty to select all periods"
+msgstr "留空则选择所有期间。"
+
+msgctxt "help:account_reports.print_taxes_by_invoice.start,taxes:"
+msgid "Leave empty to select all taxes"
+msgstr "留空则选择所有税项。"
+
+msgctxt "help:account_reports.print_taxes_by_invoice.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr "如果报表计算超过指定时间（秒），将自动停止处理。"
+
+msgctxt "help:account_reports.print_trial_balance.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr "如果报表计算超过指定时间（秒），将自动停止处理。"
+
+msgctxt "model:account_reports.print_abreviated_journal.start,string:"
+msgid "Account Reports Print Abreviated Journal Start"
+msgstr "打印简式日记账：开始"
+
+msgctxt "model:account_reports.print_general_ledger.start,string:"
+msgid "Account Reports Print General Ledger Start"
+msgstr "打印总账：开始"
+
+msgctxt "model:account_reports.print_invoice_payment_dates.start,string:"
+msgid "Account Reports Print Invoice Payment Dates Start"
+msgstr "打印发票付款日期：开始"
+
+msgctxt "model:account_reports.print_journal.start,string:"
+msgid "Account Reports Print Journal Start"
+msgstr "打印日记账：开始"
+
+msgctxt "model:account_reports.print_open_move_lines.start,string:"
+msgid "Account Reports Print Open Move Lines Start"
+msgstr "打印未结会计分录：开始"
+
+msgctxt "model:account_reports.print_taxes_by_invoice.start,string:"
+msgid "Account Reports Print Taxes By Invoice Start"
+msgstr "打印按发票汇总的税项：开始"
+
+msgctxt "model:account_reports.print_trial_balance.start,string:"
+msgid "Account Reports Print Trial Balance Start"
+msgstr "打印试算平衡表：开始"
+
+msgctxt "model:ir.action,name:report_abreviated_journal"
+msgid "Abreviated Journal"
+msgstr "简式日记账"
+
+msgctxt "model:ir.action,name:report_abreviated_journal_xlsx"
+msgid "Abreviated Journal"
+msgstr "简式日记账"
+
+msgctxt "model:ir.action,name:report_general_ledger"
+msgid "General Ledger"
+msgstr "总分类帐"
+
+msgctxt "model:ir.action,name:report_general_ledger_xlsx"
+msgid "General Ledger"
+msgstr "总分类帐"
+
+msgctxt "model:ir.action,name:report_invoice_payment_dates"
+msgid "Invoice Payment Dates"
+msgstr "发票付款日期"
+
+msgctxt "model:ir.action,name:report_journal"
+msgid "Journal"
+msgstr "日记账"
+
+msgctxt "model:ir.action,name:report_journal_xlsx"
+msgid "Journal"
+msgstr "日记账"
+
+msgctxt "model:ir.action,name:report_open_move_lines"
+msgid "Open Move Lines"
+msgstr "未结会计分录"
+
+msgctxt "model:ir.action,name:report_open_move_lines_xlsx"
+msgid "Open Move Lines"
+msgstr "未结会计分录"
+
+msgctxt "model:ir.action,name:report_taxes_by_invoice"
+msgid "Taxes by Invoice"
+msgstr "按发票汇总税项"
+
+msgctxt "model:ir.action,name:report_taxes_by_invoice_xlsx"
+msgid "Taxes by Invoice"
+msgstr "按发票汇总税项"
+
+msgctxt "model:ir.action,name:report_trial_balance"
+msgid "Trial Balance"
+msgstr "试算平衡表"
+
+msgctxt "model:ir.action,name:report_trial_balance_xlsx"
+msgid "Trial Balance"
+msgstr "试算平衡表"
+
+msgctxt "model:ir.action,name:wizard_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "打印简式日记账"
+
+msgctxt "model:ir.action,name:wizard_print_general_ledger"
+msgid "Print General Ledger"
+msgstr "打印总账"
+
+msgctxt "model:ir.action,name:wizard_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "打印发票付款日期"
+
+msgctxt "model:ir.action,name:wizard_print_journal"
+msgid "Print Journal"
+msgstr "打印日记账"
+
+msgctxt "model:ir.action,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "打印未结会计分录"
+
+msgctxt "model:ir.action,name:wizard_print_taxes_by_invoice"
+msgid "Print Taxes by Invoice and Period"
+msgstr "按发票及期间打印税项"
+
+msgctxt "model:ir.action,name:wizard_print_trial_balance"
+msgid "Print Trial Balance"
+msgstr "打印试算平衡表"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "打印简式日记账"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_general_ledger"
+msgid "Print General Ledger"
+msgstr "打印总账"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "打印发票付款日期"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "打印未结会计分录"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_taxes_by_invoice"
+msgid "Print Taxes by Invoice and Period"
+msgstr "按发票及期间打印税项"
+
+#, python-format
+msgctxt "model:ir.message,text:fiscalyear_end_date"
+msgid "The final posting date does not match the fiscal year \"%(fiscalyear)s\"."
+msgstr "结束过账日期不属于会计年度“%(fiscalyear)s”。"
+
+#, python-format
+msgctxt "model:ir.message,text:fiscalyear_start_date"
+msgid ""
+"The initial posting date does not match the fiscal year \"%(fiscalyear)s\"."
+msgstr "开始过账日期不属于会计年度“%(fiscalyear)s”。"
+
+msgctxt "model:ir.message,text:msg_all_parties"
+msgid "All"
+msgstr "全部"
+
+msgctxt "model:ir.message,text:msg_invalid_date_range"
+msgid ""
+"The initial posting date must be before or equal to the final posting date."
+msgstr "开始过账日期必须早于或等于结束过账日期。"
+
+msgctxt "model:ir.message,text:msg_missing_fiscalyear"
+msgid "The fiscalyear selected it is not valid."
+msgstr "所选会计年度无效。"
+
+msgctxt "model:ir.message,text:msg_not_deductible_tax"
+msgid "Not Deductible VAT"
+msgstr "不可抵扣的增值税"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_renumber_move"
+msgid ""
+"We have noticed that the sequence \"%(sequence)s\" pattern does not match the post number of \"%(move)s\".\n"
+"Please proceed to renumber the records before consulting the journal report."
+msgstr ""
+"编号序列“%(sequence)s”的模式与凭证“%(move)s”的过账编号不匹配。\n"
+"请先重新编号记录，再查看日记账报表。"
+
+msgctxt "model:ir.message,text:msg_timeout_exception"
+msgid ""
+"Report computation timed out. You may consider increasing the timeout of the"
+" account reports or export to XLS format."
+msgstr "报表计算超时。可考虑增加会计报表的超时时间或导出为 XLS 格式。"
+
+msgctxt "model:ir.ui.menu,name:menu_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "打印简式日记账"
+
+msgctxt "model:ir.ui.menu,name:menu_print_general_journal"
+msgid "Print Journal"
+msgstr "打印日记账"
+
+msgctxt "model:ir.ui.menu,name:menu_print_general_ledger"
+msgid "Print General Ledger"
+msgstr "打印总账"
+
+msgctxt "model:ir.ui.menu,name:menu_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "打印发票付款日期"
+
+msgctxt "model:ir.ui.menu,name:menu_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "打印未结会计分录"
+
+msgctxt "model:ir.ui.menu,name:menu_print_taxes_by_invoice"
+msgid "Print Taxes by Invoice and Period"
+msgstr "按发票及期间打印税项"
+
+msgctxt "model:ir.ui.menu,name:menu_print_trial_balance"
+msgid "Print Trial Balance"
+msgstr "打印试算平衡表"
+
+msgctxt "report:account.general_ledger:"
+msgid "/"
+msgstr "/"
+
+msgctxt "report:account.general_ledger:"
+msgid ":"
+msgstr ":"
+
+msgctxt "report:account.general_ledger:"
+msgid "Balance"
+msgstr "余额"
+
+msgctxt "report:account.general_ledger:"
+msgid "Company:"
+msgstr "公司:"
+
+msgctxt "report:account.general_ledger:"
+msgid "Credit"
+msgstr "贷方"
+
+msgctxt "report:account.general_ledger:"
+msgid "Date"
+msgstr "日期"
+
+msgctxt "report:account.general_ledger:"
+msgid "Debit"
+msgstr "借方"
+
+msgctxt "report:account.general_ledger:"
+msgid "Description"
+msgstr "描述"
+
+msgctxt "report:account.general_ledger:"
+msgid "Draft"
+msgstr "草案"
+
+msgctxt "report:account.general_ledger:"
+msgid "Fiscal Year:"
+msgstr "会计年度:"
+
+msgctxt "report:account.general_ledger:"
+msgid "From Date:"
+msgstr "从日期:"
+
+msgctxt "report:account.general_ledger:"
+msgid "From Period"
+msgstr "从分期"
+
+msgctxt "report:account.general_ledger:"
+msgid "General Ledger"
+msgstr "总分类帐"
+
+msgctxt "report:account.general_ledger:"
+msgid "Move"
+msgstr "记账凭证"
+
+msgctxt "report:account.general_ledger:"
+msgid "Name"
+msgstr "名称"
+
+msgctxt "report:account.general_ledger:"
+msgid "Origin"
+msgstr "依据"
+
+msgctxt "report:account.general_ledger:"
+msgid "Print Date:"
+msgstr "打印日期:"
+
+msgctxt "report:account.general_ledger:"
+msgid "To"
+msgstr "到"
+
+msgctxt "report:account.general_ledger:"
+msgid "Total"
+msgstr "合计"
+
+msgctxt "report:account.general_ledger:"
+msgid "User:"
+msgstr "用户:"
+
+msgctxt "report:account.general_ledger:"
+msgid "at"
+msgstr "在"
+
+msgctxt "report:account.trial_balance:"
+msgid "/"
+msgstr "/"
+
+msgctxt "report:account.trial_balance:"
+msgid "Account"
+msgstr "账户"
+
+msgctxt "report:account.trial_balance:"
+msgid "Company:"
+msgstr "公司:"
+
+msgctxt "report:account.trial_balance:"
+msgid "Credit"
+msgstr "贷方"
+
+msgctxt "report:account.trial_balance:"
+msgid "Debit"
+msgstr "借方"
+
+msgctxt "report:account.trial_balance:"
+msgid "End Balance"
+msgstr "期末余额"
+
+msgctxt "report:account.trial_balance:"
+msgid "Fiscal Year:"
+msgstr "会计年度:"
+
+msgctxt "report:account.trial_balance:"
+msgid "From Date:"
+msgstr "从日期:"
+
+msgctxt "report:account.trial_balance:"
+msgid "From Period:"
+msgstr "从分期:"
+
+msgctxt "report:account.trial_balance:"
+msgid "Print Date:"
+msgstr "打印日期:"
+
+msgctxt "report:account.trial_balance:"
+msgid "Start Balance"
+msgstr "期初余额"
+
+msgctxt "report:account.trial_balance:"
+msgid "To"
+msgstr "到"
+
+msgctxt "report:account.trial_balance:"
+msgid "Total"
+msgstr "合计"
+
+msgctxt "report:account.trial_balance:"
+msgid "Trial Balance"
+msgstr "试算平衡"
+
+msgctxt "report:account.trial_balance:"
+msgid "User:"
+msgstr "用户:"
+
+msgctxt "report:account.trial_balance:"
+msgid "at"
+msgstr "在"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,display_account:"
+msgid "All"
+msgstr "全部"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,display_account:"
+msgid "With movements"
+msgstr "有发生额"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Customer Invoices"
+msgstr "客户原始凭证"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Supplier Invoices"
+msgstr "供应商原始凭证"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_journal.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_journal.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,grouping:"
+msgid "Base Tax Code"
+msgstr "计税基数税码"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,grouping:"
+msgid "Invoice"
+msgstr "原始凭证"
+
+msgctxt ""
+"selection:account_reports.print_taxes_by_invoice.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt ""
+"selection:account_reports.print_taxes_by_invoice.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,partner_type:"
+msgid "Customers"
+msgstr "客户"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,partner_type:"
+msgid "Suppliers"
+msgstr "供应商"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,tax_type:"
+msgid "All"
+msgstr "全部"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,tax_type:"
+msgid "Invoiced"
+msgstr "已开票"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,tax_type:"
+msgid "Refunded"
+msgstr "已退款"
+
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "view:account.configuration:"
+msgid "Report"
+msgstr "报告"
+
+msgctxt "view:account_reports.print_abreviated_journal.start:"
+msgid "Print Abreviated Journal"
+msgstr "打印简式日记账"
+
+msgctxt "view:account_reports.print_general_ledger.start:"
+msgid "Leave empty to select all accounts"
+msgstr "留空则选择所有科目。"
+
+msgctxt "view:account_reports.print_general_ledger.start:"
+msgid "Leave empty to select all parties"
+msgstr "留空则选择所有往来单位。"
+
+msgctxt "view:account_reports.print_journal.start:"
+msgid "Left empty to select all journals by default"
+msgstr "留空则默认选择所有日记账。"
+
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all accounts"
+msgstr "留空则选择所有科目。"
+
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all parties"
+msgstr "留空则选择所有往来单位。"
+
+msgctxt "view:account_reports.print_taxes_by_invoice.start:"
+msgid "Left empty to select all parties"
+msgstr "留空则选择所有往来单位。"
+
+msgctxt "view:account_reports.print_taxes_by_invoice.start:"
+msgid "Left empty to select all periods"
+msgstr "留空则选择所有期间。"
+
+msgctxt "view:account_reports.print_taxes_by_invoice.start:"
+msgid "Left empty to select all taxes"
+msgstr "留空则选择所有税项。"
+
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "All accounts if Empty"
+msgstr "留空则选择所有科目"
+
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "All parties if Empty"
+msgstr "留空则选择所有往来单位"
+
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "Comparison Period"
+msgstr "比较期间"
+
+msgctxt "wizard_button:account_reports.print_abreviated_journal,start,end:"
+msgid "Cancel"
+msgstr "取消"
+
+msgctxt "wizard_button:account_reports.print_abreviated_journal,start,print_:"
+msgid "Print"
+msgstr "打印"
+
+msgctxt "wizard_button:account_reports.print_general_ledger,start,end:"
+msgid "Cancel"
+msgstr "取消"
+
+msgctxt "wizard_button:account_reports.print_general_ledger,start,print_:"
+msgid "Print"
+msgstr "打印"
+
+msgctxt "wizard_button:account_reports.print_invoice_payment_dates,start,end:"
+msgid "Cancel"
+msgstr "取消"
+
+msgctxt ""
+"wizard_button:account_reports.print_invoice_payment_dates,start,print_:"
+msgid "Print"
+msgstr "打印"
+
+msgctxt "wizard_button:account_reports.print_journal,start,end:"
+msgid "Cancel"
+msgstr "取消"
+
+msgctxt "wizard_button:account_reports.print_journal,start,print_:"
+msgid "Print"
+msgstr "打印"
+
+msgctxt "wizard_button:account_reports.print_open_move_lines,start,end:"
+msgid "Cancel"
+msgstr "取消"
+
+msgctxt "wizard_button:account_reports.print_open_move_lines,start,print_:"
+msgid "Print"
+msgstr "打印"
+
+msgctxt "wizard_button:account_reports.print_taxes_by_invoice,start,end:"
+msgid "Cancel"
+msgstr "取消"
+
+msgctxt "wizard_button:account_reports.print_taxes_by_invoice,start,print_:"
+msgid "Print"
+msgstr "打印"
+
+msgctxt "wizard_button:account_reports.print_trial_balance,start,end:"
+msgid "Cancel"
+msgstr "取消"
+
+msgctxt "wizard_button:account_reports.print_trial_balance,start,print_:"
+msgid "Print"
+msgstr "打印"
+
+msgctxt "xgettext:x:"
+msgid "Abreviated Journal"
+msgstr "简式日记账"
+
+msgctxt "xgettext:x:"
+msgid "Account"
+msgstr "账户"
+
+msgctxt "xgettext:x:"
+msgid "Account / Party"
+msgstr "科目 / 往来单位"
+
+msgctxt "xgettext:x:"
+msgid "Accounts: %s"
+msgstr "科目：%s"
+
+msgctxt "xgettext:x:"
+msgid "All Accounts"
+msgstr "所有科目"
+
+msgctxt "xgettext:x:"
+msgid "All Parties"
+msgstr "所有往来单位"
+
+msgctxt "xgettext:x:"
+msgid "All Periods"
+msgstr "所有期间"
+
+msgctxt "xgettext:x:"
+msgid "Balance"
+msgstr "余额"
+
+msgctxt "xgettext:x:"
+msgid "Base"
+msgstr "基数"
+
+msgctxt "xgettext:x:"
+msgid "Base + Tax"
+msgstr "计税基数 + 税额"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid ""
+"Cancelled invoices are shown in %(marker)s. Invoices without a cancelled "
+"move or a cancelled move not related to an invoice are not added to the "
+"total."
+msgstr "已取消的发票以 %(marker)s 显示。没有取消凭证的发票，以及未关联发票的取消凭证，不计入合计。"
+
+msgctxt "xgettext:x:"
+msgid ""
+"Cancelled invoices are shown in grey. Invoices without a cancelled move or a"
+" cancelled move not related to an invoice are not added to the total."
+msgstr "已取消的发票以灰色显示。没有取消凭证的发票，以及未关联发票的取消凭证，不计入合计。"
+
+msgctxt "xgettext:x:"
+msgid "Code"
+msgstr "代码"
+
+msgctxt "xgettext:x:"
+msgid "Company:"
+msgstr "公司:"
+
+msgctxt "xgettext:x:"
+msgid "Comparision Balance %s"
+msgstr "比较余额 %s"
+
+msgctxt "xgettext:x:"
+msgid "Comparision Balance %s: From: %s To: %s"
+msgstr "比较余额 %s：从 %s 至 %s"
+
+msgctxt "xgettext:x:"
+msgid "Credit"
+msgstr "贷方"
+
+msgctxt "xgettext:x:"
+msgid "Cut-off Date: %s"
+msgstr "截止日期：%s"
+
+msgctxt "xgettext:x:"
+msgid "Date"
+msgstr "日期"
+
+msgctxt "xgettext:x:"
+msgid "Debit"
+msgstr "借方"
+
+msgctxt "xgettext:x:"
+msgid "Description"
+msgstr "描述"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Final posting date: %(end_date)s"
+msgstr "结束过账日期：%(end_date)s"
+
+msgctxt "xgettext:x:"
+msgid "Fiscal Year"
+msgstr "会计年度"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Fiscal Year: %(fiscal_year)s %(periods)s"
+msgstr "会计年度：%(fiscal_year)s %(periods)s"
+
+msgctxt "xgettext:x:"
+msgid "Fiscal Year: %s Start Period: %s End Period: %s"
+msgstr "会计年度：%s 开始期间：%s 结束期间：%s"
+
+msgctxt "xgettext:x:"
+msgid "From %s To %s"
+msgstr "从 %s 至 %s"
+
+msgctxt "xgettext:x:"
+msgid "General Ledger"
+msgstr "总分类帐"
+
+msgctxt "xgettext:x:"
+msgid "Initial"
+msgstr "期初"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Initial posting date: %(start_date)s"
+msgstr "开始过账日期：%(start_date)s"
+
+msgctxt "xgettext:x:"
+msgid "Invoice"
+msgstr "原始凭证"
+
+msgctxt "xgettext:x:"
+msgid "Journal"
+msgstr "日记账"
+
+msgctxt "xgettext:x:"
+msgid "Journals"
+msgstr "日记账"
+
+msgctxt "xgettext:x:"
+msgid "Main Balance %s"
+msgstr "主要余额 %s"
+
+msgctxt "xgettext:x:"
+msgid "Main Balance %s: From: %s To: %s"
+msgstr "主要余额 %s：从 %s 至 %s"
+
+msgctxt "xgettext:x:"
+msgid "Maturity Date"
+msgstr "到期日"
+
+msgctxt "xgettext:x:"
+msgid "Move"
+msgstr "记账凭证"
+
+msgctxt "xgettext:x:"
+msgid "Move Date"
+msgstr "凭证日期"
+
+msgctxt "xgettext:x:"
+msgid "NIF"
+msgstr "税务识别号（NIF）"
+
+msgctxt "xgettext:x:"
+msgid "No records found"
+msgstr "未找到记录"
+
+msgctxt "xgettext:x:"
+msgid "Number"
+msgstr "编号"
+
+msgctxt "xgettext:x:"
+msgid "Open Move Lines"
+msgstr "未结会计分录"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Parties: %(parties)s"
+msgstr "往来单位：%(parties)s"
+
+msgctxt "xgettext:x:"
+msgid "Parties: %s"
+msgstr "往来单位：%s"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Periods: %(periods)s"
+msgstr "期间：%(periods)s"
+
+msgctxt "xgettext:x:"
+msgid "Previous balance"
+msgstr "上期余额"
+
+msgctxt "xgettext:x:"
+msgid "Previous balance..."
+msgstr "上期余额..."
+
+msgctxt "xgettext:x:"
+msgid "Reconciliation Date"
+msgstr "核销日期"
+
+msgctxt "xgettext:x:"
+msgid "Reference // Description"
+msgstr "参考 // 描述"
+
+msgctxt "xgettext:x:"
+msgid "Start Date: %s End Date: %s"
+msgstr "开始日期：%s 结束日期：%s"
+
+msgctxt "xgettext:x:"
+msgid "Tax"
+msgstr "税"
+
+msgctxt "xgettext:x:"
+msgid "Taxes By Invoice"
+msgstr "按发票汇总税项"
+
+msgctxt "xgettext:x:"
+msgid "Taxes By Invoice and Period"
+msgstr "按发票及期间汇总税项"
+
+msgctxt "xgettext:x:"
+msgid "Total"
+msgstr "合计"
+
+msgctxt "xgettext:x:"
+msgid "Total Fiscal Year"
+msgstr "会计年度合计"
+
+msgctxt "xgettext:x:"
+msgid "Total Invoice"
+msgstr "发票合计"
+
+msgctxt "xgettext:x:"
+msgid "Total Period"
+msgstr "期间合计"
+
+msgctxt "xgettext:x:"
+msgid "Total month %s"
+msgstr "%s 月合计"
+
+msgctxt "xgettext:x:"
+msgid "Trial Balance"
+msgstr "试算平衡表"
+
+msgctxt "xgettext:x:"
+msgid "VAT"
+msgstr "增值税"
+
+msgctxt "xgettext:x:"
+msgid ""
+"When move number is between parentheses it means that it has no post number "
+"and the number shown is the provisional one."
+msgstr "凭证编号显示在括号内表示尚无过账编号，所显示的是临时编号。"
+
+msgctxt "xgettext:x:"
+msgid "Due Amount"
+msgstr "到期金额"
+
+msgctxt "xgettext:x:"
+msgid "Due Date"
+msgstr "到期日"
+
+msgctxt "xgettext:x:"
+msgid "Invoice Date"
+msgstr "发票日期"
+
+msgctxt "xgettext:x:"
+msgid "Invoice Payment Dates"
+msgstr "发票付款日期"
+
+msgctxt "xgettext:x:"
+msgid "No invoices found"
+msgstr "未找到发票"
+
+msgctxt "xgettext:x:"
+msgid "Party"
+msgstr "参与者"
+
+msgctxt "xgettext:x:"
+msgid "Payment Date"
+msgstr "付款日期"
+
+msgctxt "xgettext:x:"
+msgid "Payment Days"
+msgstr "付款日"
+
+msgctxt "xgettext:x:"
+msgid "Payment Type"
+msgstr "付款方式"
+
+msgctxt "xgettext:x:"
+msgid "Reference"
+msgstr "参考"
+
+msgctxt "xgettext:x:"
+msgid "State"
+msgstr "状态"
+
+msgctxt "xgettext:x:"
+msgid "Untaxed"
+msgstr "未税"
+
+msgctxt "field:party.party,accounting_name:"
+msgid "Accounting Name"
+msgstr "会计名称"
+
+msgctxt "field:account_reports.print_trial_balance.start,with_move_only:"
+msgid "Only Accounts With Move"
+msgstr "仅包含有凭证的科目"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,with_move_or_initial:"
+msgid "Only Accounts With Moves or Initial Balance"
+msgstr "仅包含有凭证或期初余额的科目"
+
+msgctxt "model:account_reports.print_general_ledger.start,name:"
+msgid "Print General Ledger"
+msgstr "打印总账"
+
+msgctxt "model:account_reports.print_taxes_by_invoice.start,name:"
+msgid "Print Taxes by Invoice and Period"
+msgstr "按发票及期间打印税项"
+
+msgctxt "model:account_reports.print_trial_balance.start,name:"
+msgid "Print Trial Balance Start"
+msgstr "打印试算平衡表：开始"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_journal.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt ""
+"selection:account_reports.print_taxes_by_invoice.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
