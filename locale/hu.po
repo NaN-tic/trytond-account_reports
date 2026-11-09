@@ -1,0 +1,1367 @@
+#
+msgid ""
+msgstr ""
+"Language: hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgctxt "field:account.configuration,account_reports_margin:"
+msgid "Account Reports Margin (px)"
+msgstr "Könyvelési jelentések margója (px)"
+
+msgctxt "field:account.configuration,default_timeout:"
+msgid "Timeout (s)"
+msgstr "Időkorlát (s)"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,company:"
+msgid "Company"
+msgstr "Cég"
+
+msgctxt ""
+"field:account_reports.print_abreviated_journal.start,display_account:"
+msgid "Display Accounts"
+msgstr "Főkönyvi számlák megjelenítése"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Üzleti év"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,level:"
+msgid "Level"
+msgstr "Szint"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,output_format:"
+msgid "Output Format"
+msgstr "Kimeneti formátum"
+
+msgctxt "field:account_reports.print_general_ledger.start,accounts:"
+msgid "Accounts"
+msgstr "Számlák"
+
+msgctxt "field:account_reports.print_general_ledger.start,all_accounts:"
+msgid "All accounts with and without balance"
+msgstr "Minden főkönyvi számla, egyenleggel és anélkül"
+
+msgctxt "field:account_reports.print_general_ledger.start,company:"
+msgid "Company"
+msgstr "Cég"
+
+msgctxt "field:account_reports.print_general_ledger.start,end_date:"
+msgid "Final Posting Date"
+msgstr "Záró könyvelési dátum"
+
+msgctxt "field:account_reports.print_general_ledger.start,end_period:"
+msgid "End Period"
+msgstr "Záróperiódus"
+
+msgctxt "field:account_reports.print_general_ledger.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Üzleti év"
+
+msgctxt "field:account_reports.print_general_ledger.start,output_format:"
+msgid "Output Format"
+msgstr "Kimeneti formátum"
+
+msgctxt "field:account_reports.print_general_ledger.start,parties:"
+msgid "Parties"
+msgstr "Ügyfelek"
+
+msgctxt "field:account_reports.print_general_ledger.start,show_description:"
+msgid "Show Description"
+msgstr "Leírás megjelenítése"
+
+msgctxt "field:account_reports.print_general_ledger.start,start_date:"
+msgid "Initial Posting Date"
+msgstr "Kezdő könyvelési dátum"
+
+msgctxt "field:account_reports.print_general_ledger.start,start_period:"
+msgid "Start Period"
+msgstr "Kezdőperiódus"
+
+msgctxt "field:account_reports.print_general_ledger.start,timeout:"
+msgid "Timeout (s)"
+msgstr "Időkorlát (s)"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,company:"
+msgid "Company"
+msgstr "Cég"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,end_date:"
+msgid "Final invoice date"
+msgstr "Záró számladátum"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Üzleti év"
+
+msgctxt ""
+"field:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Invoice Type"
+msgstr "Számla típusa"
+
+msgctxt ""
+"field:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "Output Format"
+msgstr "Kimeneti formátum"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,periods:"
+msgid "Periods"
+msgstr "Periódusok"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,start_date:"
+msgid "Initial invoice date"
+msgstr "Kezdő számladátum"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,timeout:"
+msgid "Timeout"
+msgstr "Időkorlát"
+
+msgctxt "field:account_reports.print_journal.start,close_move_description:"
+msgid "Close Move Description"
+msgstr "Záró könyvelési tétel leírása"
+
+msgctxt "field:account_reports.print_journal.start,company:"
+msgid "Company"
+msgstr "Cég"
+
+msgctxt "field:account_reports.print_journal.start,end_period:"
+msgid "End Period"
+msgstr "Záróperiódus"
+
+msgctxt "field:account_reports.print_journal.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Üzleti év"
+
+msgctxt "field:account_reports.print_journal.start,journals:"
+msgid "Journals"
+msgstr "Pénzügyi naplók"
+
+msgctxt "field:account_reports.print_journal.start,open_close_account_moves:"
+msgid "Create Open/Close Moves"
+msgstr "Nyitó/záró könyvelési tételek létrehozása"
+
+msgctxt "field:account_reports.print_journal.start,open_move_description:"
+msgid "Open Move Description"
+msgstr "Nyitó könyvelési tétel leírása"
+
+msgctxt "field:account_reports.print_journal.start,output_format:"
+msgid "Output Format"
+msgstr "Kimeneti formátum"
+
+msgctxt "field:account_reports.print_journal.start,start_period:"
+msgid "Start Period"
+msgstr "Kezdőperiódus"
+
+msgctxt "field:account_reports.print_journal.start,timeout:"
+msgid "Timeout (s)"
+msgstr "Időkorlát (s)"
+
+msgctxt "field:account_reports.print_open_move_lines.start,accounts:"
+msgid "Accounts"
+msgstr "Számlák"
+
+msgctxt "field:account_reports.print_open_move_lines.start,company:"
+msgid "Company"
+msgstr "Cég"
+
+msgctxt "field:account_reports.print_open_move_lines.start,date:"
+msgid "Cut-off Date"
+msgstr "Fordulónap"
+
+msgctxt "field:account_reports.print_open_move_lines.start,output_format:"
+msgid "Output Format"
+msgstr "Kimeneti formátum"
+
+msgctxt "field:account_reports.print_open_move_lines.start,parties:"
+msgid "Parties"
+msgstr "Ügyfelek"
+
+msgctxt "field:account_reports.print_open_move_lines.start,show_description:"
+msgid "Show Description"
+msgstr "Leírás megjelenítése"
+
+msgctxt "field:account_reports.print_open_move_lines.start,timeout:"
+msgid "Timeout (s)"
+msgstr "Időkorlát (s)"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,company:"
+msgid "Company"
+msgstr "Cég"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,end_date:"
+msgid "Final posting date"
+msgstr "Záró könyvelési dátum"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,excluded_parties:"
+msgid "Excluded Parties"
+msgstr "Kizárt partnerek"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Üzleti év"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,grouping:"
+msgid "Grouping"
+msgstr "Csoportosítás"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,output_format:"
+msgid "Output Format"
+msgstr "Kimeneti formátum"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,parties:"
+msgid "Parties"
+msgstr "Ügyfelek"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,partner_type:"
+msgid "Party Type"
+msgstr "Partner típusa"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,periods:"
+msgid "Periods"
+msgstr "Periódusok"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,start_date:"
+msgid "Initial posting date"
+msgstr "Kezdő könyvelési dátum"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,tax_type:"
+msgid "Tax Type"
+msgstr "Adó típusa"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,taxes:"
+msgid "Taxes"
+msgstr "Adók"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,timeout:"
+msgid "Timeout"
+msgstr "Időkorlát"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,totals_only:"
+msgid "Totals Only"
+msgstr "Csak összesítések"
+
+msgctxt "field:account_reports.print_trial_balance.start,accounts:"
+msgid "Accounts"
+msgstr "Számlák"
+
+msgctxt "field:account_reports.print_trial_balance.start,add_initial_balance:"
+msgid "Add Initial Balance"
+msgstr "Nyitóegyenleg hozzáadása"
+
+msgctxt "field:account_reports.print_trial_balance.start,show_summary_lines:"
+msgid "Show Summary Lines"
+msgstr "Összesítő sorok megjelenítése"
+
+msgctxt "field:account_reports.print_trial_balance.start,company:"
+msgid "Company"
+msgstr "Cég"
+
+msgctxt "field:account_reports.print_trial_balance.start,comparison_end_date:"
+msgid "Final Posting Date"
+msgstr "Záró könyvelési dátum"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_end_period:"
+msgid "End Period"
+msgstr "Záróperiódus"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Üzleti év"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_start_date:"
+msgid "Initial Posting Date"
+msgstr "Kezdő könyvelési dátum"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_start_period:"
+msgid "Start Period"
+msgstr "Kezdőperiódus"
+
+msgctxt "field:account_reports.print_trial_balance.start,end_date:"
+msgid "Final Posting Date"
+msgstr "Záró könyvelési dátum"
+
+msgctxt "field:account_reports.print_trial_balance.start,end_period:"
+msgid "End Period"
+msgstr "Záróperiódus"
+
+msgctxt "field:account_reports.print_trial_balance.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "Üzleti év"
+
+msgctxt "field:account_reports.print_trial_balance.start,hide_split_parties:"
+msgid "Hide Split Parties"
+msgstr "Partnerenkénti bontás elrejtése"
+
+msgctxt "field:account_reports.print_trial_balance.start,moves_or_initial:"
+msgid "Only Accounts With Moves or Initial Balance"
+msgstr "Csak forgalommal vagy nyitóegyenleggel rendelkező számlák"
+
+msgctxt "field:account_reports.print_trial_balance.start,only_moves:"
+msgid "Only Accounts With Move"
+msgstr "Csak forgalommal rendelkező számlák"
+
+msgctxt "field:account_reports.print_trial_balance.start,output_format:"
+msgid "Output Format"
+msgstr "Kimeneti formátum"
+
+msgctxt "field:account_reports.print_trial_balance.start,parties:"
+msgid "Parties"
+msgstr "Ügyfelek"
+
+msgctxt "field:account_reports.print_trial_balance.start,show_digits:"
+msgid "Digits"
+msgstr "Tizedesjegyek"
+
+msgctxt "field:account_reports.print_trial_balance.start,split_parties:"
+msgid "Split Parties"
+msgstr "Bontás partnerenként"
+
+msgctxt "field:account_reports.print_trial_balance.start,start_date:"
+msgid "Initial Posting Date"
+msgstr "Kezdő könyvelési dátum"
+
+msgctxt "field:account_reports.print_trial_balance.start,start_period:"
+msgid "Start Period"
+msgstr "Kezdőperiódus"
+
+msgctxt "field:account_reports.print_trial_balance.start,timeout:"
+msgid "Timeout (s)"
+msgstr "Időkorlát (s)"
+
+msgctxt "help:account_reports.print_abreviated_journal.start,level:"
+msgid "Display accounts of this level"
+msgstr "Az ezen a szinten lévő főkönyvi számlák megjelenítése"
+
+msgctxt "help:account_reports.print_general_ledger.start,all_accounts:"
+msgid ""
+"If unchecked only print accounts with previous balance different from 0 or "
+"with moves"
+msgstr ""
+"Ha nincs bejelölve, csak a nem nulla előző egyenlegű vagy forgalommal "
+"rendelkező számlákat nyomtatja ki"
+
+msgctxt "help:account_reports.print_general_ledger.start,show_description:"
+msgid "If checked show description from Account Move Line"
+msgstr "Ha be van jelölve, megjeleníti a könyvelési sor leírását"
+
+msgctxt "help:account_reports.print_general_ledger.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"Ha a jelentés számítása túllépi a megadott másodperces időkorlátot, a "
+"folyamat automatikusan leáll."
+
+msgctxt "help:account_reports.print_invoice_payment_dates.start,periods:"
+msgid "Leave empty to select all periods"
+msgstr "Hagyja üresen az összes időszak kiválasztásához"
+
+msgctxt "help:account_reports.print_invoice_payment_dates.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"Ha a jelentés számítása túllépi a megadott másodperces időkorlátot, a "
+"folyamat automatikusan leáll."
+
+msgctxt "help:account_reports.print_journal.start,open_close_account_moves:"
+msgid ""
+"If this field is checked and Start Period is 01 and the fiscal year before "
+"are closed, an open move of this year will be created. And if 12 is in End "
+"Period and the fiscal year are closed a close move of the year are created. "
+"And will use all journals."
+msgstr ""
+"Ha be van jelölve, a kezdő időszak 01, és az előző üzleti év le van zárva, "
+"az adott évhez nyitó könyvelési tétel jön létre. Ha a záró időszak "
+"tartalmazza a 12-es időszakot, és az üzleti év le van zárva, az évhez záró "
+"könyvelési tétel jön létre. Minden naplót figyelembe vesz."
+
+msgctxt "help:account_reports.print_journal.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"Ha a jelentés számítása túllépi a megadott másodperces időkorlátot, a "
+"folyamat automatikusan leáll."
+
+msgctxt "help:account_reports.print_open_move_lines.start,show_description:"
+msgid "If checked show description from Account Move Line"
+msgstr "Ha be van jelölve, megjeleníti a könyvelési sor leírását"
+
+msgctxt "help:account_reports.print_open_move_lines.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"Ha a jelentés számítása túllépi a megadott másodperces időkorlátot, a "
+"folyamat automatikusan leáll."
+
+msgctxt "help:account_reports.print_taxes_by_invoice.start,parties:"
+msgid "Leave empty to select all parties"
+msgstr "Hagyja üresen az összes partner kiválasztásához"
+
+msgctxt "help:account_reports.print_taxes_by_invoice.start,periods:"
+msgid "Leave empty to select all periods"
+msgstr "Hagyja üresen az összes időszak kiválasztásához"
+
+msgctxt "help:account_reports.print_taxes_by_invoice.start,taxes:"
+msgid "Leave empty to select all taxes"
+msgstr "Hagyja üresen az összes adó kiválasztásához"
+
+msgctxt "help:account_reports.print_taxes_by_invoice.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"Ha a jelentés számítása túllépi a megadott másodperces időkorlátot, a "
+"folyamat automatikusan leáll."
+
+msgctxt "help:account_reports.print_trial_balance.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"Ha a jelentés számítása túllépi a megadott másodperces időkorlátot, a "
+"folyamat automatikusan leáll."
+
+msgctxt "model:account_reports.print_abreviated_journal.start,string:"
+msgid "Account Reports Print Abreviated Journal Start"
+msgstr "Rövidített napló nyomtatásának indítása"
+
+msgctxt "model:account_reports.print_general_ledger.start,string:"
+msgid "Account Reports Print General Ledger Start"
+msgstr "Főkönyv nyomtatásának indítása"
+
+msgctxt "model:account_reports.print_invoice_payment_dates.start,string:"
+msgid "Account Reports Print Invoice Payment Dates Start"
+msgstr "Számlafizetési dátumok nyomtatásának indítása"
+
+msgctxt "model:account_reports.print_journal.start,string:"
+msgid "Account Reports Print Journal Start"
+msgstr "Napló nyomtatásának indítása"
+
+msgctxt "model:account_reports.print_open_move_lines.start,string:"
+msgid "Account Reports Print Open Move Lines Start"
+msgstr "Nyitott könyvelési tételek nyomtatásának indítása"
+
+msgctxt "model:account_reports.print_taxes_by_invoice.start,string:"
+msgid "Account Reports Print Taxes By Invoice Start"
+msgstr "Számlánkénti adók nyomtatásának indítása"
+
+msgctxt "model:account_reports.print_trial_balance.start,string:"
+msgid "Account Reports Print Trial Balance Start"
+msgstr "Főkönyvi kivonat nyomtatásának indítása"
+
+msgctxt "model:ir.action,name:report_abreviated_journal"
+msgid "Abreviated Journal"
+msgstr "Rövidített napló"
+
+msgctxt "model:ir.action,name:report_abreviated_journal_xlsx"
+msgid "Abreviated Journal"
+msgstr "Rövidített napló"
+
+msgctxt "model:ir.action,name:report_general_ledger"
+msgid "General Ledger"
+msgstr "Főkönyv"
+
+msgctxt "model:ir.action,name:report_general_ledger_xlsx"
+msgid "General Ledger"
+msgstr "Főkönyv"
+
+msgctxt "model:ir.action,name:report_invoice_payment_dates"
+msgid "Invoice Payment Dates"
+msgstr "Számlafizetési dátumok"
+
+msgctxt "model:ir.action,name:report_journal"
+msgid "Journal"
+msgstr "Napló"
+
+msgctxt "model:ir.action,name:report_journal_xlsx"
+msgid "Journal"
+msgstr "Napló"
+
+msgctxt "model:ir.action,name:report_open_move_lines"
+msgid "Open Move Lines"
+msgstr "Nyitott könyvelési tételek"
+
+msgctxt "model:ir.action,name:report_open_move_lines_xlsx"
+msgid "Open Move Lines"
+msgstr "Nyitott könyvelési tételek"
+
+msgctxt "model:ir.action,name:report_taxes_by_invoice"
+msgid "Taxes by Invoice"
+msgstr "Adók számlánként"
+
+msgctxt "model:ir.action,name:report_taxes_by_invoice_xlsx"
+msgid "Taxes by Invoice"
+msgstr "Adók számlánként"
+
+msgctxt "model:ir.action,name:report_trial_balance"
+msgid "Trial Balance"
+msgstr "Nyersmérleg"
+
+msgctxt "model:ir.action,name:report_trial_balance_xlsx"
+msgid "Trial Balance"
+msgstr "Nyersmérleg"
+
+msgctxt "model:ir.action,name:wizard_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "Rövidített napló nyomtatása"
+
+msgctxt "model:ir.action,name:wizard_print_general_ledger"
+msgid "Print General Ledger"
+msgstr "Főkönyv nyomtatása"
+
+msgctxt "model:ir.action,name:wizard_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "Számlafizetési dátumok nyomtatása"
+
+msgctxt "model:ir.action,name:wizard_print_journal"
+msgid "Print Journal"
+msgstr "Napló nyomtatása"
+
+msgctxt "model:ir.action,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Nyitott könyvelési tételek nyomtatása"
+
+msgctxt "model:ir.action,name:wizard_print_taxes_by_invoice"
+msgid "Print Taxes by Invoice and Period"
+msgstr "Adók nyomtatása számlánként és időszakonként"
+
+msgctxt "model:ir.action,name:wizard_print_trial_balance"
+msgid "Print Trial Balance"
+msgstr "Főkönyvi kivonat nyomtatása"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "Rövidített napló nyomtatása"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_general_ledger"
+msgid "Print General Ledger"
+msgstr "Főkönyv nyomtatása"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "Számlafizetési dátumok nyomtatása"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Nyitott könyvelési tételek nyomtatása"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_taxes_by_invoice"
+msgid "Print Taxes by Invoice and Period"
+msgstr "Adók nyomtatása számlánként és időszakonként"
+
+#, python-format
+msgctxt "model:ir.message,text:fiscalyear_end_date"
+msgid "The final posting date does not match the fiscal year \"%(fiscalyear)s\"."
+msgstr ""
+"A záró könyvelési dátum nem tartozik a(z) „%(fiscalyear)s” üzleti évhez."
+
+#, python-format
+msgctxt "model:ir.message,text:fiscalyear_start_date"
+msgid ""
+"The initial posting date does not match the fiscal year \"%(fiscalyear)s\"."
+msgstr ""
+"A kezdő könyvelési dátum nem tartozik a(z) „%(fiscalyear)s” üzleti évhez."
+
+msgctxt "model:ir.message,text:msg_all_parties"
+msgid "All"
+msgstr "összes"
+
+msgctxt "model:ir.message,text:msg_invalid_date_range"
+msgid ""
+"The initial posting date must be before or equal to the final posting date."
+msgstr ""
+"A kezdő könyvelési dátum nem lehet későbbi a záró könyvelési dátumnál."
+
+msgctxt "model:ir.message,text:msg_missing_fiscalyear"
+msgid "The fiscalyear selected it is not valid."
+msgstr "A kiválasztott üzleti év érvénytelen."
+
+msgctxt "model:ir.message,text:msg_not_deductible_tax"
+msgid "Not Deductible VAT"
+msgstr "Le nem vonható áfa"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_renumber_move"
+msgid ""
+"We have noticed that the sequence \"%(sequence)s\" pattern does not match the post number of \"%(move)s\".\n"
+"Please proceed to renumber the records before consulting the journal report."
+msgstr ""
+"A(z) „%(sequence)s” számsorozat mintája nem egyezik a(z) „%(move)s” könyvelési tétel végleges számával.\n"
+"A naplójelentés megtekintése előtt számozza újra a rekordokat."
+
+msgctxt "model:ir.message,text:msg_timeout_exception"
+msgid ""
+"Report computation timed out. You may consider increasing the timeout of the"
+" account reports or export to XLS format."
+msgstr ""
+"A jelentés számítása túllépte az időkorlátot. Növelje a könyvelési "
+"jelentések időkorlátját, vagy exportáljon XLS-formátumba."
+
+msgctxt "model:ir.ui.menu,name:menu_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "Rövidített napló nyomtatása"
+
+msgctxt "model:ir.ui.menu,name:menu_print_general_journal"
+msgid "Print Journal"
+msgstr "Napló nyomtatása"
+
+msgctxt "model:ir.ui.menu,name:menu_print_general_ledger"
+msgid "Print General Ledger"
+msgstr "Főkönyv nyomtatása"
+
+msgctxt "model:ir.ui.menu,name:menu_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "Számlafizetési dátumok nyomtatása"
+
+msgctxt "model:ir.ui.menu,name:menu_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "Nyitott könyvelési tételek nyomtatása"
+
+msgctxt "model:ir.ui.menu,name:menu_print_taxes_by_invoice"
+msgid "Print Taxes by Invoice and Period"
+msgstr "Adók nyomtatása számlánként és időszakonként"
+
+msgctxt "model:ir.ui.menu,name:menu_print_trial_balance"
+msgid "Print Trial Balance"
+msgstr "Főkönyvi kivonat nyomtatása"
+
+msgctxt "report:account.general_ledger:"
+msgid "/"
+msgstr "/"
+
+msgctxt "report:account.general_ledger:"
+msgid ":"
+msgstr ":"
+
+msgctxt "report:account.general_ledger:"
+msgid "Balance"
+msgstr "Egyenleg"
+
+msgctxt "report:account.general_ledger:"
+msgid "Company:"
+msgstr "Cég:"
+
+msgctxt "report:account.general_ledger:"
+msgid "Credit"
+msgstr "Követel"
+
+msgctxt "report:account.general_ledger:"
+msgid "Date"
+msgstr "Dátum"
+
+msgctxt "report:account.general_ledger:"
+msgid "Debit"
+msgstr "Tartozik"
+
+msgctxt "report:account.general_ledger:"
+msgid "Description"
+msgstr "Leírás"
+
+msgctxt "report:account.general_ledger:"
+msgid "Draft"
+msgstr "vázlat"
+
+msgctxt "report:account.general_ledger:"
+msgid "Fiscal Year:"
+msgstr "Üzleti év:"
+
+msgctxt "report:account.general_ledger:"
+msgid "From Date:"
+msgstr "Ettől:"
+
+msgctxt "report:account.general_ledger:"
+msgid "From Period"
+msgstr "Kezdő időszak"
+
+msgctxt "report:account.general_ledger:"
+msgid "General Ledger"
+msgstr "Főkönyv"
+
+msgctxt "report:account.general_ledger:"
+msgid "Move"
+msgstr "Bizonylat"
+
+msgctxt "report:account.general_ledger:"
+msgid "Name"
+msgstr "Név"
+
+msgctxt "report:account.general_ledger:"
+msgid "Origin"
+msgstr "Eredet"
+
+msgctxt "report:account.general_ledger:"
+msgid "Print Date:"
+msgstr "Nyomtatás dátuma:"
+
+msgctxt "report:account.general_ledger:"
+msgid "To"
+msgstr "Címzett"
+
+msgctxt "report:account.general_ledger:"
+msgid "Total"
+msgstr "Összesen"
+
+msgctxt "report:account.general_ledger:"
+msgid "User:"
+msgstr "Felhasználó:"
+
+msgctxt "report:account.general_ledger:"
+msgid "at"
+msgstr "ekkor"
+
+msgctxt "report:account.trial_balance:"
+msgid "/"
+msgstr "/"
+
+msgctxt "report:account.trial_balance:"
+msgid "Account"
+msgstr "Számla"
+
+msgctxt "report:account.trial_balance:"
+msgid "Company:"
+msgstr "Cég:"
+
+msgctxt "report:account.trial_balance:"
+msgid "Credit"
+msgstr "Követel"
+
+msgctxt "report:account.trial_balance:"
+msgid "Debit"
+msgstr "Tartozik"
+
+msgctxt "report:account.trial_balance:"
+msgid "End Balance"
+msgstr "Záró egyenleg"
+
+msgctxt "report:account.trial_balance:"
+msgid "Fiscal Year:"
+msgstr "Üzleti év:"
+
+msgctxt "report:account.trial_balance:"
+msgid "From Date:"
+msgstr "Ettől:"
+
+msgctxt "report:account.trial_balance:"
+msgid "From Period:"
+msgstr "Kezdő időszak:"
+
+msgctxt "report:account.trial_balance:"
+msgid "Print Date:"
+msgstr "Nyomtatás dátuma:"
+
+msgctxt "report:account.trial_balance:"
+msgid "Start Balance"
+msgstr "Nyitó egyenleg"
+
+msgctxt "report:account.trial_balance:"
+msgid "To"
+msgstr "Címzett"
+
+msgctxt "report:account.trial_balance:"
+msgid "Total"
+msgstr "Összesen"
+
+msgctxt "report:account.trial_balance:"
+msgid "Trial Balance"
+msgstr "Nyersmérleg"
+
+msgctxt "report:account.trial_balance:"
+msgid "User:"
+msgstr "Felhasználó:"
+
+msgctxt "report:account.trial_balance:"
+msgid "at"
+msgstr "ekkor"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,display_account:"
+msgid "All"
+msgstr "összes"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,display_account:"
+msgid "With movements"
+msgstr "Forgalommal"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Customer Invoices"
+msgstr "Vevői számlák"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Supplier Invoices"
+msgstr "Szállítói számlák"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_journal.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_journal.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,grouping:"
+msgid "Base Tax Code"
+msgstr "Adóalapkód"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,grouping:"
+msgid "Invoice"
+msgstr "Számla"
+
+msgctxt ""
+"selection:account_reports.print_taxes_by_invoice.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt ""
+"selection:account_reports.print_taxes_by_invoice.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,partner_type:"
+msgid "Customers"
+msgstr "Vevők"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,partner_type:"
+msgid "Suppliers"
+msgstr "Beszállítók"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,tax_type:"
+msgid "All"
+msgstr "összes"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,tax_type:"
+msgid "Invoiced"
+msgstr "Számlázva"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,tax_type:"
+msgid "Refunded"
+msgstr "Visszatérítve"
+
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "view:account.configuration:"
+msgid "Report"
+msgstr "Nyomtatvány"
+
+msgctxt "view:account_reports.print_abreviated_journal.start:"
+msgid "Print Abreviated Journal"
+msgstr "Rövidített napló nyomtatása"
+
+msgctxt "view:account_reports.print_general_ledger.start:"
+msgid "Leave empty to select all accounts"
+msgstr "Hagyja üresen az összes főkönyvi számla kiválasztásához"
+
+msgctxt "view:account_reports.print_general_ledger.start:"
+msgid "Leave empty to select all parties"
+msgstr "Hagyja üresen az összes partner kiválasztásához"
+
+msgctxt "view:account_reports.print_journal.start:"
+msgid "Left empty to select all journals by default"
+msgstr "Hagyja üresen az összes napló alapértelmezett kiválasztásához"
+
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all accounts"
+msgstr "Hagyja üresen az összes főkönyvi számla kiválasztásához"
+
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all parties"
+msgstr "Hagyja üresen az összes partner kiválasztásához"
+
+msgctxt "view:account_reports.print_taxes_by_invoice.start:"
+msgid "Left empty to select all parties"
+msgstr "Hagyja üresen az összes partner kiválasztásához"
+
+msgctxt "view:account_reports.print_taxes_by_invoice.start:"
+msgid "Left empty to select all periods"
+msgstr "Hagyja üresen az összes időszak kiválasztásához"
+
+msgctxt "view:account_reports.print_taxes_by_invoice.start:"
+msgid "Left empty to select all taxes"
+msgstr "Hagyja üresen az összes adó kiválasztásához"
+
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "All accounts if Empty"
+msgstr "Üresen hagyva az összes főkönyvi számla"
+
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "All parties if Empty"
+msgstr "Üresen hagyva az összes partner"
+
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "Comparison Period"
+msgstr "Összehasonlítási időszak"
+
+msgctxt "wizard_button:account_reports.print_abreviated_journal,start,end:"
+msgid "Cancel"
+msgstr "Mégse"
+
+msgctxt "wizard_button:account_reports.print_abreviated_journal,start,print_:"
+msgid "Print"
+msgstr "Nyomtatás"
+
+msgctxt "wizard_button:account_reports.print_general_ledger,start,end:"
+msgid "Cancel"
+msgstr "Mégse"
+
+msgctxt "wizard_button:account_reports.print_general_ledger,start,print_:"
+msgid "Print"
+msgstr "Nyomtatás"
+
+msgctxt "wizard_button:account_reports.print_invoice_payment_dates,start,end:"
+msgid "Cancel"
+msgstr "Mégse"
+
+msgctxt ""
+"wizard_button:account_reports.print_invoice_payment_dates,start,print_:"
+msgid "Print"
+msgstr "Nyomtatás"
+
+msgctxt "wizard_button:account_reports.print_journal,start,end:"
+msgid "Cancel"
+msgstr "Mégse"
+
+msgctxt "wizard_button:account_reports.print_journal,start,print_:"
+msgid "Print"
+msgstr "Nyomtatás"
+
+msgctxt "wizard_button:account_reports.print_open_move_lines,start,end:"
+msgid "Cancel"
+msgstr "Mégse"
+
+msgctxt "wizard_button:account_reports.print_open_move_lines,start,print_:"
+msgid "Print"
+msgstr "Nyomtatás"
+
+msgctxt "wizard_button:account_reports.print_taxes_by_invoice,start,end:"
+msgid "Cancel"
+msgstr "Mégse"
+
+msgctxt "wizard_button:account_reports.print_taxes_by_invoice,start,print_:"
+msgid "Print"
+msgstr "Nyomtatás"
+
+msgctxt "wizard_button:account_reports.print_trial_balance,start,end:"
+msgid "Cancel"
+msgstr "Mégse"
+
+msgctxt "wizard_button:account_reports.print_trial_balance,start,print_:"
+msgid "Print"
+msgstr "Nyomtatás"
+
+msgctxt "xgettext:x:"
+msgid "Abreviated Journal"
+msgstr "Rövidített napló"
+
+msgctxt "xgettext:x:"
+msgid "Account"
+msgstr "Számla"
+
+msgctxt "xgettext:x:"
+msgid "Account / Party"
+msgstr "Főkönyvi számla / Partner"
+
+msgctxt "xgettext:x:"
+msgid "Accounts: %s"
+msgstr "Főkönyvi számlák: %s"
+
+msgctxt "xgettext:x:"
+msgid "All Accounts"
+msgstr "Összes főkönyvi számla"
+
+msgctxt "xgettext:x:"
+msgid "All Parties"
+msgstr "Összes partner"
+
+msgctxt "xgettext:x:"
+msgid "All Periods"
+msgstr "Összes időszak"
+
+msgctxt "xgettext:x:"
+msgid "Balance"
+msgstr "Egyenleg"
+
+msgctxt "xgettext:x:"
+msgid "Base"
+msgstr "Alap"
+
+msgctxt "xgettext:x:"
+msgid "Base + Tax"
+msgstr "Adóalap + Adó"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid ""
+"Cancelled invoices are shown in %(marker)s. Invoices without a cancelled "
+"move or a cancelled move not related to an invoice are not added to the "
+"total."
+msgstr ""
+"A törölt számlák jelölése: %(marker)s. A törölt könyvelési tétel nélküli "
+"számlák, valamint a számlához nem kapcsolódó törölt könyvelési tételek nem "
+"kerülnek bele az összesítésbe."
+
+msgctxt "xgettext:x:"
+msgid ""
+"Cancelled invoices are shown in grey. Invoices without a cancelled move or a"
+" cancelled move not related to an invoice are not added to the total."
+msgstr ""
+"A törölt számlák szürkével jelennek meg. A törölt könyvelési tétel nélküli "
+"számlák, valamint a számlához nem kapcsolódó törölt könyvelési tételek nem "
+"kerülnek bele az összesítésbe."
+
+msgctxt "xgettext:x:"
+msgid "Code"
+msgstr "Kód"
+
+msgctxt "xgettext:x:"
+msgid "Company:"
+msgstr "Cég:"
+
+msgctxt "xgettext:x:"
+msgid "Comparision Balance %s"
+msgstr "Összehasonlító egyenleg %s"
+
+msgctxt "xgettext:x:"
+msgid "Comparision Balance %s: From: %s To: %s"
+msgstr "Összehasonlító egyenleg %s: Kezdete: %s Vége: %s"
+
+msgctxt "xgettext:x:"
+msgid "Credit"
+msgstr "Követel"
+
+msgctxt "xgettext:x:"
+msgid "Cut-off Date: %s"
+msgstr "Fordulónap: %s"
+
+msgctxt "xgettext:x:"
+msgid "Date"
+msgstr "Dátum"
+
+msgctxt "xgettext:x:"
+msgid "Debit"
+msgstr "Tartozik"
+
+msgctxt "xgettext:x:"
+msgid "Description"
+msgstr "Leírás"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Final posting date: %(end_date)s"
+msgstr "Záró könyvelési dátum: %(end_date)s"
+
+msgctxt "xgettext:x:"
+msgid "Fiscal Year"
+msgstr "Üzleti év"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Fiscal Year: %(fiscal_year)s %(periods)s"
+msgstr "Üzleti év: %(fiscal_year)s %(periods)s"
+
+msgctxt "xgettext:x:"
+msgid "Fiscal Year: %s Start Period: %s End Period: %s"
+msgstr "Üzleti év: %s Kezdő időszak: %s Záró időszak: %s"
+
+msgctxt "xgettext:x:"
+msgid "From %s To %s"
+msgstr "%s és %s között"
+
+msgctxt "xgettext:x:"
+msgid "General Ledger"
+msgstr "Főkönyv"
+
+msgctxt "xgettext:x:"
+msgid "Initial"
+msgstr "Nyitó"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Initial posting date: %(start_date)s"
+msgstr "Kezdő könyvelési dátum: %(start_date)s"
+
+msgctxt "xgettext:x:"
+msgid "Invoice"
+msgstr "Számla"
+
+msgctxt "xgettext:x:"
+msgid "Journal"
+msgstr "Napló"
+
+msgctxt "xgettext:x:"
+msgid "Journals"
+msgstr "Pénzügyi naplók"
+
+msgctxt "xgettext:x:"
+msgid "Main Balance %s"
+msgstr "Fő egyenleg %s"
+
+msgctxt "xgettext:x:"
+msgid "Main Balance %s: From: %s To: %s"
+msgstr "Fő egyenleg %s: Kezdete: %s Vége: %s"
+
+msgctxt "xgettext:x:"
+msgid "Maturity Date"
+msgstr "Esedékesség"
+
+msgctxt "xgettext:x:"
+msgid "Move"
+msgstr "Bizonylat"
+
+msgctxt "xgettext:x:"
+msgid "Move Date"
+msgstr "Könyvelési tétel dátuma"
+
+msgctxt "xgettext:x:"
+msgid "NIF"
+msgstr "NIF"
+
+msgctxt "xgettext:x:"
+msgid "No records found"
+msgstr "Nem található rekord"
+
+msgctxt "xgettext:x:"
+msgid "Number"
+msgstr "Szám"
+
+msgctxt "xgettext:x:"
+msgid "Open Move Lines"
+msgstr "Nyitott könyvelési tételek"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Parties: %(parties)s"
+msgstr "Partnerek: %(parties)s"
+
+msgctxt "xgettext:x:"
+msgid "Parties: %s"
+msgstr "Partnerek: %s"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Periods: %(periods)s"
+msgstr "Időszakok: %(periods)s"
+
+msgctxt "xgettext:x:"
+msgid "Previous balance"
+msgstr "Előző egyenleg"
+
+msgctxt "xgettext:x:"
+msgid "Previous balance..."
+msgstr "Előző egyenleg..."
+
+msgctxt "xgettext:x:"
+msgid "Reconciliation Date"
+msgstr "Egyeztetés dátuma"
+
+msgctxt "xgettext:x:"
+msgid "Reference // Description"
+msgstr "Hivatkozás // Leírás"
+
+msgctxt "xgettext:x:"
+msgid "Start Date: %s End Date: %s"
+msgstr "Kezdő dátum: %s Záró dátum: %s"
+
+msgctxt "xgettext:x:"
+msgid "Tax"
+msgstr "Adó"
+
+msgctxt "xgettext:x:"
+msgid "Taxes By Invoice"
+msgstr "Adók számlánként"
+
+msgctxt "xgettext:x:"
+msgid "Taxes By Invoice and Period"
+msgstr "Adók számlánként és időszakonként"
+
+msgctxt "xgettext:x:"
+msgid "Total"
+msgstr "Összesen"
+
+msgctxt "xgettext:x:"
+msgid "Total Fiscal Year"
+msgstr "Üzleti év összesen"
+
+msgctxt "xgettext:x:"
+msgid "Total Invoice"
+msgstr "Számla összesen"
+
+msgctxt "xgettext:x:"
+msgid "Total Period"
+msgstr "Időszak összesen"
+
+msgctxt "xgettext:x:"
+msgid "Total month %s"
+msgstr "%s. hónap összesen"
+
+msgctxt "xgettext:x:"
+msgid "Trial Balance"
+msgstr "Nyersmérleg"
+
+msgctxt "xgettext:x:"
+msgid "VAT"
+msgstr "Áfa"
+
+msgctxt "xgettext:x:"
+msgid ""
+"When move number is between parentheses it means that it has no post number "
+"and the number shown is the provisional one."
+msgstr ""
+"A zárójelben szereplő könyvelési tételszám azt jelzi, hogy még nincs "
+"végleges könyvelési száma, és a megjelenített szám ideiglenes."
+
+msgctxt "xgettext:x:"
+msgid "Due Amount"
+msgstr "Esedékes összeg"
+
+msgctxt "xgettext:x:"
+msgid "Due Date"
+msgstr "Esedékesség"
+
+msgctxt "xgettext:x:"
+msgid "Invoice Date"
+msgstr "Számla kelte"
+
+msgctxt "xgettext:x:"
+msgid "Invoice Payment Dates"
+msgstr "Számlafizetési dátumok"
+
+msgctxt "xgettext:x:"
+msgid "No invoices found"
+msgstr "Nem találhatók számlák"
+
+msgctxt "xgettext:x:"
+msgid "Party"
+msgstr "Ügyfél"
+
+msgctxt "xgettext:x:"
+msgid "Payment Date"
+msgstr "Fizetés dátuma"
+
+msgctxt "xgettext:x:"
+msgid "Payment Days"
+msgstr "Fizetési napok"
+
+msgctxt "xgettext:x:"
+msgid "Payment Type"
+msgstr "Fizetési mód"
+
+msgctxt "xgettext:x:"
+msgid "Reference"
+msgstr "Hivatkozás"
+
+msgctxt "xgettext:x:"
+msgid "State"
+msgstr "Állapot"
+
+msgctxt "xgettext:x:"
+msgid "Untaxed"
+msgstr "Nettó"
+
+msgctxt "field:party.party,accounting_name:"
+msgid "Accounting Name"
+msgstr "Könyvelési név"
+
+msgctxt "field:account_reports.print_trial_balance.start,with_move_only:"
+msgid "Only Accounts With Move"
+msgstr "Csak forgalommal rendelkező számlák"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,with_move_or_initial:"
+msgid "Only Accounts With Moves or Initial Balance"
+msgstr "Csak forgalommal vagy nyitóegyenleggel rendelkező számlák"
+
+msgctxt "model:account_reports.print_general_ledger.start,name:"
+msgid "Print General Ledger"
+msgstr "Főkönyv nyomtatása"
+
+msgctxt "model:account_reports.print_taxes_by_invoice.start,name:"
+msgid "Print Taxes by Invoice and Period"
+msgstr "Adók nyomtatása számlánként és időszakonként"
+
+msgctxt "model:account_reports.print_trial_balance.start,name:"
+msgid "Print Trial Balance Start"
+msgstr "Főkönyvi kivonat nyomtatásának indítása"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_journal.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt ""
+"selection:account_reports.print_taxes_by_invoice.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
