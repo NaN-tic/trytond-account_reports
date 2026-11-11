@@ -13,6 +13,10 @@ terms. -->
             <field name="name">Print Invoice Payment Dates</field>
             <field name="wiz_name">account_reports.print_invoice_payment_dates</field>
         </record>
+        <record model="ir.action-res.group" id="wizard_print_invoice_payment_dates_group_account">
+            <field name="action" ref="wizard_print_invoice_payment_dates"/>
+            <field name="group" ref="account.group_account"/>
+        </record>
 
         <record model="ir.action.report" id="report_invoice_payment_dates">
             <field name="name">Invoice Payment Dates</field>
