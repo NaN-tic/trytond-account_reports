@@ -1,0 +1,1359 @@
+#
+msgid ""
+msgstr ""
+"Language: km\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgctxt "field:account.configuration,account_reports_margin:"
+msgid "Account Reports Margin (px)"
+msgstr "រឹមរបាយការណ៍គណនេយ្យ (px)"
+
+msgctxt "field:account.configuration,default_timeout:"
+msgid "Timeout (s)"
+msgstr "ពេលអស់កំណត់ (វិនាទី)"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,company:"
+msgid "Company"
+msgstr "ក្រុមហ៊ុន"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,display_account:"
+msgid "Display Accounts"
+msgstr "បង្ហាញគណនី"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "ឆ្នាំសារពើពន្ធ"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,level:"
+msgid "Level"
+msgstr "កម្រិត"
+
+msgctxt "field:account_reports.print_abreviated_journal.start,output_format:"
+msgid "Output Format"
+msgstr "ទ្រង់ទ្រាយលទ្ធផល"
+
+msgctxt "field:account_reports.print_general_ledger.start,accounts:"
+msgid "Accounts"
+msgstr "គណនី"
+
+msgctxt "field:account_reports.print_general_ledger.start,all_accounts:"
+msgid "All accounts with and without balance"
+msgstr "គណនីទាំងអស់ ទាំងមាន និងគ្មានសមតុល្យ"
+
+msgctxt "field:account_reports.print_general_ledger.start,company:"
+msgid "Company"
+msgstr "ក្រុមហ៊ុន"
+
+msgctxt "field:account_reports.print_general_ledger.start,end_date:"
+msgid "Final Posting Date"
+msgstr "កាលបរិច្ឆេទកត់ត្រាក្នុងបញ្ជីចុងក្រោយ"
+
+msgctxt "field:account_reports.print_general_ledger.start,end_period:"
+msgid "End Period"
+msgstr "គ្រាបញ្ចប់"
+
+msgctxt "field:account_reports.print_general_ledger.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "ឆ្នាំសារពើពន្ធ"
+
+msgctxt "field:account_reports.print_general_ledger.start,output_format:"
+msgid "Output Format"
+msgstr "ទ្រង់ទ្រាយលទ្ធផល"
+
+msgctxt "field:account_reports.print_general_ledger.start,parties:"
+msgid "Parties"
+msgstr "ភាគី"
+
+msgctxt "field:account_reports.print_general_ledger.start,show_description:"
+msgid "Show Description"
+msgstr "បង្ហាញសេចក្តីពិពណ៌នា"
+
+msgctxt "field:account_reports.print_general_ledger.start,start_date:"
+msgid "Initial Posting Date"
+msgstr "កាលបរិច្ឆេទកត់ត្រាក្នុងបញ្ជីដំបូង"
+
+msgctxt "field:account_reports.print_general_ledger.start,start_period:"
+msgid "Start Period"
+msgstr "គ្រាចាប់ផ្តើម"
+
+msgctxt "field:account_reports.print_general_ledger.start,timeout:"
+msgid "Timeout (s)"
+msgstr "ពេលអស់កំណត់ (វិនាទី)"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,company:"
+msgid "Company"
+msgstr "ក្រុមហ៊ុន"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,end_date:"
+msgid "Final invoice date"
+msgstr "កាលបរិច្ឆេទវិក្កយបត្រចុងក្រោយ"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "ឆ្នាំសារពើពន្ធ"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Invoice Type"
+msgstr "ប្រភេទវិក្កយបត្រ"
+
+msgctxt ""
+"field:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "Output Format"
+msgstr "ទ្រង់ទ្រាយលទ្ធផល"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,periods:"
+msgid "Periods"
+msgstr "គ្រា"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,start_date:"
+msgid "Initial invoice date"
+msgstr "កាលបរិច្ឆេទវិក្កយបត្រដំបូង"
+
+msgctxt "field:account_reports.print_invoice_payment_dates.start,timeout:"
+msgid "Timeout"
+msgstr "រយៈពេលរង់ចាំអតិបរមា"
+
+msgctxt "field:account_reports.print_journal.start,close_move_description:"
+msgid "Close Move Description"
+msgstr "សេចក្តីពិពណ៌នាកំណត់ត្រាបិទគ្រា"
+
+msgctxt "field:account_reports.print_journal.start,company:"
+msgid "Company"
+msgstr "ក្រុមហ៊ុន"
+
+msgctxt "field:account_reports.print_journal.start,end_period:"
+msgid "End Period"
+msgstr "គ្រាបញ្ចប់"
+
+msgctxt "field:account_reports.print_journal.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "ឆ្នាំសារពើពន្ធ"
+
+msgctxt "field:account_reports.print_journal.start,journals:"
+msgid "Journals"
+msgstr "ទិនានុប្បវត្តិ"
+
+msgctxt "field:account_reports.print_journal.start,open_close_account_moves:"
+msgid "Create Open/Close Moves"
+msgstr "បង្កើតកំណត់ត្រាបើក និងបិទគ្រា"
+
+msgctxt "field:account_reports.print_journal.start,open_move_description:"
+msgid "Open Move Description"
+msgstr "សេចក្តីពិពណ៌នាកំណត់ត្រាបើកគ្រា"
+
+msgctxt "field:account_reports.print_journal.start,output_format:"
+msgid "Output Format"
+msgstr "ទ្រង់ទ្រាយលទ្ធផល"
+
+msgctxt "field:account_reports.print_journal.start,start_period:"
+msgid "Start Period"
+msgstr "គ្រាចាប់ផ្តើម"
+
+msgctxt "field:account_reports.print_journal.start,timeout:"
+msgid "Timeout (s)"
+msgstr "ពេលអស់កំណត់ (វិនាទី)"
+
+msgctxt "field:account_reports.print_open_move_lines.start,accounts:"
+msgid "Accounts"
+msgstr "គណនី"
+
+msgctxt "field:account_reports.print_open_move_lines.start,company:"
+msgid "Company"
+msgstr "ក្រុមហ៊ុន"
+
+msgctxt "field:account_reports.print_open_move_lines.start,date:"
+msgid "Cut-off Date"
+msgstr "កាលបរិច្ឆេទកាត់ផ្ដាច់"
+
+msgctxt "field:account_reports.print_open_move_lines.start,output_format:"
+msgid "Output Format"
+msgstr "ទ្រង់ទ្រាយលទ្ធផល"
+
+msgctxt "field:account_reports.print_open_move_lines.start,parties:"
+msgid "Parties"
+msgstr "ភាគី"
+
+msgctxt "field:account_reports.print_open_move_lines.start,show_description:"
+msgid "Show Description"
+msgstr "បង្ហាញសេចក្តីពិពណ៌នា"
+
+msgctxt "field:account_reports.print_open_move_lines.start,timeout:"
+msgid "Timeout (s)"
+msgstr "ពេលអស់កំណត់ (វិនាទី)"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,company:"
+msgid "Company"
+msgstr "ក្រុមហ៊ុន"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,end_date:"
+msgid "Final posting date"
+msgstr "កាលបរិច្ឆេទកត់ត្រាក្នុងបញ្ជីចុងក្រោយ"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,excluded_parties:"
+msgid "Excluded Parties"
+msgstr "ភាគីដែលមិនត្រូវបញ្ចូល"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "ឆ្នាំសារពើពន្ធ"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,grouping:"
+msgid "Grouping"
+msgstr "ការដាក់ខ្ទង់ជាក្រុម"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,output_format:"
+msgid "Output Format"
+msgstr "ទ្រង់ទ្រាយលទ្ធផល"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,parties:"
+msgid "Parties"
+msgstr "ភាគី"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,partner_type:"
+msgid "Party Type"
+msgstr "ប្រភេទភាគី"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,periods:"
+msgid "Periods"
+msgstr "គ្រា"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,start_date:"
+msgid "Initial posting date"
+msgstr "កាលបរិច្ឆេទកត់ត្រាក្នុងបញ្ជីដំបូង"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,tax_type:"
+msgid "Tax Type"
+msgstr "ប្រភេទពន្ធ"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,taxes:"
+msgid "Taxes"
+msgstr "ពន្ធ"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,timeout:"
+msgid "Timeout"
+msgstr "រយៈពេលរង់ចាំអតិបរមា"
+
+msgctxt "field:account_reports.print_taxes_by_invoice.start,totals_only:"
+msgid "Totals Only"
+msgstr "បង្ហាញតែចំនួនសរុប"
+
+msgctxt "field:account_reports.print_trial_balance.start,accounts:"
+msgid "Accounts"
+msgstr "គណនី"
+
+msgctxt "field:account_reports.print_trial_balance.start,add_initial_balance:"
+msgid "Add Initial Balance"
+msgstr "បន្ថែមសមតុល្យដំបូង"
+
+msgctxt "field:account_reports.print_trial_balance.start,show_summary_lines:"
+msgid "Show Summary Lines"
+msgstr "បង្ហាញបន្ទាត់សង្ខេប"
+
+msgctxt "field:account_reports.print_trial_balance.start,company:"
+msgid "Company"
+msgstr "ក្រុមហ៊ុន"
+
+msgctxt "field:account_reports.print_trial_balance.start,comparison_end_date:"
+msgid "Final Posting Date"
+msgstr "កាលបរិច្ឆេទកត់ត្រាក្នុងបញ្ជីចុងក្រោយ"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_end_period:"
+msgid "End Period"
+msgstr "គ្រាបញ្ចប់"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_fiscalyear:"
+msgid "Fiscal Year"
+msgstr "ឆ្នាំសារពើពន្ធ"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_start_date:"
+msgid "Initial Posting Date"
+msgstr "កាលបរិច្ឆេទកត់ត្រាក្នុងបញ្ជីដំបូង"
+
+msgctxt ""
+"field:account_reports.print_trial_balance.start,comparison_start_period:"
+msgid "Start Period"
+msgstr "គ្រាចាប់ផ្តើម"
+
+msgctxt "field:account_reports.print_trial_balance.start,end_date:"
+msgid "Final Posting Date"
+msgstr "កាលបរិច្ឆេទកត់ត្រាក្នុងបញ្ជីចុងក្រោយ"
+
+msgctxt "field:account_reports.print_trial_balance.start,end_period:"
+msgid "End Period"
+msgstr "គ្រាបញ្ចប់"
+
+msgctxt "field:account_reports.print_trial_balance.start,fiscalyear:"
+msgid "Fiscal Year"
+msgstr "ឆ្នាំសារពើពន្ធ"
+
+msgctxt "field:account_reports.print_trial_balance.start,hide_split_parties:"
+msgid "Hide Split Parties"
+msgstr "លាក់ការបែងចែកតាមភាគី"
+
+msgctxt "field:account_reports.print_trial_balance.start,moves_or_initial:"
+msgid "Only Accounts With Moves or Initial Balance"
+msgstr "បង្ហាញតែគណនីដែលមានកំណត់ត្រាគណនេយ្យ ឬមានសមតុល្យដំបូង"
+
+msgctxt "field:account_reports.print_trial_balance.start,only_moves:"
+msgid "Only Accounts With Move"
+msgstr "បង្ហាញតែគណនីដែលមានកំណត់ត្រាគណនេយ្យ"
+
+msgctxt "field:account_reports.print_trial_balance.start,output_format:"
+msgid "Output Format"
+msgstr "ទ្រង់ទ្រាយលទ្ធផល"
+
+msgctxt "field:account_reports.print_trial_balance.start,parties:"
+msgid "Parties"
+msgstr "ភាគី"
+
+msgctxt "field:account_reports.print_trial_balance.start,show_digits:"
+msgid "Digits"
+msgstr "ខ្ទង់"
+
+msgctxt "field:account_reports.print_trial_balance.start,split_parties:"
+msgid "Split Parties"
+msgstr "បែងចែកតាមភាគី"
+
+msgctxt "field:account_reports.print_trial_balance.start,start_date:"
+msgid "Initial Posting Date"
+msgstr "កាលបរិច្ឆេទកត់ត្រាក្នុងបញ្ជីដំបូង"
+
+msgctxt "field:account_reports.print_trial_balance.start,start_period:"
+msgid "Start Period"
+msgstr "គ្រាចាប់ផ្តើម"
+
+msgctxt "field:account_reports.print_trial_balance.start,timeout:"
+msgid "Timeout (s)"
+msgstr "ពេលអស់កំណត់ (វិនាទី)"
+
+msgctxt "help:account_reports.print_abreviated_journal.start,level:"
+msgid "Display accounts of this level"
+msgstr "បង្ហាញគណនីនៅកម្រិតនេះ"
+
+msgctxt "help:account_reports.print_general_ledger.start,all_accounts:"
+msgid ""
+"If unchecked only print accounts with previous balance different from 0 or "
+"with moves"
+msgstr "បើមិនធីក បោះពុម្ពតែគណនីដែលមានសមតុល្យមុនខុសពីសូន្យ ឬមានកំណត់ត្រាគណនេយ្យ"
+
+msgctxt "help:account_reports.print_general_ledger.start,show_description:"
+msgid "If checked show description from Account Move Line"
+msgstr "បើធីក បង្ហាញសេចក្តីពិពណ៌នាពីបន្ទាត់កំណត់ត្រាគណនេយ្យ"
+
+msgctxt "help:account_reports.print_general_ledger.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"ប្រសិនបើការគណនារបាយការណ៍ចំណាយពេលលើសកំណត់ (គិតជាវិនាទី) "
+"ដំណើរការនឹងត្រូវបានបញ្ឈប់ដោយស្វ័យប្រវត្តិ។"
+
+msgctxt "help:account_reports.print_invoice_payment_dates.start,periods:"
+msgid "Leave empty to select all periods"
+msgstr "ទុកឱ្យទទេដើម្បីជ្រើសរើសគ្រាទាំងអស់"
+
+msgctxt "help:account_reports.print_invoice_payment_dates.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"ប្រសិនបើការគណនារបាយការណ៍ចំណាយពេលលើសកំណត់ (គិតជាវិនាទី) "
+"ដំណើរការនឹងត្រូវបានបញ្ឈប់ដោយស្វ័យប្រវត្តិ។"
+
+msgctxt "help:account_reports.print_journal.start,open_close_account_moves:"
+msgid ""
+"If this field is checked and Start Period is 01 and the fiscal year before "
+"are closed, an open move of this year will be created. And if 12 is in End "
+"Period and the fiscal year are closed a close move of the year are created. "
+"And will use all journals."
+msgstr ""
+"បើធីកវាលនេះ គ្រាចាប់ផ្ដើមគឺ 01 និងឆ្នាំសារពើពន្ធមុនត្រូវបានបិទ "
+"នោះប្រព័ន្ធនឹងបង្កើតកំណត់ត្រាបើកសម្រាប់ឆ្នាំនេះ។ បើគ្រាបញ្ចប់រួមមាន 12 "
+"និងឆ្នាំសារពើពន្ធត្រូវបានបិទ នោះប្រព័ន្ធនឹងបង្កើតកំណត់ត្រាបិទសម្រាប់ឆ្នាំនោះ។"
+" ប្រព័ន្ធប្រើទិនានុប្បវត្តិទាំងអស់។"
+
+msgctxt "help:account_reports.print_journal.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"ប្រសិនបើការគណនារបាយការណ៍ចំណាយពេលលើសកំណត់ (គិតជាវិនាទី) "
+"ដំណើរការនឹងត្រូវបានបញ្ឈប់ដោយស្វ័យប្រវត្តិ។"
+
+msgctxt "help:account_reports.print_open_move_lines.start,show_description:"
+msgid "If checked show description from Account Move Line"
+msgstr "បើធីក បង្ហាញសេចក្តីពិពណ៌នាពីបន្ទាត់កំណត់ត្រាគណនេយ្យ"
+
+msgctxt "help:account_reports.print_open_move_lines.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"ប្រសិនបើការគណនារបាយការណ៍ចំណាយពេលលើសកំណត់ (គិតជាវិនាទី) "
+"ដំណើរការនឹងត្រូវបានបញ្ឈប់ដោយស្វ័យប្រវត្តិ។"
+
+msgctxt "help:account_reports.print_taxes_by_invoice.start,parties:"
+msgid "Leave empty to select all parties"
+msgstr "ទុកឱ្យទទេដើម្បីជ្រើសរើសភាគីទាំងអស់"
+
+msgctxt "help:account_reports.print_taxes_by_invoice.start,periods:"
+msgid "Leave empty to select all periods"
+msgstr "ទុកឱ្យទទេដើម្បីជ្រើសរើសគ្រាទាំងអស់"
+
+msgctxt "help:account_reports.print_taxes_by_invoice.start,taxes:"
+msgid "Leave empty to select all taxes"
+msgstr "ទុកឱ្យទទេដើម្បីជ្រើសរើសពន្ធទាំងអស់"
+
+msgctxt "help:account_reports.print_taxes_by_invoice.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"ប្រសិនបើការគណនារបាយការណ៍ចំណាយពេលលើសកំណត់ (គិតជាវិនាទី) "
+"ដំណើរការនឹងត្រូវបានបញ្ឈប់ដោយស្វ័យប្រវត្តិ។"
+
+msgctxt "help:account_reports.print_trial_balance.start,timeout:"
+msgid ""
+"If report calculation should take more than the specified timeout (in "
+"seconds) the process will be stopped automatically."
+msgstr ""
+"ប្រសិនបើការគណនារបាយការណ៍ចំណាយពេលលើសកំណត់ (គិតជាវិនាទី) "
+"ដំណើរការនឹងត្រូវបានបញ្ឈប់ដោយស្វ័យប្រវត្តិ។"
+
+msgctxt "model:account_reports.print_abreviated_journal.start,string:"
+msgid "Account Reports Print Abreviated Journal Start"
+msgstr "ចាប់ផ្ដើមបោះពុម្ពទិនានុប្បវត្តិសង្ខេប"
+
+msgctxt "model:account_reports.print_general_ledger.start,string:"
+msgid "Account Reports Print General Ledger Start"
+msgstr "ចាប់ផ្ដើមបោះពុម្ពសៀវភៅធំ"
+
+msgctxt "model:account_reports.print_invoice_payment_dates.start,string:"
+msgid "Account Reports Print Invoice Payment Dates Start"
+msgstr "ចាប់ផ្ដើមបោះពុម្ពកាលបរិច្ឆេទទូទាត់វិក្កយបត្រ"
+
+msgctxt "model:account_reports.print_journal.start,string:"
+msgid "Account Reports Print Journal Start"
+msgstr "ចាប់ផ្ដើមបោះពុម្ពទិនានុប្បវត្តិ"
+
+msgctxt "model:account_reports.print_open_move_lines.start,string:"
+msgid "Account Reports Print Open Move Lines Start"
+msgstr "ចាប់ផ្ដើមបោះពុម្ពបន្ទាត់កំណត់ត្រាគណនេយ្យដែលមិនទាន់ទូទាត់"
+
+msgctxt "model:account_reports.print_taxes_by_invoice.start,string:"
+msgid "Account Reports Print Taxes By Invoice Start"
+msgstr "ចាប់ផ្ដើមបោះពុម្ពពន្ធតាមវិក្កយបត្រ"
+
+msgctxt "model:account_reports.print_trial_balance.start,string:"
+msgid "Account Reports Print Trial Balance Start"
+msgstr "ចាប់ផ្ដើមបោះពុម្ពតារាងតុល្យការសាកល្បង"
+
+msgctxt "model:ir.action,name:report_abreviated_journal"
+msgid "Abreviated Journal"
+msgstr "ទិនានុប្បវត្តិសង្ខេប"
+
+msgctxt "model:ir.action,name:report_abreviated_journal_xlsx"
+msgid "Abreviated Journal"
+msgstr "ទិនានុប្បវត្តិសង្ខេប"
+
+msgctxt "model:ir.action,name:report_general_ledger"
+msgid "General Ledger"
+msgstr "សៀវភៅធំ"
+
+msgctxt "model:ir.action,name:report_general_ledger_xlsx"
+msgid "General Ledger"
+msgstr "សៀវភៅធំ"
+
+msgctxt "model:ir.action,name:report_invoice_payment_dates"
+msgid "Invoice Payment Dates"
+msgstr "កាលបរិច្ឆេទទូទាត់វិក្កយបត្រ"
+
+msgctxt "model:ir.action,name:report_journal"
+msgid "Journal"
+msgstr "ទិនានុប្បវត្តិ"
+
+msgctxt "model:ir.action,name:report_journal_xlsx"
+msgid "Journal"
+msgstr "ទិនានុប្បវត្តិ"
+
+msgctxt "model:ir.action,name:report_open_move_lines"
+msgid "Open Move Lines"
+msgstr "បន្ទាត់កំណត់ត្រាគណនេយ្យដែលមិនទាន់ទូទាត់"
+
+msgctxt "model:ir.action,name:report_open_move_lines_xlsx"
+msgid "Open Move Lines"
+msgstr "បន្ទាត់កំណត់ត្រាគណនេយ្យដែលមិនទាន់ទូទាត់"
+
+msgctxt "model:ir.action,name:report_taxes_by_invoice"
+msgid "Taxes by Invoice"
+msgstr "ពន្ធតាមវិក្កយបត្រ"
+
+msgctxt "model:ir.action,name:report_taxes_by_invoice_xlsx"
+msgid "Taxes by Invoice"
+msgstr "ពន្ធតាមវិក្កយបត្រ"
+
+msgctxt "model:ir.action,name:report_trial_balance"
+msgid "Trial Balance"
+msgstr "តារាងតុល្យការសាកល្បង"
+
+msgctxt "model:ir.action,name:report_trial_balance_xlsx"
+msgid "Trial Balance"
+msgstr "តារាងតុល្យការសាកល្បង"
+
+msgctxt "model:ir.action,name:wizard_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "បោះពុម្ពទិនានុប្បវត្តិសង្ខេប"
+
+msgctxt "model:ir.action,name:wizard_print_general_ledger"
+msgid "Print General Ledger"
+msgstr "បោះពុម្ពសៀវភៅធំ"
+
+msgctxt "model:ir.action,name:wizard_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "បោះពុម្ពកាលបរិច្ឆេទទូទាត់វិក្កយបត្រ"
+
+msgctxt "model:ir.action,name:wizard_print_journal"
+msgid "Print Journal"
+msgstr "បោះពុម្ពទិនានុប្បវត្តិ"
+
+msgctxt "model:ir.action,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "បោះពុម្ពបន្ទាត់កំណត់ត្រាគណនេយ្យដែលមិនទាន់ទូទាត់"
+
+msgctxt "model:ir.action,name:wizard_print_taxes_by_invoice"
+msgid "Print Taxes by Invoice and Period"
+msgstr "បោះពុម្ពពន្ធតាមវិក្កយបត្រ និងគ្រា"
+
+msgctxt "model:ir.action,name:wizard_print_trial_balance"
+msgid "Print Trial Balance"
+msgstr "បោះពុម្ពតារាងតុល្យការសាកល្បង"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "បោះពុម្ពទិនានុប្បវត្តិសង្ខេប"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_general_ledger"
+msgid "Print General Ledger"
+msgstr "បោះពុម្ពសៀវភៅធំ"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "បោះពុម្ពកាលបរិច្ឆេទទូទាត់វិក្កយបត្រ"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "បោះពុម្ពបន្ទាត់កំណត់ត្រាគណនេយ្យដែលមិនទាន់ទូទាត់"
+
+msgctxt "model:ir.action.wizard,name:wizard_print_taxes_by_invoice"
+msgid "Print Taxes by Invoice and Period"
+msgstr "បោះពុម្ពពន្ធតាមវិក្កយបត្រ និងគ្រា"
+
+#, python-format
+msgctxt "model:ir.message,text:fiscalyear_end_date"
+msgid "The final posting date does not match the fiscal year \"%(fiscalyear)s\"."
+msgstr ""
+"កាលបរិច្ឆេទកត់ត្រាក្នុងបញ្ជីចុងក្រោយមិនត្រូវនឹងឆ្នាំសារពើពន្ធ "
+"«%(fiscalyear)s»។"
+
+#, python-format
+msgctxt "model:ir.message,text:fiscalyear_start_date"
+msgid "The initial posting date does not match the fiscal year \"%(fiscalyear)s\"."
+msgstr ""
+"កាលបរិច្ឆេទកត់ត្រាក្នុងបញ្ជីដំបូងមិនត្រូវនឹងឆ្នាំសារពើពន្ធ «%(fiscalyear)s»។"
+
+msgctxt "model:ir.message,text:msg_all_parties"
+msgid "All"
+msgstr "ទាំងអស់"
+
+msgctxt "model:ir.message,text:msg_invalid_date_range"
+msgid ""
+"The initial posting date must be before or equal to the final posting date."
+msgstr ""
+"កាលបរិច្ឆេទកត់ត្រាក្នុងបញ្ជីដំបូងត្រូវនៅមុន "
+"ឬស្មើនឹងកាលបរិច្ឆេទកត់ត្រាក្នុងបញ្ជីចុងក្រោយ។"
+
+msgctxt "model:ir.message,text:msg_missing_fiscalyear"
+msgid "The fiscalyear selected it is not valid."
+msgstr "ឆ្នាំសារពើពន្ធដែលបានជ្រើសរើសមិនត្រឹមត្រូវ។"
+
+msgctxt "model:ir.message,text:msg_not_deductible_tax"
+msgid "Not Deductible VAT"
+msgstr "អាករលើតម្លៃបន្ថែមដែលមិនអាចកាត់កងបាន"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_renumber_move"
+msgid ""
+"We have noticed that the sequence \"%(sequence)s\" pattern does not match the post number of \"%(move)s\".\n"
+"Please proceed to renumber the records before consulting the journal report."
+msgstr ""
+"លំនាំលេខរៀង «%(sequence)s» មិនត្រូវនឹងលេខកត់ត្រាក្នុងបញ្ជីរបស់ «%(move)s»។\n"
+"សូមដាក់លេខកំណត់ត្រាឡើងវិញ មុននឹងមើលរបាយការណ៍ទិនានុប្បវត្តិ។"
+
+msgctxt "model:ir.message,text:msg_timeout_exception"
+msgid ""
+"Report computation timed out. You may consider increasing the timeout of the "
+"account reports or export to XLS format."
+msgstr ""
+"ការគណនារបាយការណ៍បានអស់ពេលកំណត់។ អ្នកអាចបង្កើនពេលកំណត់នៃរបាយការណ៍គណនេយ្យ "
+"ឬនាំចេញជាទ្រង់ទ្រាយ XLS។"
+
+msgctxt "model:ir.ui.menu,name:menu_print_abreviated_journal"
+msgid "Print Abreviated Journal"
+msgstr "បោះពុម្ពទិនានុប្បវត្តិសង្ខេប"
+
+msgctxt "model:ir.ui.menu,name:menu_print_general_journal"
+msgid "Print Journal"
+msgstr "បោះពុម្ពទិនានុប្បវត្តិ"
+
+msgctxt "model:ir.ui.menu,name:menu_print_general_ledger"
+msgid "Print General Ledger"
+msgstr "បោះពុម្ពសៀវភៅធំ"
+
+msgctxt "model:ir.ui.menu,name:menu_print_invoice_payment_dates"
+msgid "Print Invoice Payment Dates"
+msgstr "បោះពុម្ពកាលបរិច្ឆេទទូទាត់វិក្កយបត្រ"
+
+msgctxt "model:ir.ui.menu,name:menu_print_open_move_lines"
+msgid "Print Open Move Lines"
+msgstr "បោះពុម្ពបន្ទាត់កំណត់ត្រាគណនេយ្យដែលមិនទាន់ទូទាត់"
+
+msgctxt "model:ir.ui.menu,name:menu_print_taxes_by_invoice"
+msgid "Print Taxes by Invoice and Period"
+msgstr "បោះពុម្ពពន្ធតាមវិក្កយបត្រ និងគ្រា"
+
+msgctxt "model:ir.ui.menu,name:menu_print_trial_balance"
+msgid "Print Trial Balance"
+msgstr "បោះពុម្ពតារាងតុល្យការសាកល្បង"
+
+msgctxt "report:account.general_ledger:"
+msgid "/"
+msgstr "/"
+
+msgctxt "report:account.general_ledger:"
+msgid ":"
+msgstr "៖"
+
+msgctxt "report:account.general_ledger:"
+msgid "Balance"
+msgstr "សមតុល្យ"
+
+msgctxt "report:account.general_ledger:"
+msgid "Company:"
+msgstr "ក្រុមហ៊ុន៖"
+
+msgctxt "report:account.general_ledger:"
+msgid "Credit"
+msgstr "ឥណទាន"
+
+msgctxt "report:account.general_ledger:"
+msgid "Date"
+msgstr "កាលបរិច្ឆេទ"
+
+msgctxt "report:account.general_ledger:"
+msgid "Debit"
+msgstr "ឥណពន្ធ"
+
+msgctxt "report:account.general_ledger:"
+msgid "Description"
+msgstr "សេចក្តីពិពណ៌នា"
+
+msgctxt "report:account.general_ledger:"
+msgid "Draft"
+msgstr "សេចក្តីព្រាង"
+
+msgctxt "report:account.general_ledger:"
+msgid "Fiscal Year:"
+msgstr "ឆ្នាំសារពើពន្ធ៖"
+
+msgctxt "report:account.general_ledger:"
+msgid "From Date:"
+msgstr "ចាប់ពីកាលបរិច្ឆេទ៖"
+
+msgctxt "report:account.general_ledger:"
+msgid "From Period"
+msgstr "ពីគ្រា"
+
+msgctxt "report:account.general_ledger:"
+msgid "General Ledger"
+msgstr "សៀវភៅធំ"
+
+msgctxt "report:account.general_ledger:"
+msgid "Move"
+msgstr "កំណត់ត្រាគណនេយ្យ"
+
+msgctxt "report:account.general_ledger:"
+msgid "Name"
+msgstr "ឈ្មោះ"
+
+msgctxt "report:account.general_ledger:"
+msgid "Origin"
+msgstr "ប្រភពដើម"
+
+msgctxt "report:account.general_ledger:"
+msgid "Print Date:"
+msgstr "កាលបរិច្ឆេទបោះពុម្ព៖"
+
+msgctxt "report:account.general_ledger:"
+msgid "To"
+msgstr "ដល់"
+
+msgctxt "report:account.general_ledger:"
+msgid "Total"
+msgstr "សរុប"
+
+msgctxt "report:account.general_ledger:"
+msgid "User:"
+msgstr "អ្នកប្រើប្រាស់៖"
+
+msgctxt "report:account.general_ledger:"
+msgid "at"
+msgstr "នៅ"
+
+msgctxt "report:account.trial_balance:"
+msgid "/"
+msgstr "/"
+
+msgctxt "report:account.trial_balance:"
+msgid "Account"
+msgstr "គណនី"
+
+msgctxt "report:account.trial_balance:"
+msgid "Company:"
+msgstr "ក្រុមហ៊ុន៖"
+
+msgctxt "report:account.trial_balance:"
+msgid "Credit"
+msgstr "ឥណទាន"
+
+msgctxt "report:account.trial_balance:"
+msgid "Debit"
+msgstr "ឥណពន្ធ"
+
+msgctxt "report:account.trial_balance:"
+msgid "End Balance"
+msgstr "សមតុល្យចុងគ្រា"
+
+msgctxt "report:account.trial_balance:"
+msgid "Fiscal Year:"
+msgstr "ឆ្នាំសារពើពន្ធ៖"
+
+msgctxt "report:account.trial_balance:"
+msgid "From Date:"
+msgstr "ចាប់ពីកាលបរិច្ឆេទ៖"
+
+msgctxt "report:account.trial_balance:"
+msgid "From Period:"
+msgstr "ពីគ្រា៖"
+
+msgctxt "report:account.trial_balance:"
+msgid "Print Date:"
+msgstr "កាលបរិច្ឆេទបោះពុម្ព៖"
+
+msgctxt "report:account.trial_balance:"
+msgid "Start Balance"
+msgstr "សមតុល្យដើមគ្រា"
+
+msgctxt "report:account.trial_balance:"
+msgid "To"
+msgstr "ដល់"
+
+msgctxt "report:account.trial_balance:"
+msgid "Total"
+msgstr "សរុប"
+
+msgctxt "report:account.trial_balance:"
+msgid "Trial Balance"
+msgstr "តារាងតុល្យការសាកល្បង"
+
+msgctxt "report:account.trial_balance:"
+msgid "User:"
+msgstr "អ្នកប្រើប្រាស់៖"
+
+msgctxt "report:account.trial_balance:"
+msgid "at"
+msgstr "នៅ"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,display_account:"
+msgid "All"
+msgstr "ទាំងអស់"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,display_account:"
+msgid "With movements"
+msgstr "មានកំណត់ត្រាគណនេយ្យ"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Customer Invoices"
+msgstr "វិក្កយបត្រអតិថិជន"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,invoice_type:"
+msgid "Supplier Invoices"
+msgstr "វិក្កយបត្រអ្នកផ្គត់ផ្គង់"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_journal.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_journal.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,grouping:"
+msgid "Base Tax Code"
+msgstr "កូដមូលដ្ឋានគិតពន្ធ"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,grouping:"
+msgid "Invoice"
+msgstr "វិក្កយបត្រ"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,partner_type:"
+msgid "Customers"
+msgstr "អតិថិជន"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,partner_type:"
+msgid "Suppliers"
+msgstr "អ្នកផ្គត់ផ្គង់"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,tax_type:"
+msgid "All"
+msgstr "ទាំងអស់"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,tax_type:"
+msgid "Invoiced"
+msgstr "បានចេញវិក្កយបត្រ"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,tax_type:"
+msgid "Refunded"
+msgstr "បានសងប្រាក់វិញ"
+
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "Excel"
+msgstr "Excel"
+
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "PDF"
+msgstr "PDF"
+
+msgctxt "view:account.configuration:"
+msgid "Report"
+msgstr "របាយការណ៍"
+
+msgctxt "view:account_reports.print_abreviated_journal.start:"
+msgid "Print Abreviated Journal"
+msgstr "បោះពុម្ពទិនានុប្បវត្តិសង្ខេប"
+
+msgctxt "view:account_reports.print_general_ledger.start:"
+msgid "Leave empty to select all accounts"
+msgstr "ទុកឱ្យទទេដើម្បីជ្រើសរើសគណនីទាំងអស់"
+
+msgctxt "view:account_reports.print_general_ledger.start:"
+msgid "Leave empty to select all parties"
+msgstr "ទុកឱ្យទទេដើម្បីជ្រើសរើសភាគីទាំងអស់"
+
+msgctxt "view:account_reports.print_journal.start:"
+msgid "Left empty to select all journals by default"
+msgstr "ទុកឱ្យទទេដើម្បីជ្រើសរើសទិនានុប្បវត្តិទាំងអស់តាមលំនាំដើម"
+
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all accounts"
+msgstr "ទុកឱ្យទទេដើម្បីជ្រើសរើសគណនីទាំងអស់"
+
+msgctxt "view:account_reports.print_open_move_lines.start:"
+msgid "Leave empty to select all parties"
+msgstr "ទុកឱ្យទទេដើម្បីជ្រើសរើសភាគីទាំងអស់"
+
+msgctxt "view:account_reports.print_taxes_by_invoice.start:"
+msgid "Left empty to select all parties"
+msgstr "ទុកឱ្យទទេដើម្បីជ្រើសរើសភាគីទាំងអស់"
+
+msgctxt "view:account_reports.print_taxes_by_invoice.start:"
+msgid "Left empty to select all periods"
+msgstr "ទុកឱ្យទទេដើម្បីជ្រើសរើសគ្រាទាំងអស់"
+
+msgctxt "view:account_reports.print_taxes_by_invoice.start:"
+msgid "Left empty to select all taxes"
+msgstr "ទុកឱ្យទទេដើម្បីជ្រើសរើសពន្ធទាំងអស់"
+
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "All accounts if Empty"
+msgstr "គណនីទាំងអស់ ប្រសិនបើទុកឱ្យទទេ"
+
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "All parties if Empty"
+msgstr "ភាគីទាំងអស់ ប្រសិនបើទុកឱ្យទទេ"
+
+msgctxt "view:account_reports.print_trial_balance.start:"
+msgid "Comparison Period"
+msgstr "គ្រាសម្រាប់ប្រៀបធៀប"
+
+msgctxt "wizard_button:account_reports.print_abreviated_journal,start,end:"
+msgid "Cancel"
+msgstr "បោះបង់"
+
+msgctxt "wizard_button:account_reports.print_abreviated_journal,start,print_:"
+msgid "Print"
+msgstr "បោះពុម្ព"
+
+msgctxt "wizard_button:account_reports.print_general_ledger,start,end:"
+msgid "Cancel"
+msgstr "បោះបង់"
+
+msgctxt "wizard_button:account_reports.print_general_ledger,start,print_:"
+msgid "Print"
+msgstr "បោះពុម្ព"
+
+msgctxt "wizard_button:account_reports.print_invoice_payment_dates,start,end:"
+msgid "Cancel"
+msgstr "បោះបង់"
+
+msgctxt ""
+"wizard_button:account_reports.print_invoice_payment_dates,start,print_:"
+msgid "Print"
+msgstr "បោះពុម្ព"
+
+msgctxt "wizard_button:account_reports.print_journal,start,end:"
+msgid "Cancel"
+msgstr "បោះបង់"
+
+msgctxt "wizard_button:account_reports.print_journal,start,print_:"
+msgid "Print"
+msgstr "បោះពុម្ព"
+
+msgctxt "wizard_button:account_reports.print_open_move_lines,start,end:"
+msgid "Cancel"
+msgstr "បោះបង់"
+
+msgctxt "wizard_button:account_reports.print_open_move_lines,start,print_:"
+msgid "Print"
+msgstr "បោះពុម្ព"
+
+msgctxt "wizard_button:account_reports.print_taxes_by_invoice,start,end:"
+msgid "Cancel"
+msgstr "បោះបង់"
+
+msgctxt "wizard_button:account_reports.print_taxes_by_invoice,start,print_:"
+msgid "Print"
+msgstr "បោះពុម្ព"
+
+msgctxt "wizard_button:account_reports.print_trial_balance,start,end:"
+msgid "Cancel"
+msgstr "បោះបង់"
+
+msgctxt "wizard_button:account_reports.print_trial_balance,start,print_:"
+msgid "Print"
+msgstr "បោះពុម្ព"
+
+msgctxt "xgettext:x:"
+msgid "Abreviated Journal"
+msgstr "ទិនានុប្បវត្តិសង្ខេប"
+
+msgctxt "xgettext:x:"
+msgid "Account"
+msgstr "គណនី"
+
+msgctxt "xgettext:x:"
+msgid "Account / Party"
+msgstr "គណនី / ភាគី"
+
+msgctxt "xgettext:x:"
+msgid "Accounts: %s"
+msgstr "គណនី៖ %s"
+
+msgctxt "xgettext:x:"
+msgid "All Accounts"
+msgstr "គណនីទាំងអស់"
+
+msgctxt "xgettext:x:"
+msgid "All Parties"
+msgstr "ភាគីទាំងអស់"
+
+msgctxt "xgettext:x:"
+msgid "All Periods"
+msgstr "គ្រាទាំងអស់"
+
+msgctxt "xgettext:x:"
+msgid "Balance"
+msgstr "សមតុល្យ"
+
+msgctxt "xgettext:x:"
+msgid "Base"
+msgstr "មូលដ្ឋាន"
+
+msgctxt "xgettext:x:"
+msgid "Base + Tax"
+msgstr "មូលដ្ឋានគិតពន្ធ + ពន្ធ"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid ""
+"Cancelled invoices are shown in %(marker)s. Invoices without a cancelled move"
+" or a cancelled move not related to an invoice are not added to the total."
+msgstr ""
+"វិក្កយបត្រដែលបានបោះបង់បង្ហាញជា %(marker)s។ វិក្កយបត្រដែលគ្មានកំណត់ត្រាបោះបង់ "
+"ឬកំណត់ត្រាបោះបង់ដែលមិនពាក់ព័ន្ធនឹងវិក្កយបត្រ "
+"មិនត្រូវបានបញ្ចូលក្នុងចំនួនសរុបទេ។"
+
+msgctxt "xgettext:x:"
+msgid ""
+"Cancelled invoices are shown in grey. Invoices without a cancelled move or a "
+"cancelled move not related to an invoice are not added to the total."
+msgstr ""
+"វិក្កយបត្រដែលបានបោះបង់បង្ហាញជាពណ៌ប្រផេះ។ វិក្កយបត្រដែលគ្មានកំណត់ត្រាបោះបង់ "
+"ឬកំណត់ត្រាបោះបង់ដែលមិនពាក់ព័ន្ធនឹងវិក្កយបត្រ "
+"មិនត្រូវបានបញ្ចូលក្នុងចំនួនសរុបទេ។"
+
+msgctxt "xgettext:x:"
+msgid "Code"
+msgstr "កូដ"
+
+msgctxt "xgettext:x:"
+msgid "Company:"
+msgstr "ក្រុមហ៊ុន៖"
+
+msgctxt "xgettext:x:"
+msgid "Comparision Balance %s"
+msgstr "សមតុល្យសម្រាប់ប្រៀបធៀប %s"
+
+msgctxt "xgettext:x:"
+msgid "Comparision Balance %s: From: %s To: %s"
+msgstr "សមតុល្យសម្រាប់ប្រៀបធៀប %s៖ ពី %s ដល់ %s"
+
+msgctxt "xgettext:x:"
+msgid "Credit"
+msgstr "ឥណទាន"
+
+msgctxt "xgettext:x:"
+msgid "Cut-off Date: %s"
+msgstr "កាលបរិច្ឆេទកាត់ផ្ដាច់៖ %s"
+
+msgctxt "xgettext:x:"
+msgid "Date"
+msgstr "កាលបរិច្ឆេទ"
+
+msgctxt "xgettext:x:"
+msgid "Debit"
+msgstr "ឥណពន្ធ"
+
+msgctxt "xgettext:x:"
+msgid "Description"
+msgstr "សេចក្តីពិពណ៌នា"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Final posting date: %(end_date)s"
+msgstr "កាលបរិច្ឆេទកត់ត្រាក្នុងបញ្ជីចុងក្រោយ៖ %(end_date)s"
+
+msgctxt "xgettext:x:"
+msgid "Fiscal Year"
+msgstr "ឆ្នាំសារពើពន្ធ"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Fiscal Year: %(fiscal_year)s %(periods)s"
+msgstr "ឆ្នាំសារពើពន្ធ៖ %(fiscal_year)s %(periods)s"
+
+msgctxt "xgettext:x:"
+msgid "Fiscal Year: %s Start Period: %s End Period: %s"
+msgstr "ឆ្នាំសារពើពន្ធ៖ %s គ្រាចាប់ផ្ដើម៖ %s គ្រាបញ្ចប់៖ %s"
+
+msgctxt "xgettext:x:"
+msgid "From %s To %s"
+msgstr "ពី %s ដល់ %s"
+
+msgctxt "xgettext:x:"
+msgid "General Ledger"
+msgstr "សៀវភៅធំ"
+
+msgctxt "xgettext:x:"
+msgid "Initial"
+msgstr "ដំបូង"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Initial posting date: %(start_date)s"
+msgstr "កាលបរិច្ឆេទកត់ត្រាក្នុងបញ្ជីដំបូង៖ %(start_date)s"
+
+msgctxt "xgettext:x:"
+msgid "Invoice"
+msgstr "វិក្កយបត្រ"
+
+msgctxt "xgettext:x:"
+msgid "Journal"
+msgstr "ទិនានុប្បវត្តិ"
+
+msgctxt "xgettext:x:"
+msgid "Journals"
+msgstr "ទិនានុប្បវត្តិ"
+
+msgctxt "xgettext:x:"
+msgid "Main Balance %s"
+msgstr "សមតុល្យចម្បង %s"
+
+msgctxt "xgettext:x:"
+msgid "Main Balance %s: From: %s To: %s"
+msgstr "សមតុល្យចម្បង %s៖ ពី %s ដល់ %s"
+
+msgctxt "xgettext:x:"
+msgid "Maturity Date"
+msgstr "កាលបរិច្ឆេទដល់កំណត់"
+
+msgctxt "xgettext:x:"
+msgid "Move"
+msgstr "កំណត់ត្រាគណនេយ្យ"
+
+msgctxt "xgettext:x:"
+msgid "Move Date"
+msgstr "កាលបរិច្ឆេទកំណត់ត្រាគណនេយ្យ"
+
+msgctxt "xgettext:x:"
+msgid "NIF"
+msgstr "NIF"
+
+msgctxt "xgettext:x:"
+msgid "No records found"
+msgstr "រកមិនឃើញកំណត់ត្រាទេ"
+
+msgctxt "xgettext:x:"
+msgid "Number"
+msgstr "លេខ"
+
+msgctxt "xgettext:x:"
+msgid "Open Move Lines"
+msgstr "បន្ទាត់កំណត់ត្រាគណនេយ្យដែលមិនទាន់ទូទាត់"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Parties: %(parties)s"
+msgstr "ភាគី៖ %(parties)s"
+
+msgctxt "xgettext:x:"
+msgid "Parties: %s"
+msgstr "ភាគី៖ %s"
+
+#, python-format
+msgctxt "xgettext:x:"
+msgid "Periods: %(periods)s"
+msgstr "គ្រា៖ %(periods)s"
+
+msgctxt "xgettext:x:"
+msgid "Previous balance"
+msgstr "សមតុល្យមុន"
+
+msgctxt "xgettext:x:"
+msgid "Previous balance..."
+msgstr "សមតុល្យមុន..."
+
+msgctxt "xgettext:x:"
+msgid "Reconciliation Date"
+msgstr "កាលបរិច្ឆេទផ្ទៀងផ្ទាត់សមតុល្យ"
+
+msgctxt "xgettext:x:"
+msgid "Reference // Description"
+msgstr "ឯកសារយោង // សេចក្តីពិពណ៌នា"
+
+msgctxt "xgettext:x:"
+msgid "Start Date: %s End Date: %s"
+msgstr "កាលបរិច្ឆេទចាប់ផ្ដើម៖ %s កាលបរិច្ឆេទបញ្ចប់៖ %s"
+
+msgctxt "xgettext:x:"
+msgid "Tax"
+msgstr "ពន្ធ"
+
+msgctxt "xgettext:x:"
+msgid "Taxes By Invoice"
+msgstr "ពន្ធតាមវិក្កយបត្រ"
+
+msgctxt "xgettext:x:"
+msgid "Taxes By Invoice and Period"
+msgstr "ពន្ធតាមវិក្កយបត្រ និងគ្រា"
+
+msgctxt "xgettext:x:"
+msgid "Total"
+msgstr "សរុប"
+
+msgctxt "xgettext:x:"
+msgid "Total Fiscal Year"
+msgstr "សរុបតាមឆ្នាំសារពើពន្ធ"
+
+msgctxt "xgettext:x:"
+msgid "Total Invoice"
+msgstr "សរុបតាមវិក្កយបត្រ"
+
+msgctxt "xgettext:x:"
+msgid "Total Period"
+msgstr "សរុបតាមគ្រា"
+
+msgctxt "xgettext:x:"
+msgid "Total month %s"
+msgstr "សរុបខែ %s"
+
+msgctxt "xgettext:x:"
+msgid "Trial Balance"
+msgstr "តារាងតុល្យការសាកល្បង"
+
+msgctxt "xgettext:x:"
+msgid "VAT"
+msgstr "អាករលើតម្លៃបន្ថែម (VAT)"
+
+msgctxt "xgettext:x:"
+msgid ""
+"When move number is between parentheses it means that it has no post number "
+"and the number shown is the provisional one."
+msgstr ""
+"លេខកំណត់ត្រាគណនេយ្យក្នុងវង់ក្រចក "
+"គឺជាលេខបណ្ដោះអាសន្នសម្រាប់កំណត់ត្រាដែលមិនទាន់មានលេខកត់ក្នុងបញ្ជី។"
+
+msgctxt "xgettext:x:"
+msgid "Due Amount"
+msgstr "ចំនួនទឹកប្រាក់ត្រូវបង់"
+
+msgctxt "xgettext:x:"
+msgid "Due Date"
+msgstr "កាលបរិច្ឆេទដល់កំណត់"
+
+msgctxt "xgettext:x:"
+msgid "Invoice Date"
+msgstr "កាលបរិច្ឆេទវិក្កយបត្រ"
+
+msgctxt "xgettext:x:"
+msgid "Invoice Payment Dates"
+msgstr "កាលបរិច្ឆេទទូទាត់វិក្កយបត្រ"
+
+msgctxt "xgettext:x:"
+msgid "No invoices found"
+msgstr "រកមិនឃើញវិក្កយបត្រ"
+
+msgctxt "xgettext:x:"
+msgid "Party"
+msgstr "ភាគី"
+
+msgctxt "xgettext:x:"
+msgid "Payment Date"
+msgstr "កាលបរិច្ឆេទទូទាត់"
+
+msgctxt "xgettext:x:"
+msgid "Payment Days"
+msgstr "ចំនួនថ្ងៃសម្រាប់ទូទាត់"
+
+msgctxt "xgettext:x:"
+msgid "Payment Type"
+msgstr "ប្រភេទការទូទាត់"
+
+msgctxt "xgettext:x:"
+msgid "Reference"
+msgstr "ឯកសារយោង"
+
+msgctxt "xgettext:x:"
+msgid "State"
+msgstr "ស្ថានភាព"
+
+msgctxt "xgettext:x:"
+msgid "Untaxed"
+msgstr "មិនរួមបញ្ចូលពន្ធ"
+
+msgctxt "field:party.party,accounting_name:"
+msgid "Accounting Name"
+msgstr "ឈ្មោះក្នុងគណនេយ្យ"
+
+msgctxt "field:account_reports.print_trial_balance.start,with_move_only:"
+msgid "Only Accounts With Move"
+msgstr "បង្ហាញតែគណនីដែលមានកំណត់ត្រាគណនេយ្យ"
+
+msgctxt "field:account_reports.print_trial_balance.start,with_move_or_initial:"
+msgid "Only Accounts With Moves or Initial Balance"
+msgstr "បង្ហាញតែគណនីដែលមានកំណត់ត្រាគណនេយ្យ ឬមានសមតុល្យដំបូង"
+
+msgctxt "model:account_reports.print_general_ledger.start,name:"
+msgid "Print General Ledger"
+msgstr "បោះពុម្ពសៀវភៅធំ"
+
+msgctxt "model:account_reports.print_taxes_by_invoice.start,name:"
+msgid "Print Taxes by Invoice and Period"
+msgstr "បោះពុម្ពពន្ធតាមវិក្កយបត្រ និងគ្រា"
+
+msgctxt "model:account_reports.print_trial_balance.start,name:"
+msgid "Print Trial Balance Start"
+msgstr "ចាប់ផ្ដើមបោះពុម្ពតារាងតុល្យការសាកល្បង"
+
+msgctxt ""
+"selection:account_reports.print_abreviated_journal.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_general_ledger.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt ""
+"selection:account_reports.print_invoice_payment_dates.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_journal.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_open_move_lines.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_taxes_by_invoice.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
+
+msgctxt "selection:account_reports.print_trial_balance.start,output_format:"
+msgid "HTML"
+msgstr "HTML"
